@@ -71,7 +71,8 @@ export function registerViewScene(
             'view_unavailable',
             'This Pascal server has no editor to render with: take sizes and counts from the tools.',
           )
-        const projectId = operations.getActiveScene()?.projectId
+        const active = operations.getActiveScene()
+        const projectId = active?.projectId ?? active?.id
         if (!projectId)
           refuse('no_project', 'This session has no project open to look at: load or create one.')
         // No view of the person's here: core refuses camera 'current' without one.

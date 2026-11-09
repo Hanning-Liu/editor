@@ -38,6 +38,11 @@ export const MaterialSchema = z.object({
       /** Shift of the pattern, in texture repeats, applied to every map below. */
       offset: z.tuple([z.number(), z.number()]).optional(),
       normalMap: AssetUrl.optional(),
+      roughnessMap: AssetUrl.optional(),
+      aoMap: AssetUrl.optional(),
+      metalnessMap: AssetUrl.optional(),
+      displacementMap: AssetUrl.optional(),
+      displacementScale: z.number().min(0).max(1).optional(),
       normalScale: z.number().optional(),
       bumpMap: AssetUrl.optional(),
       bumpScale: z.number().optional(),

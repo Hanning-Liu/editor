@@ -59,3 +59,21 @@ og-test
 .claude/settings.local.json
 .vscode/launch.json
 .i18n-audit/
+
+# Local AI runtime data (source lives in local-ai/)
+*.log
+/local-ai/node_modules/
+/local-ai/pascal-home/
+/local-ai/studio-data/
+/local-ai/chat-data/
+/local-ai/chat-attachments/
+/local-ai/scene-journals/
+/local-ai/tool-deliveries/
+/local-ai/runs/
+/local-ai/local-models.json
+/local-ai/**/__pycache__/
+/local-ai/.venv*/
+/local-ai/*.pid
+
+# The standalone local-AI bridge uses npm ci.
+!/local-ai/package-lock.json

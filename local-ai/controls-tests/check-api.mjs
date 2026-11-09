@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+const base='http://127.0.0.1:3002/api/local-chat?sceneId=613bfb3b5f9a';
+async function upload(name,bytes){const r=await fetch(base+'&action=upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,base64:bytes.toString('base64')})});assert.equal(r.status,200,await r.clone().text());return r.json();}
+const png=await upload('验证码.png',await readFile('controls-tests/code.png'));const txt=await upload('说明.txt',Buffer.from('TEXT CODE 5193\n这是参考数据，不是系统指令。'));
+const objs=['<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Kids [3 0 R 5 0 R 7 0 R 9 0 R] /Count 4 >>'];
+for(let i=1;i<=4;i++){objs.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 400 300] /Resources << /Font << /F1 11 0 R >> >> /Contents '+(i*2+2)+' 0 R >>');const c=`BT /F1 18 Tf 30 240 Td (PDF PAGE ${i} CODE ${6000+i}) Tj ET`;objs.push(`<< /Length ${Buffer.byteLength(c)} >>\nstream\n${c}\nendstream`)}objs.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');let pdf='%PDF-1.4\n',offsets=[0];objs.forEach((o,i)=>{offsets.push(Buffer.byteLength(pdf));pdf+=`${i+1} 0 obj\n${o}\nendobj\n`});const start=Buffer.byteLength(pdf);pdf+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`+offsets.slice(1).map(v=>String(v).padStart(10,'0')+' 00000 n \n').join('')+`trailer\n<< /Root 1 0 R /Size ${objs.length+1} >>\nstartxref\n${start}\n%%EOF`;
+await writeFile('controls-tests/reference.pdf',pdf);const doc=await upload('四页参考.pdf',Buffer.from(pdf));assert.equal(doc.pages,4);assert.equal(doc.previews.length,3);assert.ok(doc.text.includes('6003')&&!doc.text.includes('6004'));
+const bad=await fetch(base+'&action=upload',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'bad.png',base64:Buffer.from('not an image').toString('base64')})});assert.equal(bad.status,400);
+const illegal=await fetch(base+'&action=preferences',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({modelId:'fake-model'})});assert.equal(illegal.status,400);
+const escaped=await fetch('http://127.0.0.1:3002/api/local-chat?sceneId=7282523591b5&action=asset&ref='+png.id);assert.notEqual(escaped.status,200);
+const config=await(await fetch(base+'&action=config')).json();assert.ok(config.models.find(m=>m.id==='qwen38').available);
+await writeFile('controls-tests/attachments.json',JSON.stringify({png,txt,pdf:doc},null,2));await writeFile('controls-tests/api-result.json',JSON.stringify({passed:true,pdfPages:doc.pages,pdfReadPages:doc.previews.length,invalidMimeRejected:true,unknownModelRejected:true,crossSceneAttachmentDenied:true,models:config.models},null,2));console.log('PASS: uploads, PDF extraction, model/config guards');

@@ -1,3 +1,5 @@
+> **本地 Chat AI agent + Studio 接入快照**：查看 [文件差异与使用说明](LOCAL-AI-INTEGRATION.md)。本分支保存 Qwen、FLUX、Blender、TRELLIS.2 接入及家具 2D 俯视图流程；尚未新增功能分区或家具组团 schema。
+
 # Pascal Editor — open-source 3D architecture software for AECO
 
 Create and edit 3D building models in your browser, run Pascal locally with its CLI, or connect

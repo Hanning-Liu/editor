@@ -1,0 +1,4 @@
+import { Client } from '@modelcontextprotocol/client';
+import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
+import { readFile, writeFile } from 'node:fs/promises';
+const c=new Client({name:'inventory',version:'1'});await c.connect(new StdioClientTransport({command:process.execPath,args:[process.cwd()+'/node_modules/@pascal-app/cli/dist/bin/pascal.js','mcp','connect'],env:{...process.env,PASCAL_HOME:process.cwd()+'/pascal-home'}}));const source=await readFile('chat-server.mjs','utf8');const a=source.indexOf('const brief = ')+14;const b=source.indexOf('emit({',a);const literal=source.slice(a,b).trim().replace(/;$/, '');const text='仅从目录添加指定沙发，不额外装饰';const brief=new Function('text','bounded','open','return ('+literal+')')(text,reading=>({kind:'bounded',quote:text,reading}),design=>({kind:'open',design}));const r=await c.callTool({name:'design_brief',arguments:brief});console.log(JSON.stringify(r));await c.close();

@@ -422,6 +422,8 @@ export function buildItemFloorplan(node: ItemNode, ctx: GeometryContext): Floorp
       center: [cx, cy],
       width,
       height: depth,
+      // The plan extent already includes independent X/Z scaling, just as the GLB does.
+      preserveAspectRatio: 'none',
       // `rotateVec` (the footprint polygon) applies R(-angle), but the renderer
       // draws the image with SVG `rotate(+deg)` = R(+angle). Negate so the
       // sprite rotates the same way as its footprint box (and 3D); otherwise the

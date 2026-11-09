@@ -97,6 +97,41 @@ describe('native texture placement', () => {
     expect(material.bumpScale).toBe(1)
   })
 
+  test('Studio PBR maps keep linear data and affect the material cache', () => {
+    const input: MaterialSchema = {
+      texture: {
+        url: 'https://example.com/studio-base.png',
+        aoMap: 'https://example.com/studio-ao.png',
+        roughnessMap: 'https://example.com/studio-rough.png',
+        metalnessMap: 'https://example.com/studio-metal.png',
+        displacementMap: 'https://example.com/studio-height.png',
+        displacementScale: 0.02,
+        repeat: [3, 4],
+      },
+    }
+    const material = withImageStub(() =>
+      createMaterial(input, 'rendered'),
+    ) as MeshStandardNodeMaterial
+    expect(material.map?.colorSpace).toBe(SRGBColorSpace)
+    for (const map of [
+      material.aoMap,
+      material.roughnessMap,
+      material.metalnessMap,
+      material.displacementMap,
+    ]) {
+      expect(map).toBeDefined()
+      expect(map?.colorSpace).toBe(NoColorSpace)
+      expect(map?.repeat.toArray()).toEqual([3, 4])
+    }
+    expect(material.displacementScale).toBe(0.02)
+    expect(getTextureKey(input)).not.toBe(
+      getTextureKey({
+        ...input,
+        texture: { ...input.texture!, roughnessMap: 'https://example.com/other.png' },
+      }),
+    )
+  })
+
   test('a different offset is a different texture and material', () => {
     expect(getTextureKey(placed([0, 0]))).not.toBe(getTextureKey(placed([0.5, 0])))
     const [first, second] = withImageStub(() => [

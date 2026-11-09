@@ -1,0 +1,12 @@
+[
+  {
+    "id": "qwen38",
+    "label": "Qwen3.8 27B · 本地",
+    "model": "mlx-community/Qwen3.8-27B-8bit",
+    "endpoint": "http://127.0.0.1:18080/v1/chat/completions",
+    "vision": true,
+    "thinking": true,
+    "contextLimit": 262144,
+    "contextLimitSource": "来自本地模型配置，未验证满窗口容量"
+  }
+]

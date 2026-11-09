@@ -1,0 +1,501 @@
+{
+  "upstreamCommit": "7d45390fd49bc7700402e4adaa5b6936a50594bc",
+  "scope": "Exact local integration source snapshot before functional zones and furniture groups",
+  "files": [
+    {
+      "path": "DELIVERY.md",
+      "sha256": "1220deb1d3b1881540654ab03f97bba734303388e16285c3469020bee6957ba5",
+      "bytes": 3798
+    },
+    {
+      "path": "FLOORPLAN-PLAN.md",
+      "sha256": "a2b781b7c3d17d937024d9c2502e13e83fe1e8d8205e2f9c7203b8fbc66105d8",
+      "bytes": 3594
+    },
+    {
+      "path": "FULL-TOOLS-PLAN.md",
+      "sha256": "517751e9546eec0b805962eb1c8afe6678a2ecc8e8e55c59d3ce6f622380a491",
+      "bytes": 3704
+    },
+    {
+      "path": "PLAN.md",
+      "sha256": "421461d611a4b54040e61f16c165367f02f03b434c2df8dbf67e5bed49822c40",
+      "bytes": 1094
+    },
+    {
+      "path": "README.md",
+      "sha256": "f39bc407420e7c1a59e53b88e9d6c448aef905d361a0c3b41fe068436056f595",
+      "bytes": 9676
+    },
+    {
+      "path": "STUDIO-PLAN.md",
+      "sha256": "6880d3448adce3bde0698e21212d354579548c9fc0b9dfd87f2aa807e2f4dea6",
+      "bytes": 3313
+    },
+    {
+      "path": "WEB-CHAT.md",
+      "sha256": "78937f4da68164e2ce3d8478d2f864576d7e089dfcf02f0e38ccd4362dd5cd1d",
+      "bytes": 10112
+    },
+    {
+      "path": "agent.mjs",
+      "sha256": "abe6efd568b4ef727cbbca98b292a2bbdad84e4dc0998c6352c891df60462c0d",
+      "bytes": 8369
+    },
+    {
+      "path": "all-tools.json",
+      "sha256": "a10c96c8fdb9e06c48932a098bdf7788603833a454e2d60e656dc19cb4c869d4",
+      "bytes": 621016
+    },
+    {
+      "path": "brief-probe.mjs",
+      "sha256": "cec8f5ea82dfc9a322762fcd6bb7bc3014d2b508ea25254ca246b5f87834b6c8",
+      "bytes": 978
+    },
+    {
+      "path": "browser-check.mjs",
+      "sha256": "229bf79d6e3e5c3b1d61d5de8329ead62cb7d28ce172e8986550129fedf48051",
+      "bytes": 1547
+    },
+    {
+      "path": "chat-boundary-check.mjs",
+      "sha256": "9551f61de57db605c65314df5778c07f2483c798dbaa9d6f9b45ce529d8d5163",
+      "bytes": 1244
+    },
+    {
+      "path": "chat-features.mjs",
+      "sha256": "a9951121c1b309ac82c317872c39129f3e363033d17206edcf03fd6f0ef28166",
+      "bytes": 9692
+    },
+    {
+      "path": "chat-server.mjs",
+      "sha256": "ec7ec5829e8fe6f729ac51c035b338b0e2aeeb66042ae185a8cd3e15fdbaf82f",
+      "bytes": 33041
+    },
+    {
+      "path": "controls-tests/check-api.mjs",
+      "sha256": "f5f47933eaa3665b2a4b3077721feab8284ce8dd1f266cdb483911d0fe3c9cf1",
+      "bytes": 2816
+    },
+    {
+      "path": "controls-tests/check-history.mjs",
+      "sha256": "ed7fd61345ed2c8a3e3791c3c1b1a10e88c3a072f79f92a008870e6b795c85aa",
+      "bytes": 1288
+    },
+    {
+      "path": "controls-tests/check-model.mjs",
+      "sha256": "dbbbcf56190d3b27f4ac162b569a3e1f051c32db8d5419428e18551d223996f7",
+      "bytes": 1682
+    },
+    {
+      "path": "controls-tests/check-ui-send.mjs",
+      "sha256": "ab2d2d298d996bb2b2da353616f83834697029294eea3ab0df555915e4753120",
+      "bytes": 3730
+    },
+    {
+      "path": "controls-tests/check-ui.mjs",
+      "sha256": "eae009f349feabdc0725dd58e913c9dfe7a0ecef77c81d4980b1e2d80aebbf4c",
+      "bytes": 4421
+    },
+    {
+      "path": "create-chat-test.mjs",
+      "sha256": "f5edd9d269b1171843935eecb7c0665683ebdfb8dc5b5491167398e2cb304d94",
+      "bytes": 859
+    },
+    {
+      "path": "full-tools-tests/TOOL-MATRIX.md",
+      "sha256": "445903a1f02599f30730d43aa2cb52e724b7392484d443a7c0c8e148b7746731",
+      "bytes": 9576
+    },
+    {
+      "path": "full-tools-tests/check-download-ui.mjs",
+      "sha256": "783144d00b63831ab652d2fe39da3b1a56217bba9621d2ee47ea14258dbcd66d",
+      "bytes": 1441
+    },
+    {
+      "path": "full-tools-tests/check-ui.mjs",
+      "sha256": "dd07b3fe5521f0875656630e2942083617b70d5179836b13d4c18611ea1be291",
+      "bytes": 1169
+    },
+    {
+      "path": "full-tools-tests/debug-legacy.mjs",
+      "sha256": "e5088717993f57dbfebc6017f4ba55f183c9d202b6d618800f10935a4211d9ef",
+      "bytes": 1295
+    },
+    {
+      "path": "full-tools-tests/native-extended.mjs",
+      "sha256": "6844caa1487e486b4c9d0ae2e249883db7c47932f93efb343246ba6497a03e71",
+      "bytes": 7856
+    },
+    {
+      "path": "full-tools-tests/native-retry.mjs",
+      "sha256": "e189c8dd9a3de64213303d1ad899bf4464fe8f032ea5d9d81dcdd73b753b47e4",
+      "bytes": 5523
+    },
+    {
+      "path": "full-tools-tests/native-smoke.mjs",
+      "sha256": "968179b114e655e9cc783d3c120b336ce28ecb75e72bb332d4cace6d26ed1c69",
+      "bytes": 4098
+    },
+    {
+      "path": "full-tools-tests/qwen-run.mjs",
+      "sha256": "8b841ba86bb83e900ad5111c3a0a9a2a84bfe7686f3cd956988eb5fdec14c9b6",
+      "bytes": 1062
+    },
+    {
+      "path": "full-tools-tests/registry.test.mjs",
+      "sha256": "7ea7046223d24b1c87496345f3afd2a0a4b63418deb5a4c416a6bae384de8d5e",
+      "bytes": 3112
+    },
+    {
+      "path": "full-tools-tests/roof-migration-persisted.ts",
+      "sha256": "64cfe81037f79376952a58d8b61fce70f6eb544a40e203440bcd8ceec6e248b0",
+      "bytes": 1615
+    },
+    {
+      "path": "full-tools-tests/roof-migration.ts",
+      "sha256": "385af56a3a0c96b53d55b3ac17fd4bda1131d842a37f235385ed1fb065b98e0a",
+      "bytes": 1421
+    },
+    {
+      "path": "full-tools-tests/stop.mjs",
+      "sha256": "5e110aa482cd873d5c20784b53adc9624f62712fb4552664d0ac5aabfab3dadd",
+      "bytes": 1547
+    },
+    {
+      "path": "full-tools-tests/summarize.mjs",
+      "sha256": "642aff70bd8748dd021e38de70d9ad39c86ea6767e6801978231afbc5d12322f",
+      "bytes": 4024
+    },
+    {
+      "path": "full-tools-tests/vision.mjs",
+      "sha256": "01e0d15b0af1cf5592be2c3b6727b484de4e5ade0be0d91f325ddd8eeddf3278",
+      "bytes": 2896
+    },
+    {
+      "path": "geometry-adapter-worker.mjs",
+      "sha256": "e261c71971064e40570ccbdadeb4f52124a7a5cc7eec81d0e2dc8f7d35ade965",
+      "bytes": 679
+    },
+    {
+      "path": "inspect-web-scene.mjs",
+      "sha256": "ffd1f98e709e1def7ec53a904e575b542c16357fd84421d7c7315a1d87eff33d",
+      "bytes": 760
+    },
+    {
+      "path": "inventory.mjs",
+      "sha256": "74381c36de53e227513d04e1e3e37053cd491124547811f298c6588834b9796b",
+      "bytes": 587
+    },
+    {
+      "path": "local-mcp.ts",
+      "sha256": "9d760516abb7874dada245c964bdfc5cda440eb33ba3ae267d2236b77e571ff8",
+      "bytes": 4201
+    },
+    {
+      "path": "local-models.example.json",
+      "sha256": "581ea0c4a394b96544fb42675479cc26d548a114b647a6983fcec4e4f2211e5f",
+      "bytes": 329
+    },
+    {
+      "path": "mcp-session.mjs",
+      "sha256": "71bc7bf967f8525842028b0c6dbdbca043dfefa5012ee99dae72e01caa1d3f16",
+      "bytes": 2564
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "b09f52f45b731c0df4c18df46ee95d5241aed35d37f04a389e7ff34aaa48ced0",
+      "bytes": 7591
+    },
+    {
+      "path": "package.json",
+      "sha256": "802988ed923e2ba3a9be6b407b00660c1bc196b953154d608f690567feee5dd3",
+      "bytes": 531
+    },
+    {
+      "path": "pascal.sh",
+      "sha256": "8cf470a2688ec811b26dfd9ae2512fa9fb89b5d6c75b111c471661bb626e67c9",
+      "bytes": 186
+    },
+    {
+      "path": "qwen-server.sh",
+      "sha256": "7eb7eaf6255816c3210703b45cf2abb5792a9167fc089d0da4147b8469c60858",
+      "bytes": 402
+    },
+    {
+      "path": "reliability-tests/roof-and-disconnect.mjs",
+      "sha256": "efd0c161e37d289b8aaf61f5035d383043189e28b02379c0baf21221139d4d42",
+      "bytes": 4151
+    },
+    {
+      "path": "reliability-tests/roof-snapshot.mjs",
+      "sha256": "92eebe31e2c2157fffd6dd57a3955985c5d8b825b1b84137dddefcb95ad440f4",
+      "bytes": 750
+    },
+    {
+      "path": "reliability-tests/stop-and-ui.mjs",
+      "sha256": "de5051f11ddee7f0d2233cf00065cc057816ddf6ecb00d1a75b3ef77b55bd432",
+      "bytes": 2798
+    },
+    {
+      "path": "render-scene.mjs",
+      "sha256": "fe2a0fe963370516ac5f2165185ff68f79cb827bdd6cbb2246b859590bac955b",
+      "bytes": 2081
+    },
+    {
+      "path": "run-local-service.sh",
+      "sha256": "9f6a82cb7a2563d4ad4dcb4fd3c8a946a0957e2fca07809d31b53d2753da04f6",
+      "bytes": 441
+    },
+    {
+      "path": "scene-journal.mjs",
+      "sha256": "e33de7a9df9b3f2ce92cdfb12ae0b629c8c73d3574bb5a759929c72e29898a51",
+      "bytes": 3612
+    },
+    {
+      "path": "service-control.mjs",
+      "sha256": "8296ddb70bd8a3d71c53a2ca625cb06db9cb1178f08f8d271e636ddbe73e1c9d",
+      "bytes": 2365
+    },
+    {
+      "path": "start-local.sh",
+      "sha256": "6f104f7806cc54c4f41b69eeaa605dcb55e1e5a56c32c03f3415748614d69b80",
+      "bytes": 1491
+    },
+    {
+      "path": "studio/backfill-floorplans.mjs",
+      "sha256": "4099b5dab8b2e56dbcdeb8613bf4834ffc6b0b23da8748f30570d86ac40b8fda",
+      "bytes": 4720
+    },
+    {
+      "path": "studio/blender_worker.py",
+      "sha256": "0d128dd6b2e4ae1ca3e0a180eff6e33b27ace971085071277664c163951f4ab2",
+      "bytes": 5536
+    },
+    {
+      "path": "studio/config.mjs",
+      "sha256": "2066b50169fd3bd3002740d9999677f76ce3f8f37929c158df7445c6e507c0d2",
+      "bytes": 2269
+    },
+    {
+      "path": "studio/engine.mjs",
+      "sha256": "0fc4be51ba90e76ee9f02e9d021dbbad1f74f9d0293fb24d8fdc7b13a3d0e099",
+      "bytes": 10573
+    },
+    {
+      "path": "studio/floorplan.mjs",
+      "sha256": "155ac96c5780a995297e67a4984a0c43d2dfcc4a51ac489e9d00b95729bf8aaa",
+      "bytes": 1556
+    },
+    {
+      "path": "studio/floorplan_worker.py",
+      "sha256": "1338b104367db720ae3c817abbba55319f551e9a0d3b3b47dc01c0aaedb76d4c",
+      "bytes": 4846
+    },
+    {
+      "path": "studio/image_worker.py",
+      "sha256": "0c7ba057dbb2814297a3989a3e8eb7c8eca02cba8e230254a093855df84536d9",
+      "bytes": 6176
+    },
+    {
+      "path": "studio/mcp-tools.ts",
+      "sha256": "a95e88cc57e24875f0707607a43725be8aaa73afc44020ce2483b623d1014cba",
+      "bytes": 4621
+    },
+    {
+      "path": "studio/server.mjs",
+      "sha256": "7d43cd3262f8c25bf9eb9d0c1e157e43ba3b3a84510acf9fdd27d1ef778b248c",
+      "bytes": 16782
+    },
+    {
+      "path": "studio/store.mjs",
+      "sha256": "1eb7d16786795f377a61023747ca55bcf2ed998a7fed068bb230a41594623407",
+      "bytes": 2100
+    },
+    {
+      "path": "studio-tests/api-guards.mjs",
+      "sha256": "182f0d821c0ed78d5179d7340887274c7c12a2a6c6751940ccde886b3ba50f6c",
+      "bytes": 2751
+    },
+    {
+      "path": "studio-tests/cancel-resume-ui.mjs",
+      "sha256": "c5babfc1819e8a6046832c1abb6c7d84b543c4b55d1c247a836aed3bc49e36ce",
+      "bytes": 3943
+    },
+    {
+      "path": "studio-tests/check-current-2d.mjs",
+      "sha256": "ca4c4307fe88e7098fab66f4c0f7a4d73f1ad4e20531434727d1dc3b19804fea",
+      "bytes": 1495
+    },
+    {
+      "path": "studio-tests/console-diagnostics.mjs",
+      "sha256": "6ed0926fc8e7e2687f5e234aa81cc22a702c4f3920b38625a7fad102d4badef7",
+      "bytes": 1079
+    },
+    {
+      "path": "studio-tests/export-scene-pbr.mjs",
+      "sha256": "73e136c6e231d1197d9a637c00354cd60b0b42b72f9144adac76e1b0b3ebf2d5",
+      "bytes": 626
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/acceptance-final.mjs",
+      "sha256": "c5c9f223d86e81432c28f2b74904e121304d59ada6fe24f64ac6f9d968892707",
+      "bytes": 4459
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/apply-assets-ui.mjs",
+      "sha256": "96eb2c6c8502c1c69b9c9c452aa8dd604c18e9088d8d7710d9a872e5ead28489",
+      "bytes": 3101
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/image-fallback-ui.mjs",
+      "sha256": "120d143816d8c020720ea39a3607fcc2bda978a9acf7f09ac097b73e7863d6af",
+      "bytes": 2868
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/interactions-ui.mjs",
+      "sha256": "88cc1cd82091d79a179c0c13c0ee1ff67aa2ea4b5edf44433b766b71462d2e5b",
+      "bytes": 7428
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/new-blender-ui.mjs",
+      "sha256": "a0c9bd301cbc7b0fc25c67de2ad88e79d325aae429b4f1161e52b2f7ce514829",
+      "bytes": 1564
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/new-round-ui.mjs",
+      "sha256": "8ecf9809798638f9f67f1c33a08fcb38e3b26c8371e377d56e77420dc2b8642a",
+      "bytes": 1546
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/new-trellis-ui.mjs",
+      "sha256": "9dc90c2531498c43f71fcd86db3cc444e7b20c19905094cd9af1c273c6cbf46b",
+      "bytes": 2179
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/original-scene-ui.mjs",
+      "sha256": "e2be83ba7bd515187900f607bb4754fec990f9a72b84873b476006514333f39e",
+      "bytes": 3115
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/plan-download-ui.mjs",
+      "sha256": "255b334e933936e3fd5ea3f2223b135e7d168839b631c485ae03ad94cc0815f6",
+      "bytes": 1630
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/setup.mjs",
+      "sha256": "02dd3521c6797fc09fc3d3ab6b7885fb37fb175292f40ae86cde44959361c380",
+      "bytes": 690
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/validate-projections.mjs",
+      "sha256": "5c3e41b8399c3213101dc1e1c3ae432018d926cc4e1a2e018b4fc0b9e991794b",
+      "bytes": 2263
+    },
+    {
+      "path": "studio-tests/floorplan-20261109/verify-3d-bounds.mjs",
+      "sha256": "a7a8e54b938eb8d5439111e7ee0c609257283f1c6a953afb0b9b1370f6f88f4c",
+      "bytes": 2678
+    },
+    {
+      "path": "studio-tests/pbr-final-submit.mjs",
+      "sha256": "6df9e6da43de608c70fa619c4829f1f5136e7cdc9f1b9901c9efdbb2e6c1ae29",
+      "bytes": 1174
+    },
+    {
+      "path": "studio-tests/pbr-trellis-ui.mjs",
+      "sha256": "ef16b8c7d88864bff8da51700e3ee85d896e88cf9c3c0f47d629af8812314bc4",
+      "bytes": 3060
+    },
+    {
+      "path": "studio-tests/qwen-studio.mjs",
+      "sha256": "9d7c07159ff5305e33e05a8425c6f35428bba00234e4b8aeab613322ab0732f3",
+      "bytes": 1372
+    },
+    {
+      "path": "studio-tests/refresh-all-ui.mjs",
+      "sha256": "354b0be1de4b859a67cceaecb77fbfa2dfeab751e895b2557e2f3416731a56ab",
+      "bytes": 2069
+    },
+    {
+      "path": "studio-tests/render-preserve-ui.mjs",
+      "sha256": "c9e1e674baf4a76e3e534e8bb25ddc7e92b03f692bd6a7581b25b42df604d4ec",
+      "bytes": 3236
+    },
+    {
+      "path": "studio-tests/scene-capture.mjs",
+      "sha256": "88f20f7167ece5491f7aa9c16d0f0a5615341409ca08a05e383d1bf9f2d37894",
+      "bytes": 830
+    },
+    {
+      "path": "studio-tests/submit-ui.mjs",
+      "sha256": "4057557db3b54e770de2fe86d4647ec4c832e6ab44ff288c9011a575f8bdd68e",
+      "bytes": 2740
+    },
+    {
+      "path": "studio-tests/summarize-protected.mjs",
+      "sha256": "f758fbe37d33b4899ab20e1930dde7a17c7ed5e71dab894548ced5e85cf83c87",
+      "bytes": 841
+    },
+    {
+      "path": "studio-tests/surface-ui.mjs",
+      "sha256": "7a72826550b0f2cc87943ed084d4a43e90e56bf94221370e98607d21722c9086",
+      "bytes": 1839
+    },
+    {
+      "path": "studio-tests/verify-pbr-final-ui.mjs",
+      "sha256": "76e4a65769eb54b72a904bd2d5e998323e18cd545f4d2d4d13b7e24a6fa0f10b",
+      "bytes": 2518
+    },
+    {
+      "path": "studio-tests/verify-resumed-ui.mjs",
+      "sha256": "e2e43f8aff8a2bf0907628c0abfd67899dd2a43fe8cb64547697e08efde39009",
+      "bytes": 1962
+    },
+    {
+      "path": "studio-tests/verify-three-ui.mjs",
+      "sha256": "19740414ac96649e3d5ee38939d58aaf3b857d707311cbc777a0c19a301a9ff1",
+      "bytes": 3640
+    },
+    {
+      "path": "studio-tests/verify-trellis-ui.mjs",
+      "sha256": "83540940b31fd6cd6c7474c50ce787bb267a7a9c328887deb68b12897d4a092c",
+      "bytes": 3111
+    },
+    {
+      "path": "tool-files.mjs",
+      "sha256": "a517015a6bc88ee0a3f2b9c00d6f61c7e0447dd286e787ad998633e9a8f3a5ea",
+      "bytes": 1016
+    },
+    {
+      "path": "tool-registry.mjs",
+      "sha256": "3404e54cbba949b18bfb49f663be79cd4ccb02cceda54b09729c3bc262482651",
+      "bytes": 6853
+    },
+    {
+      "path": "tool-schemas.json",
+      "sha256": "278e7a49429a77047c20213a6c316743193232f4c296dfbcf522af47ccd3da39",
+      "bytes": 106812
+    },
+    {
+      "path": "web-chat-check.mjs",
+      "sha256": "a5d885afd1f0680ea928d46999f0a310b9217b714c8fe8f22955d23a951501e9",
+      "bytes": 1943
+    },
+    {
+      "path": "web-final-check.mjs",
+      "sha256": "5ac79ac48d14d5dfb509a945a16cc6bf425c9689b2c441441b7b5a2094efe24f",
+      "bytes": 2388
+    },
+    {
+      "path": "web-furniture-check.mjs",
+      "sha256": "d9358e7415c57868566f426f851cfad5905012c1dc6e0ae08bed93a615f867e0",
+      "bytes": 3170
+    },
+    {
+      "path": "web-stop-check.mjs",
+      "sha256": "eba632c8f40510ebac91b414e39bb308bfb7c2d0cb38f1de60afdaa8dcf0476b",
+      "bytes": 2600
+    }
+  ]
+}

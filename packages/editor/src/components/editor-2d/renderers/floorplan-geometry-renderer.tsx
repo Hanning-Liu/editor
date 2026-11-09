@@ -615,7 +615,8 @@ function formatTransform(t?: {
  * `image` primitive renderer. Resolves the URL asynchronously via
  * `loadAssetUrl` (handles CDN / Supabase storage) and renders an SVG
  * `<image>` centered at `center`, rotated around it, sized in plan-local
- * metres. While the resolution is in flight, renders nothing.
+ * metres. Loading and failed images keep a true-size, non-interactive fallback;
+ * the item footprint remains the selection target.
  */
 function FloorplanImage({
   url,
@@ -635,36 +636,59 @@ function FloorplanImage({
   opacity?: number
 }) {
   const [resolvedUrl, setResolvedUrl] = useState<string | null>(null)
+  const [loadedUrl, setLoadedUrl] = useState<string | null>(null)
+  const [failedUrl, setFailedUrl] = useState<string | null>(null)
   useEffect(() => {
-    if (!url) {
-      setResolvedUrl(null)
-      return
-    }
     let cancelled = false
     setResolvedUrl(null)
-    loadAssetUrl(url).then((next) => {
-      if (!cancelled) setResolvedUrl(next)
-    })
+    setLoadedUrl(null)
+    setFailedUrl(null)
+    if (url)
+      loadAssetUrl(url)
+        .then((next) => {
+          if (!cancelled) setResolvedUrl(next)
+        })
+        .catch(() => {
+          if (!cancelled) setFailedUrl(url)
+        })
     return () => {
       cancelled = true
     }
   }, [url])
-  if (!resolvedUrl) return null
+  const ready = resolvedUrl !== null && loadedUrl === resolvedUrl
+  const failed = failedUrl !== null && (!resolvedUrl || failedUrl === resolvedUrl)
   const rotationDeg = (rotation * 180) / Math.PI
   return (
     <g
       pointerEvents="none"
+      data-floorplan-image-state={failed ? 'failed' : ready ? 'ready' : 'loading'}
       transform={`translate(${center[0]} ${center[1]}) rotate(${rotationDeg})`}
     >
-      <image
-        height={height}
-        href={resolvedUrl}
-        opacity={opacity}
-        preserveAspectRatio={preserveAspectRatio}
-        width={width}
-        x={-width / 2}
-        y={-height / 2}
-      />
+      {!ready && (
+        <rect
+          x={-width / 2}
+          y={-height / 2}
+          width={width}
+          height={height}
+          fill="#fef3c7"
+          stroke="#92400e"
+          strokeWidth={0.012}
+          strokeDasharray="0.04 0.02"
+        />
+      )}
+      {resolvedUrl && !failed && (
+        <image
+          height={height}
+          href={resolvedUrl}
+          opacity={ready ? opacity : 0}
+          preserveAspectRatio={preserveAspectRatio}
+          width={width}
+          x={-width / 2}
+          y={-height / 2}
+          onLoad={() => setLoadedUrl(resolvedUrl)}
+          onError={() => setFailedUrl(resolvedUrl)}
+        />
+      )}
     </g>
   )
 }

@@ -1,0 +1,10 @@
+import {readFile,writeFile} from 'node:fs/promises';
+const [label,prompt,effort='fast']=process.argv.slice(2);
+const project=JSON.parse(await readFile('full-tools-tests/project.json','utf8')).structuredContent;
+const id=project.id,api='http://127.0.0.1:3002/api/local-chat?sceneId='+id;
+const h=await(await fetch(api)).json();if(h.running)throw Error('Another test running');
+const response=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:prompt,preferences:{...h.preferences,effort}})});
+if(!response.ok)throw Error(await response.text());
+const out=await response.text();await writeFile('full-tools-tests/'+label+'.ndjson',out);
+const after=await(await fetch(api)).json();await writeFile('full-tools-tests/'+label+'.json',JSON.stringify(after,null,2));
+console.log(JSON.stringify({label,run:after.run,tools:after.currentEvents.filter(x=>x.type==='tool'&&x.state!=='running').map(x=>({name:x.name,state:x.state,result:x.state==='error'?x.result:undefined})),reply:after.messages.at(-1).content},null,2));

@@ -383,3 +383,27 @@ describe('FloorplanGeometryRenderer static labels', () => {
     expect(markup).toContain('fill-rule="evenodd"')
   })
 })
+
+test('a pending plan image keeps a true-size, rotated fallback footprint', () => {
+  const markup = renderToStaticMarkup(
+    <svg>
+      <FloorplanGeometryRenderer
+        geometry={{
+          kind: 'image',
+          url: 'http://127.0.0.1:3002/unavailable.png',
+          center: [2, 3],
+          width: 1.8,
+          height: 0.44,
+          rotation: -Math.PI / 4,
+          preserveAspectRatio: 'none',
+        }}
+      />
+    </svg>,
+  )
+  expect(markup).toContain('data-floorplan-image-state="loading"')
+  expect(markup).toContain('translate(2 3) rotate(-45)')
+  expect(markup).toContain('width="1.8"')
+  expect(markup).toContain('height="0.44"')
+  expect(markup).toContain('fill="#fef3c7"')
+  expect(markup).toContain('pointer-events="none"')
+})

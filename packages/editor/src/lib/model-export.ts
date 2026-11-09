@@ -4,7 +4,7 @@ export type ModelExportFormat = 'glb' | 'usdz' | 'stl' | 'obj' | 'ifc' | 'print-
 
 export type ModelExportOptions = Pick<
   GlbExportOptions,
-  'onlyVisible' | 'excludedNodeTypes' | 'includedPresentationIds'
+  'onlyVisible' | 'excludedNodeTypes' | 'includedPresentationIds' | 'textures' | 'timeoutMs'
 > & {
   download?: boolean
   /** Names the IFC project and its file. */

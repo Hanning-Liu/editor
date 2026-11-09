@@ -1,0 +1,7 @@
+import assert from 'node:assert/strict';import {readFile,writeFile} from 'node:fs/promises';import {setTimeout as delay} from 'node:timers/promises';
+const id=JSON.parse(await readFile('full-tools-tests/retry-results.json')).id,api='http://127.0.0.1:3002/api/local-chat?sceneId='+id;
+const before=await(await fetch('http://127.0.0.1:3002/api/scenes/'+id)).json();
+if((await(await fetch('http://127.0.0.1:18081/health')).json()).active.length)throw Error('Another job active; do not interrupt');
+const response=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'只读：列出当前楼层和墙体数量，不要修改场景。',preferences:{modelId:'qwen38',effort:'fast'}})});assert.equal(response.status,200);const textPromise=response.text();
+for(let i=0;i<50;i++){const h=await(await fetch(api)).json();if(h.currentEvents?.some(e=>e.type==='status'&&e.text.includes('Qwen 正在规划')))break;await delay(200)}
+await fetch(api,{method:'DELETE'});const stream=await textPromise;const h=await(await fetch(api)).json();assert.equal(h.run.status,'cancelled');assert.equal(h.run.reason,'user_cancelled');assert.equal(h.messages.at(-1).actor,'system');const after=await(await fetch('http://127.0.0.1:3002/api/scenes/'+id)).json();assert.deepEqual(after.graph,before.graph);await writeFile('full-tools-tests/stop-result.json',JSON.stringify({passed:true,id,run:h.run,actor:h.messages.at(-1).actor,graphUnchanged:true},null,2));console.log('PASS explicit stop, system status, unchanged scene');

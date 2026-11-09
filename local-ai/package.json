@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
+    "@pascal-app/cli": "1.0.7"
+  },
+  "devDependencies": {
+    "playwright": "1.65.0"
+  },
+  "name": "pascal-local-qwen38",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "pascal": "bash pascal.sh",
+    "qwen": "bash qwen-server.sh",
+    "agent": "node agent.mjs",
+    "inspect": "node agent.mjs --inspect",
+    "chat": "node chat-server.mjs",
+    "start:local": "bash start-local.sh",
+    "studio": "node studio/server.mjs"
+  }
+}

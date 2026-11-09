@@ -12,7 +12,7 @@ import {
   type SidebarTab,
 } from '@pascal-app/editor'
 import { PascalWebXRButton } from '@webxr/plugin/pascal-editor'
-import { Hammer, Layers, Package, Palette, Settings } from 'lucide-react'
+import { Hammer, Layers, MessageCircle, Package, Palette, Settings } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -28,6 +28,8 @@ import { useThumbnailAutosave } from '@/lib/use-thumbnail-autosave'
 import { BuildTab } from './build-tab'
 import { EditorNavbar } from './editor-navbar'
 import { KitchenCommands } from './kitchen-browser'
+import { useLocalCapture } from './local-capture'
+import { LocalChat } from './local-chat'
 import { PaintPanel } from './paint-panel'
 import { EditorViewerToolbarLeft, EditorViewerToolbarRight } from './viewer-toolbar'
 import { useWebXRFeature, useWebXRInstalled, WebXRFeatureRuntime } from './webxr-feature-gate'
@@ -183,8 +185,18 @@ function SceneEditor({ initialScene, meta: initialMeta }: SceneLoaderProps) {
   const catalogVersion = i18n.getVersion()
   // biome-ignore lint/correctness/useExhaustiveDependencies: labels re-translate on a locale switch or a late registerMessages
   const sidebarTabs = useMemo(
-    () => SIDEBAR_TABS.map((tab) => ({ ...tab, label: i18n._(tab.label) })),
-    [i18n, catalogVersion],
+    () => [
+      {
+        id: 'local-chat',
+        label: 'Chat',
+        icon: <MessageCircle className="h-6 w-6" />,
+        mobileIcon: <MessageCircle className="h-5 w-5" />,
+        mobileDefaultSnap: 0.8,
+        component: () => <LocalChat sceneId={initialMeta.id} />,
+      },
+      ...SIDEBAR_TABS.map((tab) => ({ ...tab, label: i18n._(tab.label) })),
+    ],
+    [i18n, catalogVersion, initialMeta.id],
   )
   // A rename must reach the autosave body, which sends `meta.name`.
   const [renamedTo, setRenamedTo] = useState<string | null>(null)
@@ -194,9 +206,15 @@ function SceneEditor({ initialScene, meta: initialMeta }: SceneLoaderProps) {
   )
   const vr = useWebXRFeature()
   useLocalArtifactStore()
-  useThumbnailAutosave({ sceneId: meta.id, enabled: true })
+  useThumbnailAutosave({
+    sceneId: meta.id,
+    enabled: !new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search).has(
+      'local-render',
+    ),
+  })
   const router = useRouter()
   const searchParams = useSearchParams()
+  useLocalCapture(meta.id, searchParams.has('local-render'), meta.projectId ?? 'default')
   const versionRef = useRef(meta.version)
   // Node count of the graph the server is known to hold. Guards against the
   // autosave wipe class: a save fired from a not-yet-hydrated (empty) editor
@@ -244,6 +262,7 @@ function SceneEditor({ initialScene, meta: initialMeta }: SceneLoaderProps) {
 
   const handleSave = useCallback(
     async (graph: SceneGraph, options?: { keepalive?: boolean }) => {
+      if (new URLSearchParams(window.location.search).has('local-render')) return
       const graphJson = sceneGraphSignature(graph)
       const isRecentRemoteApply = Date.now() < suppressRemoteSaveUntilRef.current
       if (lastRemoteGraphJsonRef.current === graphJson) {

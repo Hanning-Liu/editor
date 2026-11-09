@@ -5,6 +5,7 @@ import type { NextConfig } from 'next'
 const appDirectory = path.dirname(fileURLToPath(import.meta.url))
 const portableBuild = process.env.PASCAL_PORTABLE_BUILD === '1'
 const nextConfig: NextConfig = {
+  devIndicators: false,
   ...(portableBuild
     ? { output: 'standalone' as const, outputFileTracingRoot: path.join(appDirectory, '../..') }
     : {}),

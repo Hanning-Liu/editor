@@ -1,0 +1,4 @@
+import { Client } from '@modelcontextprotocol/client';
+import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
+import { writeFile } from 'node:fs/promises';
+const c=new Client({name:'inventory',version:'1'});await c.connect(new StdioClientTransport({command:process.execPath,args:[process.cwd()+'/node_modules/@pascal-app/cli/dist/bin/pascal.js','mcp','connect'],env:{...process.env,PASCAL_HOME:process.cwd()+'/pascal-home'}}));let cursor;const a=[];do{const p=await c.listTools(cursor?{cursor}:{});a.push(...p.tools);cursor=p.nextCursor;}while(cursor);await writeFile('all-tools.json',JSON.stringify(a,null,2));const r=await c.callTool({name:'create_project',arguments:{name:'网页Chat验收-20261109'}});await writeFile('chat-test-project.json',JSON.stringify(r,null,2));console.log(JSON.stringify(r.structuredContent));await c.close();

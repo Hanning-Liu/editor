@@ -6,6 +6,7 @@ import { Eye, Pencil, Share2 } from 'lucide-react'
 import Link from 'next/link'
 import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
 import { PascalMark } from './app-shell'
+import { LocalStudio } from './local-studio'
 import { SharePanel } from './share-panel'
 
 interface EditorNavbarProps {
@@ -18,6 +19,10 @@ interface EditorNavbarProps {
 export function EditorNavbar({ sceneId, name, onRename }: EditorNavbarProps) {
   const i18n = usePascalI18n()
   const [editing, setEditing] = useState(false)
+  const [studioOpen, setStudioOpen] = useState(false)
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('studio') === '1') setStudioOpen(true)
+  }, [])
   const [shareOpen, setShareOpen] = useState(false)
   const shareAnchorRef = useRef<HTMLDivElement>(null)
   const closeShare = useCallback(() => setShareOpen(false), [])
@@ -98,6 +103,15 @@ export function EditorNavbar({ sceneId, name, onRename }: EditorNavbarProps) {
         </div>
       </div>
 
+      <button
+        type="button"
+        aria-label="打开本地 Studio"
+        className="rounded-lg border border-border px-3 py-1.5 text-sm hover:bg-accent"
+        onClick={() => setStudioOpen(true)}
+      >
+        Studio · 本地
+      </button>
+      {studioOpen && <LocalStudio sceneId={sceneId} onClose={() => setStudioOpen(false)} />}
       <div className="flex-1" />
 
       <button

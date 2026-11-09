@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+const base='http://127.0.0.1:3002/api/local-chat?sceneId=613bfb3b5f9a';const a=JSON.parse(await readFile('controls-tests/attachments.json','utf8'));
+const before=await(await fetch('http://127.0.0.1:3002/api/scenes/613bfb3b5f9a')).json();
+const r=await fetch(base,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'只回答图片中 CODE 后的四位数字，以及文本附件 TEXT CODE 后的四位数字。不要调用工具，不要修改场景。',attachments:[a.png.id,a.txt.id],preferences:{modelId:'qwen38',effort:'standard',plugins:['inspect']}})});assert.equal(r.status,200,await r.clone().text());
+const lines=(await r.text()).trim().split('\n').map(x=>JSON.parse(x));for(const e of lines)console.log(e.type,e.text?.slice(0,500)||JSON.stringify(e).slice(0,180));
+const reply=lines.findLast(e=>e.type==='reply');assert.ok(reply?.text.includes('4827')&&reply?.text.includes('5193'),'image and text must both be read');assert.ok(lines.some(e=>e.type==='usage'&&e.latest?.prompt_tokens>0));
+const context=lines.find(e=>e.type==='context').context;assert.ok(!context.tools.includes('place_items')&&!context.tools.includes('create_room'),'disabled plugins cannot expose mutators');
+const after=await(await fetch('http://127.0.0.1:3002/api/scenes/613bfb3b5f9a')).json();assert.equal(before.graphHash,after.graphHash);
+await writeFile('controls-tests/model-result.json',JSON.stringify({passed:true,imageRead:true,textRead:true,thinkingMode:'standard',reply:reply.text,context,usage:lines.filter(e=>e.type==='usage'),sceneUnchanged:true},null,2));

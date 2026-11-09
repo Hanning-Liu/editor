@@ -1,0 +1,70 @@
+{
+  "status": "passed",
+  "checkedAt": "2026-11-09T08:52:06.953Z",
+  "models": [
+    {
+      "kind": "existing-trellis",
+      "jobId": "3ce494dd-1ada-4022-bf2c-c2af30c5cc68",
+      "interactions": "passed",
+      "imageAfterServiceRestart": "passed",
+      "max3DAlignmentErrorMeters": 2.6196278757328884e-06
+    },
+    {
+      "kind": "existing-blender",
+      "jobId": "c280f038-ab85-41ce-99a2-8ae220faa7ce",
+      "interactions": "passed",
+      "imageAfterServiceRestart": "passed",
+      "max3DAlignmentErrorMeters": 1.7881393254981504e-08
+    },
+    {
+      "kind": "new-blender",
+      "jobId": "0a1ec128-454c-4d79-ac2b-bac9ef898400",
+      "interactions": "passed",
+      "imageAfterServiceRestart": "passed",
+      "max3DAlignmentErrorMeters": 3.576278695405222e-08
+    },
+    {
+      "kind": "new-trellis",
+      "jobId": "44f1959a-cd0d-48c1-a13e-6dc24eb787d2",
+      "interactions": "passed",
+      "imageAfterServiceRestart": "passed",
+      "max3DAlignmentErrorMeters": 1.2775783400087448e-06
+    },
+    {
+      "kind": "new-round",
+      "jobId": "b546885c-90f2-46a7-b84a-d498eb957455",
+      "interactions": "passed",
+      "imageAfterServiceRestart": "passed",
+      "max3DAlignmentErrorMeters": 8.940696627490752e-09
+    }
+  ],
+  "transparentRoundSilhouette": true,
+  "failedImageFallback": {
+    "states": [
+      "failed",
+      "ready"
+    ],
+    "selectableWhenFailed": true,
+    "recoveredOnRefresh": true,
+    "matchedRequests": 3
+  },
+  "previewAndDownload": [
+    {
+      "jobId": "b546885c-90f2-46a7-b84a-d498eb957455",
+      "type": "blender",
+      "preview": true,
+      "pngDownloaded": true,
+      "projectionDownloaded": true
+    },
+    {
+      "jobId": "44f1959a-cd0d-48c1-a13e-6dc24eb787d2",
+      "type": "trellis",
+      "preview": true,
+      "pngDownloaded": true,
+      "projectionDownloaded": true
+    }
+  ],
+  "nativeTestsPassed": 110,
+  "scope": "Studio TRELLIS.2 and Qwen + Blender furniture; room tree UI not changed",
+  "note": "Historical acceptance receipt from local execution; model binaries, project graphs and user chats are intentionally excluded."
+}

@@ -6,8 +6,14 @@ import { READ_ONLY_TOOL_ANNOTATIONS } from './annotations'
 export const exportGlbInput = {}
 
 export const exportGlbOutput = {
-  status: z.literal('not_implemented'),
+  status: z.enum(['not_implemented', 'exported']),
   reason: z.string(),
+  id: z.string().optional(),
+  name: z.string().optional(),
+  mime: z.string().optional(),
+  size: z.number().optional(),
+  url: z.string().optional(),
+  warnings: z.array(z.string()).optional(),
 }
 
 export function registerExportGlb(server: McpServer, _bridge: SceneOperations): void {
@@ -16,7 +22,7 @@ export function registerExportGlb(server: McpServer, _bridge: SceneOperations): 
     {
       title: 'Export GLB',
       description:
-        'GLB export is not available in headless mode — it requires the Three.js renderer, which is browser-only. Returns a structured `not_implemented` tool error.',
+        'Export the scene through the host Three.js renderer when configured. A headless host without a renderer returns a structured not_implemented error.',
       inputSchema: z.object(exportGlbInput),
       outputSchema: z.object(exportGlbOutput),
       annotations: READ_ONLY_TOOL_ANNOTATIONS,

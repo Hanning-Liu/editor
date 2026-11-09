@@ -214,3 +214,29 @@ describe('cabinet module labels on a sheet', () => {
     ).toEqual(['R'])
   })
 })
+
+describe('generated furniture plan images', () => {
+  test('canonical image shares physical dimensions and clockwise plan rotation under nonuniform scaling', () => {
+    const { node, nodes } = item('studio-bench', 'Generated bench', [1.2, 0.65, 0.55], {
+      category: 'furniture',
+      floorPlanUrl: 'http://127.0.0.1:3002/bench.png',
+    })
+    node.scale = [1.5, 1.1, 0.8]
+    node.rotation = [0, Math.PI / 4, 0]
+    const geometry = buildItemFloorplan(node, context(nodes, editing))
+    expect(geometry?.kind).toBe('group')
+    if (geometry?.kind !== 'group') throw Error('missing group')
+    const image = geometry.children.find((g) => g.kind === 'image')
+    if (image?.kind !== 'image') throw Error('missing image')
+    expect(image.width).toBeCloseTo(1.8)
+    expect(image.height).toBeCloseTo(0.44)
+    expect(image.rotation).toBeCloseTo(-Math.PI / 4)
+    expect(image.center).toEqual([2, 3])
+    expect(image.preserveAspectRatio).toBe('none')
+    const polygon = geometry.children.find((g) => g.kind === 'polygon')
+    if (polygon?.kind !== 'polygon') throw Error('missing hit polygon')
+    const [a, b, c] = polygon.points
+    expect(Math.hypot(b![0] - a![0], b![1] - a![1])).toBeCloseTo(image.width)
+    expect(Math.hypot(c![0] - b![0], c![1] - b![1])).toBeCloseTo(image.height)
+  })
+})

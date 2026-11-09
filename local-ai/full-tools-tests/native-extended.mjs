@@ -1,0 +1,38 @@
+import {createMcpSession} from '../mcp-session.mjs';import {readFile,writeFile} from 'node:fs/promises';
+const {client:c,transport}=createMcpSession();transport.stderr?.on('data',d=>process.stderr.write(d));const results=[];let id;
+function payload(r){if(r.structuredContent)return r.structuredContent;const text=r.content?.filter(c=>c.type==='text').map(c=>c.text).join('\n');try{return JSON.parse(text)}catch{return {text}}}
+async function call(name,args={}){try{const r=await c.callTool({name,arguments:args},{timeout:180000});const p=payload(r);const ok=!r.isError&&p.ok!==false&&!p.error;results.push({name,args,ok,result:p});await writeFile('full-tools-tests/extended-results.json',JSON.stringify({id,results},null,2));console.log(ok?'PASS':'FAIL',name,ok?'':JSON.stringify(p).slice(0,500));return p}catch(e){results.push({name,args,ok:false,error:e.message});await writeFile('full-tools-tests/extended-results.json',JSON.stringify({id,results},null,2));console.log('FAIL',name,e.message);return {error:e.message}}}
+const graph=async()=>payload(await c.callTool({name:'get_scene',arguments:{}}));
+const beyond=Object.fromEntries(['textiles','light','windows','walls','floor','plants','objects','smallFurniture'].map(k=>[k,{none:'Only the explicitly requested test feature; no additional room dressing.'}]));
+async function fixture(name){const p=await call('create_project',{name:'扩展工具验收-'+name});id=p.id;await call('create_room',{levelId:p.defaultLevelId,name:'测试房间',polygon:[[0,0],[8,0],[8,8],[0,8]],wallHeight:4});return p.defaultLevelId}
+try{
+await c.connect(transport);let level=await fixture('家具脚本');let g=await graph(),nodes=Object.values(g.nodes),zone=nodes.find(n=>n.type==='zone'),walls=nodes.filter(n=>n.type==='wall'),slab=nodes.find(n=>n.type==='slab');
+await call('search_assets',{queries:[{query:'sofa'}],limit:2});await call('search_materials',{queries:[{query:'wood'}]});
+await call('paint',{targets:[walls[0].id],role:'a',color:'#88bbdd',exact:true});
+await call('set_wall_type',{wallIds:[walls[0].id],type:null});
+await call('design_brief',{source:'catalog',sourceQuote:'use catalog furniture only',vision:'Place only one test sofa and one test table, leaving all architecture unchanged.',beyond,axes:{pieces:{kind:'bounded',quote:'only one test sofa and one test table',reading:'Place exactly these requested test objects.',extent:'exact'},dressing:{kind:'bounded',quote:'only one test sofa and one test table',reading:'No additional decoration.'}}});
+await call('place_items',{items:[{assetId:'sofa',position:[2,0,2]}],levelId:level});await call('place_in_room',{assetId:'dining-table',zoneId:zone.id});await call('furnish_room',{zoneId:zone.id,roomType:'living'});
+g=await graph();let item=Object.values(g.nodes).find(n=>n.type==='item');if(item){await call('move_node',{id:item.id,position:[3,0,3]});const du=await call('duplicate_node',{ids:[item.id],offset:[0,3]});g=await graph();const copy=Object.values(g.nodes).filter(n=>n.type==='item').find(n=>n.id!==item.id);if(copy)await call('delete_node',{id:copy.id});}
+await call('run_batch',{calls:[{tool:'paint',input:{targets:[walls[1].id],role:'a',color:'#eeddcc',exact:true}},{tool:'paint',input:{targets:[walls[2].id],role:'a',color:'#ccddee',exact:true}}]});
+await call('apply_patch',{patches:[{op:'update',id:walls[0].id,data:{name:'测试已命名墙'}}]});await call('undo');await call('redo');
+await call('set_room_floor_construction',{zoneId:zone.id,patch:{thickness:0.12}});await call('set_floor_foundation',{slabId:slab.id,patch:{foundationHeight:0.1}});await call('rebase_floor_reference',{slabId:slab.id,referenceFloorElevation:0.22});
+await call('design_brief',{source:'open',vision:'Build only one custom stool with four legs and one rounded Blender pedestal. Preserve all room architecture.',beyond});
+const code="export default function build({THREE}) {const g=new THREE.Group();const m=new THREE.MeshStandardMaterial({color:'#996633'});m.name='slot_wood';const top=new THREE.Mesh(new THREE.BoxGeometry(.6,.08,.6),m);top.position.y=.55;g.add(top);for(const x of [-.23,.23])for(const z of [-.23,.23]){const leg=new THREE.Mesh(new THREE.BoxGeometry(.07,.51,.07),m);leg.position.set(x,.255,z);g.add(leg)}return g}";
+let obj=await call('add_object',{code,parentId:level,position:[4,0,4],name:'自定义四腿凳',reason:'A precisely sized four-legged stool for the test seating area',exact:true});if(obj.nodeId)await call('get_source',{nodeId:obj.nodeId});
+const bpy="import bpy\ndef build(params):\n    bpy.ops.mesh.primitive_cylinder_add(vertices=24, radius=0.18, depth=0.65, location=(0,0,0.325))\n    o=bpy.context.object\n    o.name='part:pedestal'\n    m=bpy.data.materials.new('slot_stone')\n    m.diffuse_color=(0.7,0.7,0.7,1)\n    o.data.materials.append(m)\n";
+await call('add_object',{code:bpy,language:'bpy',parentId:level,position:[5,0,4],name:'Blender圆柱展示台',reason:'A custom round pedestal with precise dimensions'});
+const design=JSON.parse(await readFile('editor-src/packages/core/src/procedural-items/__fixtures__/trial-e5-louver.json','utf8'));await call('validate_design',{design});await call('place_design',{design,hostId:level,position:[4,0,5],name:'参数化百叶测试'});
+await call('rename_scene',{id,name:'扩展工具验收-家具脚本-已验证'});let state=await(await fetch('http://127.0.0.1:3002/api/scenes/'+id)).json();await call('save_scene',{id,name:state.name,expectedVersion:state.version,saveMode:'checkpoint'});
+await call('generate_variants',{count:2,save:false});
+level=await fixture('房间编辑');g=await graph();zone=Object.values(g.nodes).find(n=>n.type==='zone');await call('move_zone',{zoneId:zone.id,translate:[1,0]});await call('rotate_zone',{zoneId:zone.id,quarterTurns:1});await call('duplicate_zone',{zoneId:zone.id,translate:[12,0]});
+g=await graph();const zones=Object.values(g.nodes).filter(n=>n.type==='zone');const other=zones.find(n=>n.id!==zone.id);if(other)await call('delete_zone',{zoneId:other.id});
+const split=await call('divide_zone',{zoneId:zone.id,cut:[[5,0],[5,8]]});if(split.zoneIds?.length>1)await call('merge_zones',{zoneIds:split.zoneIds});
+await call('set_zone',{levelId:level,polygon:[[20,0],[22,0],[22,2],[20,2]],label:'新增区域'});
+g=await graph();zone=Object.values(g.nodes).find(n=>n.type==='zone');await call('create_mezzanine',{hostZoneId:zone.id,polygon:[[2,2],[4,2],[4,4],[2,4]],elevation:2.2,thickness:0.15});
+await call('duplicate_level',{levelId:level,position:'above',name:'复制楼层',preset:'structure'});g=await graph();const upper=Object.values(g.nodes).filter(n=>n.type==='level').find(n=>n.id!==level);if(upper){const op=await call('cut_floor_opening',{levelId:upper.id,rect:{x:2,z:2,width:1,depth:1},drawnOn:'floor'});g=await graph();const opening=Object.values(g.nodes).find(n=>n.type==='floor-opening');if(opening)await call('remove_floor_opening',{id:opening.id});}
+await call('set_ground_level',{levelId:level});await call('create_story_shell',{levelId:level,footprint:[[25,0],[28,0],[28,3],[25,3]],wallHeight:3,namePrefix:'附属空间'});await call('place_building',{});
+await call('add_corner_window',{levelId:level,corner:[0,0],width:1,height:1.2,sillHeight:0.9});
+await call('verify_scene',{});
+const p=await call('create_project',{name:'整栋脚本适配器验收'});id=p.id;await call('author_scene',{module:'export default function build({THREE}) { return new THREE.Group() }',adapter:'export default async function adapt() { return {levels:[{name:"Adapter ground", elevation:0, walls:[{id:"a",start:[0,0],end:[4,0],height:3,thickness:.15},{id:"b",start:[4,0],end:[4,4],height:3,thickness:.15},{id:"c",start:[4,4],end:[0,4],height:3,thickness:.15},{id:"d",start:[0,4],end:[0,0],height:3,thickness:.15}]}]} }'});
+console.log('RESULT',results.filter(x=>x.ok).length+'/'+results.length);
+}finally{await c.close()}

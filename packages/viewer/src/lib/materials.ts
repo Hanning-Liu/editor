@@ -253,14 +253,21 @@ export function getTextureKey(material?: MaterialSchema): string {
   if (!texture) return 'none'
   const normal = texture.normalMap ? `-n:${texture.normalMap}*${texture.normalScale ?? 1}` : ''
   const bump = texture.bumpMap ? `-b:${texture.bumpMap}*${texture.bumpScale ?? 1}` : ''
-  return `${texture.url}-${getPlacementKey(texture)}${normal}${bump}`
+  return `${texture.url}-${getPlacementKey(texture)}${normal}${bump}-${texture.aoMap ?? ''}-${texture.roughnessMap ?? ''}-${texture.metalnessMap ?? ''}-${texture.displacementMap ?? ''}-${texture.displacementScale ?? 0}`
 }
 
 /** One map of a native material's texture; every map shares the albedo's repeat and offset. */
 function getTexture(
   textureConfig: MaterialTexture,
   url: string,
-  slot: 'map' | 'normalMap' | 'bumpMap',
+  slot:
+    | 'map'
+    | 'normalMap'
+    | 'bumpMap'
+    | 'aoMap'
+    | 'roughnessMap'
+    | 'metalnessMap'
+    | 'displacementMap',
 ): THREE.Texture {
   const cacheKey = `${url}-${getPlacementKey(textureConfig)}-${slot}`
   const cached = textureCache.get(cacheKey)
@@ -666,6 +673,15 @@ export function createMaterial(
     if (texture?.bumpMap) {
       standard.bumpMap = getTexture(texture, texture.bumpMap, 'bumpMap')
       standard.bumpScale = texture.bumpScale ?? 1
+    }
+    if (texture?.aoMap) standard.aoMap = getTexture(texture, texture.aoMap, 'aoMap')
+    if (texture?.roughnessMap)
+      standard.roughnessMap = getTexture(texture, texture.roughnessMap, 'roughnessMap')
+    if (texture?.metalnessMap)
+      standard.metalnessMap = getTexture(texture, texture.metalnessMap, 'metalnessMap')
+    if (texture?.displacementMap) {
+      standard.displacementMap = getTexture(texture, texture.displacementMap, 'displacementMap')
+      standard.displacementScale = texture.displacementScale ?? 0
     }
     threeMaterial = standard
   }
