@@ -1,6 +1,6 @@
 {
   "upstreamCommit": "7d45390fd49bc7700402e4adaa5b6936a50594bc",
-  "scope": "Exact local integration source snapshot before functional zones and furniture groups",
+  "scope": "Local integration sources including independent spatial hierarchy; baseline remains tagged local-ai-studio-before-spatial-schema-20261109",
   "files": [
     {
       "path": "DELIVERY.md",
@@ -44,8 +44,8 @@
     },
     {
       "path": "all-tools.json",
-      "sha256": "a10c96c8fdb9e06c48932a098bdf7788603833a454e2d60e656dc19cb4c869d4",
-      "bytes": 621016
+      "sha256": "a190623ba6ca6dbe65c369ccfe730025a41965e4c6fc529271488495739ac72f",
+      "bytes": 635734
     },
     {
       "path": "brief-probe.mjs",
@@ -69,8 +69,8 @@
     },
     {
       "path": "chat-server.mjs",
-      "sha256": "ec7ec5829e8fe6f729ac51c035b338b0e2aeeb66042ae185a8cd3e15fdbaf82f",
-      "bytes": 33041
+      "sha256": "7b37ee406c2d0f7def73caa416f21640e990b323e5cc93068c90deb0fda615c9",
+      "bytes": 33330
     },
     {
       "path": "controls-tests/check-api.mjs",
@@ -259,8 +259,8 @@
     },
     {
       "path": "start-local.sh",
-      "sha256": "6f104f7806cc54c4f41b69eeaa605dcb55e1e5a56c32c03f3415748614d69b80",
-      "bytes": 1491
+      "sha256": "c6cc9ee2174643a4911f2daadc6e5e5a21e34c208f6ce40dc82045e1649f77c4",
+      "bytes": 802
     },
     {
       "path": "studio/backfill-floorplans.mjs",
@@ -469,8 +469,8 @@
     },
     {
       "path": "tool-registry.mjs",
-      "sha256": "3404e54cbba949b18bfb49f663be79cd4ccb02cceda54b09729c3bc262482651",
-      "bytes": 6853
+      "sha256": "714b071dace41c77c99ade326937a98816bcf75d5c201c92d44c8790d5c8e2f6",
+      "bytes": 6947
     },
     {
       "path": "tool-schemas.json",

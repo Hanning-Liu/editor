@@ -33,6 +33,7 @@ import { createRoofTool, moveRoofsToRoofLevelTool } from './roofs'
 import { ROOM_TOOL_CONTRACTS } from './room-structure'
 import { searchMaterialsTool } from './search-materials'
 import { getSiteTool, placeBuildingTool } from './site'
+import { SPATIAL_HIERARCHY_TOOLS } from './spatial-hierarchy'
 import { createStairTool, fitStairTool, measureStairTool } from './stairs'
 import { UNIT_TOOL_CONTRACTS } from './units'
 import { verifySceneTool } from './verify-scene'
@@ -134,6 +135,7 @@ export const AGENT_TOOL_CONTRACTS = [
   placeBuildingTool,
   ...ROOM_TOOL_CONTRACTS,
   ...UNIT_TOOL_CONTRACTS,
+  ...SPATIAL_HIERARCHY_TOOLS,
   runBatchTool,
 ] as const satisfies readonly AgentToolContract[]
 
@@ -144,3 +146,5 @@ export { placeDesignTool, validateDesignTool } from './designs'
 export { straightenFacadePhotoTool } from './photo-elevation'
 export { placeInRoomTool } from './place-in-room'
 export { createRoofTool } from './roofs'
+
+export * from './spatial-hierarchy'

@@ -228,6 +228,7 @@ import {
   RotationAngleOverlay,
 } from '../editor-2d/renderers/floorplan-registry-layer'
 import { FloorplanVoronoiLayer } from '../editor-2d/renderers/floorplan-voronoi-layer'
+import { FunctionalZoneLayer } from '../editor-2d/renderers/functional-zone-layer'
 import { buildSvgPolylinePath, formatPolygonPath } from '../editor-2d/svg-paths'
 import { snapToHalf } from '../tools/item/placement-math'
 import {
@@ -11732,7 +11733,10 @@ export function FloorplanPanel({
                   {activeDrawingType === 'site-plan' ? (
                     <FloorplanSitePlanLayer />
                   ) : (
-                    <FloorplanRegistryLayer />
+                    <>
+                      <FloorplanRegistryLayer />
+                      <FunctionalZoneLayer />
+                    </>
                   )}
                   {/* Faint footprint ghost of the node being placed by a
                       registry placement tool (e.g. column), following the

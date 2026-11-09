@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "project": {
+    "id": "8cb1690c5cd7",
+    "levelId": "level_ofq82oykkbe74tyv",
+    "roomId": "zone_kxb6s2haw61457fn",
+    "tableId": "item_n28klfpky2zhqpls",
+    "chairId": "item_hwhbuzg9f0wbau1p",
+    "toyId": "item_hierarchy_toy_test"
+  },
+  "created": true,
+  "edited": true,
+  "movedRotated": true,
+  "undoRedo": true,
+  "deletedSemanticOnly": true,
+  "toyLocalPosePreserved": true
+}

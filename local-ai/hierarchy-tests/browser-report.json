@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "projectId": "8cb1690c5cd7",
+  "areaId": "functional-zone_6zw98zy21d3vo9df",
+  "groupId": "furniture-group_fyhqkcrqw2vs0fev",
+  "created": true,
+  "edited": true,
+  "treeExpanded": true,
+  "hostedToyNested": true,
+  "translated": [
+    1,
+    2
+  ],
+  "rotatedDegrees": 90,
+  "undoRedo": true,
+  "refreshed": true,
+  "switched2D3D": true,
+  "toyLocalPosePreserved": true,
+  "saves": [
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200
+  ],
+  "errors": []
+}

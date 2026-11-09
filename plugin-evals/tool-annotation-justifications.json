@@ -436,6 +436,32 @@
       }
     },
     {
+      "name": "edit_functional_zone",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": false
+      },
+      "justifications": {
+        "readOnlyHint": "Changes semantic nodes or furniture poses in the current scene.",
+        "destructiveHint": "Can edit or remove semantic records, or replace existing furniture position and rotation.",
+        "openWorldHint": "Uses only the connected local scene, without public internet access."
+      }
+    },
+    {
+      "name": "edit_furniture_group",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": false
+      },
+      "justifications": {
+        "readOnlyHint": "Changes semantic nodes or furniture poses in the current scene.",
+        "destructiveHint": "Can edit or remove semantic records, or replace existing furniture position and rotation.",
+        "openWorldHint": "Uses only the connected local scene, without public internet access."
+      }
+    },
+    {
       "name": "export_glb",
       "annotations": {
         "readOnlyHint": true,
@@ -592,6 +618,19 @@
       }
     },
     {
+      "name": "get_spatial_hierarchy",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      },
+      "justifications": {
+        "readOnlyHint": "Reads existing semantic hierarchy without changes.",
+        "destructiveHint": "Does not change or remove scene state.",
+        "openWorldHint": "Uses only the connected local scene, without public internet access."
+      }
+    },
+    {
       "name": "get_walls",
       "annotations": {
         "readOnlyHint": true,
@@ -628,6 +667,32 @@
         "readOnlyHint": "It only reads the scene's collections and their members.",
         "destructiveHint": "It changes nothing.",
         "openWorldHint": "It reads only the active scene."
+      }
+    },
+    {
+      "name": "list_functional_zones",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      },
+      "justifications": {
+        "readOnlyHint": "Reads existing semantic hierarchy without changes.",
+        "destructiveHint": "Does not change or remove scene state.",
+        "openWorldHint": "Uses only the connected local scene, without public internet access."
+      }
+    },
+    {
+      "name": "list_furniture_groups",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      },
+      "justifications": {
+        "readOnlyHint": "Reads existing semantic hierarchy without changes.",
+        "destructiveHint": "Does not change or remove scene state.",
+        "openWorldHint": "Uses only the connected local scene, without public internet access."
       }
     },
     {
@@ -1096,6 +1161,19 @@
         "readOnlyHint": "Updates room intent and reconciles construction in the connected scene.",
         "destructiveHint": "Updates room intent without deleting authored rooms, boundaries or contents.",
         "openWorldHint": "Uses only the connected scene; no public internet access."
+      }
+    },
+    {
+      "name": "transform_furniture_group",
+      "annotations": {
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "openWorldHint": false
+      },
+      "justifications": {
+        "readOnlyHint": "Changes semantic nodes or furniture poses in the current scene.",
+        "destructiveHint": "Can edit or remove semantic records, or replace existing furniture position and rotation.",
+        "openWorldHint": "Uses only the connected local scene, without public internet access."
       }
     },
     {

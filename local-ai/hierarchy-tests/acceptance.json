@@ -1,0 +1,68 @@
+{
+  "status": "passed",
+  "checkedAt": "2026-11-09T11:34:17.063Z",
+  "baseline": "ea96d4aeaf52fde7b31fe280f24fc9dbba33eba9",
+  "branch": "codex/spatial-hierarchy",
+  "originalProjectsUnchanged": 14,
+  "native": {
+    "created": true,
+    "edited": true,
+    "transformed": true,
+    "undoRedo": true,
+    "deletedSemanticOnly": true
+  },
+  "browser": {
+    "passed": true,
+    "projectId": "8cb1690c5cd7",
+    "areaId": "functional-zone_6zw98zy21d3vo9df",
+    "groupId": "furniture-group_fyhqkcrqw2vs0fev",
+    "created": true,
+    "edited": true,
+    "treeExpanded": true,
+    "hostedToyNested": true,
+    "translated": [
+      1,
+      2
+    ],
+    "rotatedDegrees": 90,
+    "undoRedo": true,
+    "refreshed": true,
+    "switched2D3D": true,
+    "toyLocalPosePreserved": true,
+    "saves": [
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200
+    ],
+    "errors": []
+  },
+  "qwen": {
+    "passed": true,
+    "projectId": "c2940bd37c17",
+    "actualModel": "local Qwen3.8 27B",
+    "createdFunctionalZone": true,
+    "createdFurnitureGroup": true,
+    "edited": true,
+    "transformed": true,
+    "undo": true,
+    "originalPoseRestored": true,
+    "toyLocalPoseAndParentPreserved": true,
+    "groupId": "furniture-group_3ffg1axyqyjkxmad"
+  },
+  "qwenRefresh": {
+    "passed": true,
+    "semanticTreeReloaded": true,
+    "graphUnchanged": true,
+    "pageErrors": []
+  },
+  "health": {
+    "editor": 200,
+    "chat": 200,
+    "studio": 200,
+    "qwen": 200
+  }
+}

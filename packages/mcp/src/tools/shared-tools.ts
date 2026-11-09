@@ -60,6 +60,7 @@ import {
   ROOM_TOOL_CONTRACTS,
   refuse,
   runBatchTool,
+  SPATIAL_HIERARCHY_TOOLS,
   searchAssetsTool,
   searchMaterialsTool,
   setCheckpointTool,
@@ -538,6 +539,17 @@ const SHARED_TOOLS: SharedTool[] = [
     operation: AGENT_OPERATIONS.search_materials,
     annotations: READ_ONLY_TOOL_ANNOTATIONS,
   },
+  ...SPATIAL_HIERARCHY_TOOLS.map((contract) => ({
+    contract,
+    operation: AGENT_OPERATIONS[contract.name as keyof typeof AGENT_OPERATIONS] as AgentOperation,
+    annotations: [
+      'get_spatial_hierarchy',
+      'list_functional_zones',
+      'list_furniture_groups',
+    ].includes(contract.name)
+      ? READ_ONLY_TOOL_ANNOTATIONS
+      : DESTRUCTIVE_TOOL_ANNOTATIONS,
+  })),
   ...ROOM_TOOL_CONTRACTS.map((contract) => {
     const name = contract.name as RoomToolName
     return {

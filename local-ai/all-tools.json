@@ -1454,6 +1454,23 @@
                       "normalMap": {
                         "type": "string"
                       },
+                      "roughnessMap": {
+                        "type": "string"
+                      },
+                      "aoMap": {
+                        "type": "string"
+                      },
+                      "metalnessMap": {
+                        "type": "string"
+                      },
+                      "displacementMap": {
+                        "type": "string"
+                      },
+                      "displacementScale": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
                       "normalScale": {
                         "type": "number"
                       },
@@ -5848,6 +5865,23 @@
                     "normalMap": {
                       "type": "string"
                     },
+                    "roughnessMap": {
+                      "type": "string"
+                    },
+                    "aoMap": {
+                      "type": "string"
+                    },
+                    "metalnessMap": {
+                      "type": "string"
+                    },
+                    "displacementMap": {
+                      "type": "string"
+                    },
+                    "displacementScale": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
                     "normalScale": {
                       "type": "number"
                     },
@@ -6017,6 +6051,23 @@
                 "normalMap": {
                   "type": "string"
                 },
+                "roughnessMap": {
+                  "type": "string"
+                },
+                "aoMap": {
+                  "type": "string"
+                },
+                "metalnessMap": {
+                  "type": "string"
+                },
+                "displacementMap": {
+                  "type": "string"
+                },
+                "displacementScale": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
                 "normalScale": {
                   "type": "number"
                 },
@@ -6142,6 +6193,23 @@
                     },
                     "normalMap": {
                       "type": "string"
+                    },
+                    "roughnessMap": {
+                      "type": "string"
+                    },
+                    "aoMap": {
+                      "type": "string"
+                    },
+                    "metalnessMap": {
+                      "type": "string"
+                    },
+                    "displacementMap": {
+                      "type": "string"
+                    },
+                    "displacementScale": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
                     },
                     "normalScale": {
                       "type": "number"
@@ -6866,6 +6934,237 @@
       "readOnlyHint": true,
       "destructiveHint": false,
       "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "get_spatial_hierarchy",
+    "title": "Get spatial hierarchy",
+    "description": "Read rooms → functional zones → furniture groups → items, with unassigned furniture and issues. All ids come from the scene. Group membership is explicit; ungrouped containment uses plan reference points. Support parentId is separate and unchanged.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "roomId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "list_functional_zones",
+    "title": "List functional zones",
+    "description": "List independent functional zones inside a room, or all rooms. Returns functions, plan polygons in metres and roomId. These regions never create walls, floors or additional rooms.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "roomId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "list_furniture_groups",
+    "title": "List furniture groups",
+    "description": "List persisted furniture groups with members, roles, anchors and functionalZoneId. Optional functionalZoneId narrows the list.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "functionalZoneId": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false,
+      "idempotentHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "edit_functional_zone",
+    "title": "Edit functional zone",
+    "description": "Create or edit an independent functional zone. Creation needs roomId, name and polygon ([x,z] metres); edits name id. Omitted fields stay unchanged. Polygon must be simple and inside its room, outside holes; zones may overlap. delete removes zone and group records, preserving furniture. Refuses room_required, outside_room, invalid_polygon.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "roomId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "functions": {
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        },
+        "polygon": {
+          "minItems": 3,
+          "maxItems": 200,
+          "type": "array",
+          "items": {
+            "minItems": 2,
+            "maxItems": 2,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "color": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "delete": {
+          "type": "boolean"
+        }
+      },
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "edit_furniture_group",
+    "title": "Edit furniture group",
+    "description": "Create or edit a furniture group referencing a functional zone and existing item ids. Creation needs functionalZoneId, name, memberIds. Does not move or reparent furniture. An item belongs to at most one group; members share the room level. Optional anchorNodeId must be a member; null clears it. memberRoles maps member ids to roles. delete removes only the group. Refuses member_already_grouped, item_required, group_level_mismatch.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "functionalZoneId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "purpose": {
+          "type": "string",
+          "maxLength": 240
+        },
+        "memberIds": {
+          "minItems": 1,
+          "maxItems": 500,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "anchorNodeId": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "memberRoles": {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "maxLength": 80
+          }
+        },
+        "delete": {
+          "type": "boolean"
+        }
+      },
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
+      "openWorldHint": false
+    }
+  },
+  {
+    "name": "transform_furniture_group",
+    "title": "Transform furniture group",
+    "description": "Move by translate [dx,dz] metres and/or rotate by angleDegrees around pivot [x,z]. Positive angles use Pascal Y-axis rotation. Default pivot is the anchor in level space, including its support transforms, else mean root positions. Rotation then translation is one undo step. Only floor roots move; hosted children follow once with local pose and parentId preserved. Refuses external_support for hosted child without its supporting item. Does not reassign membership or solve collisions; inspect hierarchy/issues afterwards.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "translate": {
+          "minItems": 2,
+          "maxItems": 2,
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "angleDegrees": {
+          "type": "number",
+          "minimum": -3600,
+          "maximum": 3600
+        },
+        "pivot": {
+          "minItems": 2,
+          "maxItems": 2,
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": true,
       "openWorldHint": false
     }
   },
@@ -17829,6 +18128,191 @@
       "destructiveHint": false,
       "idempotentHint": true,
       "openWorldHint": true
+    }
+  },
+  {
+    "name": "local_studio_capabilities",
+    "description": "查看本地Studio生成类型、可用环境与任务队列。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "submit_local_studio",
+    "description": "提交当前项目的本地Studio异步生成任务：render效果图、material基础无缝材质、blender由Qwen编写bpy生成模型、pbr估算完整PBR、trellis图片转3D。仅提交，不修改当前场景。结果在顶部Studio预览、应用和下载；返回任务ID，不得声称已生成或已摆放。可用sourceJobId引用已有素材；需要上传新图片时让用户在Studio页面提交。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "render",
+            "material",
+            "blender",
+            "pbr",
+            "trellis"
+          ]
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8000
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "generationKey": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 128
+        },
+        "sourceJobId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "resolution": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "const": 512
+                },
+                {
+                  "type": "number",
+                  "const": 768
+                },
+                {
+                  "type": "number",
+                  "const": 1024
+                }
+              ]
+            },
+            "imageStrength": {
+              "type": "number",
+              "minimum": 0.5,
+              "maximum": 0.95
+            },
+            "seed": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "width": {
+              "type": "number",
+              "minimum": 0.05,
+              "maximum": 10
+            },
+            "depth": {
+              "type": "number",
+              "minimum": 0.05,
+              "maximum": 10
+            },
+            "height": {
+              "type": "number",
+              "minimum": 0.05,
+              "maximum": 10
+            },
+            "tileSizeMeters": {
+              "type": "number",
+              "minimum": 0.05,
+              "maximum": 20
+            },
+            "roughness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "metalness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "view": {
+              "type": "string",
+              "enum": [
+                "interior",
+                "exterior"
+              ]
+            }
+          }
+        }
+      },
+      "required": [
+        "type",
+        "prompt"
+      ],
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "list_local_studio_jobs",
+    "description": "查看当前项目Studio异步生成任务和完成结果，不要重复提交相同任务。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {},
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "get_local_studio_job",
+    "description": "读取Studio任务进度、错误和生成文件链接。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        }
+      },
+      "required": [
+        "jobId"
+      ],
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "annotations": {
+      "readOnlyHint": true,
+      "destructiveHint": false
+    }
+  },
+  {
+    "name": "cancel_local_studio_job",
+    "description": "取消当前项目的Studio生成任务；保留已经应用到场景的素材。",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "jobId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+        }
+      },
+      "required": [
+        "jobId"
+      ],
+      "$schema": "https://json-schema.org/draft/2020-12/schema"
+    },
+    "annotations": {
+      "readOnlyHint": false,
+      "destructiveHint": false
     }
   }
 ]

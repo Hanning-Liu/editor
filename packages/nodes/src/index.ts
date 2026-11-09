@@ -20,6 +20,8 @@ import { eyebrowVentDefinition } from './eyebrow-vent'
 import { fenceDefinition } from './fence'
 import { fenceGateDefinition, fenceOpeningDefinition } from './fence-feature/definition'
 import { floorOpeningDefinition } from './floor-opening/definition'
+import { functionalZoneDefinition } from './functional-zone'
+import { furnitureGroupDefinition } from './furniture-group'
 import { guideDefinition } from './guide'
 import { gutterDefinition } from './gutter'
 import { hvacEquipmentDefinition } from './hvac-equipment'
@@ -74,6 +76,8 @@ export const builtinPlugin: Plugin = {
   id: 'pascal:core',
   apiVersion: 1,
   nodes: [
+    functionalZoneDefinition as unknown as AnyNodeDefinition,
+    furnitureGroupDefinition as unknown as AnyNodeDefinition,
     // Stage E-complete (full registry path)
     shelfDefinition as unknown as AnyNodeDefinition,
     blockDefinition as unknown as AnyNodeDefinition,

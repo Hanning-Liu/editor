@@ -8,6 +8,12 @@ export type {
   PointImage,
   PointTarget,
 } from './agent-operations/point-context'
+export {
+  editFunctionalZone,
+  editFurnitureGroup,
+  getSpatialHierarchy,
+  transformFurnitureGroup,
+} from './agent-operations/spatial-hierarchy'
 export * from './commands/structure'
 export type {
   BlockEvent,

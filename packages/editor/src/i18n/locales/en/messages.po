@@ -6111,6 +6111,222 @@ msgstr "Show"
 msgid "editor.sidebar.panels.sitePanel.site"
 msgstr "Site"
 
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.addGroup"
+msgstr "Add furniture group {name}"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.editGroup"
+msgstr "Edit furniture group {name}"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.editZone"
+msgstr "Edit functional zone {name}"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.length"
+msgstr "Unassigned furniture · {length}"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.memberLabel"
+msgstr "Group member {name}"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.pointX"
+msgstr "Boundary point {index} X"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.pointZ"
+msgstr "Boundary point {index} Z"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.removePoint"
+msgstr "Delete boundary point {index}"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.roleLabel"
+msgstr "Member role {name}"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.spatialLabel"
+msgstr "Spatial hierarchy {name}"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text11yvhl"
+msgstr "+ Group"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text13eo2n"
+msgstr "(already grouped)"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text16rlge"
+msgstr "Furniture group editor"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1bfvwx"
+msgstr "zone and groups"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1flm01"
+msgstr "Applied; waiting for autosave."
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1gzjhg"
+msgstr "Group transform · rotate then translate"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1jjt7m"
+msgstr "Functions (comma separated)"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1l1flz"
+msgstr " (keep furniture)"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1rih4t"
+msgstr "Apply group transform"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1skhpl"
+msgstr "Ungrouped furniture"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1t2qgq"
+msgstr "Root member centre"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text2cwspw"
+msgstr "Add boundary point"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text7rs518"
+msgstr "Undo hierarchy edit"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text9vhvpz"
+msgstr "Membership keeps furniture in place; supported objects follow their host."
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textaggoao"
+msgstr "Save hierarchy"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textap1cmq"
+msgstr "Zone functions"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textaweu1h"
+msgstr "Close editor"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textayfzqq"
+msgstr "Functional zone"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textbwyvof"
+msgstr "Furniture group"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textc5vh0o"
+msgstr "Hierarchy name"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textdfxjts"
+msgstr "Rotation anchor"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.texte9b2m"
+msgstr "Undone"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textegm1r"
+msgstr "Redone"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textehj3"
+msgstr "Create"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.texteyrn"
+msgstr "Name"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textgcw8wa"
+msgstr "Group purpose"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textgd1ibh"
+msgstr "Group anchor"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.texth2v9tb"
+msgstr "Member role (optional)"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.texthrnixw"
+msgstr "Angle °"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textkhqjqr"
+msgstr "Group rotation angle"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textm1em"
+msgstr "group"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textmekb"
+msgstr "Edit"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textoa1t"
+msgstr "Remove "
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textqqmuk7"
+msgstr "Add functional zone"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textr39me3"
+msgstr "Functional zone editor"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textrxkhfx"
+msgstr "Redo hierarchy edit"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.toggleGroup"
+msgstr "{expanded, select, true {Collapse} other {Expand}} furniture group {name}"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.toggleRoom"
+msgstr "{expanded, select, true {Collapse} other {Expand}} room {name}"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.toggleZone"
+msgstr "{expanded, select, true {Collapse} other {Expand}} functional zone {name}"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.x"
+msgstr "ΔX metres"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.x2"
+msgstr "Group translation X"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.xZ"
+msgstr "Boundary points in X/Z metres. Start with the room outline and edit corners; no walls are created."
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.z"
+msgstr "ΔZ metres"
+
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.z2"
+msgstr "Group translation Z"
+
 #: packages/editor/src/components/ui/sidebar/panels/site-panel/index.tsx
 msgid "editor.sidebar.panels.sitePanel.takeSnapshot"
 msgstr "Take snapshot"
@@ -10443,6 +10659,22 @@ msgstr "Open Passage"
 #: packages/nodes/src/i18n/definition-messages.ts
 msgid "node.floorOpening.label"
 msgstr "Floor opening"
+
+#: packages/nodes/src/i18n/definition-messages.ts
+msgid "node.functionalZone.description"
+msgstr "An activity region within a room; no construction geometry."
+
+#: packages/nodes/src/i18n/definition-messages.ts
+msgid "node.functionalZone.label"
+msgstr "Functional zone"
+
+#: packages/nodes/src/i18n/definition-messages.ts
+msgid "node.furnitureGroup.description"
+msgstr "A persistent semantic furniture assembly; keeps support relationships intact."
+
+#: packages/nodes/src/i18n/definition-messages.ts
+msgid "node.furnitureGroup.label"
+msgstr "Furniture group"
 
 #: packages/nodes/src/i18n/definition-messages.ts
 msgid "node.guide.description"

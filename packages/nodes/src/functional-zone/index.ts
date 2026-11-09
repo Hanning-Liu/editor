@@ -1,0 +1,32 @@
+import { FunctionalZoneNode, type NodeDefinition } from '@pascal-app/core'
+export const functionalZoneDefinition: NodeDefinition<typeof FunctionalZoneNode> = {
+  kind: 'functional-zone',
+  schemaVersion: 1,
+  schema: FunctionalZoneNode,
+  category: 'site',
+  defaults: () => ({
+    object: 'node',
+    parentId: null,
+    visible: true,
+    metadata: {},
+    name: 'Functional zone',
+    roomId: 'zone_unassigned',
+    functions: [],
+    polygon: [
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [0, 1],
+    ],
+    color: '#a78bfa',
+  }),
+  dirtyTracking: false,
+  capabilities: { duplicable: false, deletable: false, presettable: false },
+  presentation: {
+    label: 'Functional zone',
+    description: 'An activity region within a room; no construction geometry.',
+    icon: { kind: 'url', src: '/icons/zone.webp' },
+    paletteSection: 'site',
+    hidden: true,
+  },
+}

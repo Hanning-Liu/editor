@@ -17,7 +17,7 @@ const groups = [
 		"rooms",
 		"房间与门窗",
 		"墙体、门窗与区域编辑",
-		"create_room add_door add_window add_wall set_wall_type add_corner_window merge_windows move_zone duplicate_zone rotate_zone set_zone_intent divide_zone merge_zones delete_zone set_zone",
+		"edit_functional_zone edit_furniture_group transform_furniture_group create_room add_door add_window add_wall set_wall_type add_corner_window merge_windows move_zone duplicate_zone rotate_zone set_zone_intent divide_zone merge_zones delete_zone set_zone",
 	],
 	[
 		"roofs",
@@ -85,6 +85,7 @@ export const READ_TOOLS = inventory
 	)
 	.map((t) => t.name);
 export const INITIAL_TOOLS = [
+	"get_spatial_hierarchy",
 	"list_levels",
 	"get_walls",
 	"get_zones",

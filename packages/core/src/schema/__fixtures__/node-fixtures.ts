@@ -12,6 +12,8 @@ import { AnyNode, type AnyNodeType, nodeKindOf } from '../types'
 
 /** Fields a kind requires beyond the defaults its own schema fills in. */
 export const NODE_REQUIRED_FIELDS: Record<string, Record<string, unknown>> = {
+  'functional-zone': {name:'Reading',roomId:'zone_room',polygon:[[0,0],[2,0],[2,2],[0,2]]},
+  'furniture-group': {name:'Reading set',functionalZoneId:'functional-zone_reading',memberIds:['item_chair']},
   beam: { start: [0, 0], end: [4, 0] },
   ceiling: {
     polygon: [

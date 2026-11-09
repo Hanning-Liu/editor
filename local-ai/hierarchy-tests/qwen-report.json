@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "projectId": "c2940bd37c17",
+  "actualModel": "local Qwen3.8 27B",
+  "createdFunctionalZone": true,
+  "createdFurnitureGroup": true,
+  "edited": true,
+  "transformed": true,
+  "undo": true,
+  "originalPoseRestored": true,
+  "toyLocalPoseAndParentPreserved": true,
+  "groupId": "furniture-group_3ffg1axyqyjkxmad"
+}

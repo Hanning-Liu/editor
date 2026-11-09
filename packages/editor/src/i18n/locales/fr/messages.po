@@ -15195,6 +15195,600 @@ msgstr "Afficher"
 msgid "editor.sidebar.panels.sitePanel.site"
 msgstr "Terrain"
 
+# Source-Hash: 0ed00f40b11cc491
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Add furniture group {name}"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.addGroup"
+msgstr "Ajouter un groupe de mobilier {name}"
+
+# Source-Hash: 3755bd9e3f6572f7
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Edit furniture group {name}"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.editGroup"
+msgstr "Modifier le groupe de mobilier {name}"
+
+# Source-Hash: 3e2b1c67f42cd30f
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Edit functional zone {name}"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.editZone"
+msgstr "Modifier la zone fonctionnelle {name}"
+
+# Source-Hash: c47c38c8af75c950
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Unassigned furniture · {length}"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.length"
+msgstr "Mobilier non affecté · {length}"
+
+# Source-Hash: 9bcefb0c3c1e54ab
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Group member {name}"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.memberLabel"
+msgstr "Membre du groupe {name}"
+
+# Source-Hash: 12cd8c6ddcb3690a
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Boundary point {index} X"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.pointX"
+msgstr "Point du contour {index} X"
+
+# Source-Hash: 7f02ba4e57a9b592
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Boundary point {index} Z"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.pointZ"
+msgstr "Point du contour {index} Z"
+
+# Source-Hash: a11332f23f2d94f2
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Delete boundary point {index}"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.removePoint"
+msgstr "Supprimer le point du contour {index}"
+
+# Source-Hash: 36fe6f4af5b2e690
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Member role {name}"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.roleLabel"
+msgstr "Rôle du membre {name}"
+
+# Source-Hash: c30826f62e05789b
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Spatial hierarchy {name}"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.spatialLabel"
+msgstr "Hiérarchie spatiale {name}"
+
+# Source-Hash: 438370970b622537
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "+ Group"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text11yvhl"
+msgstr "+ Groupe"
+
+# Source-Hash: 10e6a2705c97258a
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "(already grouped)"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text13eo2n"
+msgstr "(déjà dans un groupe)"
+
+# Source-Hash: 3d15277a59e1e6ae
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Furniture group editor"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text16rlge"
+msgstr "Éditeur de groupe de mobilier"
+
+# Source-Hash: cda094854f832965
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "zone and groups"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1bfvwx"
+msgstr "la zone et les groupes"
+
+# Source-Hash: 28a75b33df432de9
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Applied; waiting for autosave."
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1flm01"
+msgstr "Appliqué ; en attente de l’enregistrement automatique."
+
+# Source-Hash: 18d1876b463768e1
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Group transform · rotate then translate"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1gzjhg"
+msgstr "Transformation du groupe · rotation puis translation"
+
+# Source-Hash: eb27515bcd6ce337
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Functions (comma separated)"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1jjt7m"
+msgstr "Fonctions (séparées par des virgules)"
+
+# Source-Hash: dbd177fb71b35fc5
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: " (keep furniture)"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1l1flz"
+msgstr " (conserver le mobilier)"
+
+# Source-Hash: 5d49b3946c68ad16
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Apply group transform"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1rih4t"
+msgstr "Appliquer la transformation du groupe"
+
+# Source-Hash: 4825019644c8256d
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Ungrouped furniture"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1skhpl"
+msgstr "Mobilier non groupé"
+
+# Source-Hash: 3a0db9f342b19a02
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Root member centre"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1t2qgq"
+msgstr "Centre des membres racines"
+
+# Source-Hash: 6aea958f3e5ce082
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Add boundary point"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text2cwspw"
+msgstr "Ajouter un point au contour"
+
+# Source-Hash: ca99566292b46838
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Undo hierarchy edit"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text7rs518"
+msgstr "Annuler la modification de hiérarchie"
+
+# Source-Hash: 0fbf34ffb6d5ac65
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Membership keeps furniture in place; supported objects follow their host."
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text9vhvpz"
+msgstr "L’affectation ne déplace pas le mobilier ; les objets posés suivent leur support."
+
+# Source-Hash: e36aac0d1eaf7d30
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Save hierarchy"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textaggoao"
+msgstr "Enregistrer la hiérarchie"
+
+# Source-Hash: 1c3112c5f894c1ea
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Zone functions"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textap1cmq"
+msgstr "Fonctions de la zone"
+
+# Source-Hash: 83069f2b703695a0
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Close editor"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textaweu1h"
+msgstr "Fermer l’éditeur"
+
+# Source-Hash: ad9d72455b009be7
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Functional zone"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textayfzqq"
+msgstr "Zone fonctionnelle"
+
+# Source-Hash: a9279ebcbda7cea9
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Furniture group"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textbwyvof"
+msgstr "Groupe de mobilier"
+
+# Source-Hash: 1c5f62c6ba076c7e
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Hierarchy name"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textc5vh0o"
+msgstr "Nom de la hiérarchie"
+
+# Source-Hash: ea73712752b1eb86
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Rotation anchor"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textdfxjts"
+msgstr "Point d’ancrage de rotation"
+
+# Source-Hash: a9f9fa3587e98575
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Undone"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.texte9b2m"
+msgstr "Annulé"
+
+# Source-Hash: c3363e119f8f4e81
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Redone"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textegm1r"
+msgstr "Rétabli"
+
+# Source-Hash: 88f0bf04a31eeb17
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Create"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textehj3"
+msgstr "Créer"
+
+# Source-Hash: 6cc5df35f0338e23
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Name"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.texteyrn"
+msgstr "Nom"
+
+# Source-Hash: 7896e0fd07f4e84c
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Group purpose"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textgcw8wa"
+msgstr "Usage du groupe"
+
+# Source-Hash: 69c3faa6af1fe07e
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Group anchor"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textgd1ibh"
+msgstr "Ancrage du groupe"
+
+# Source-Hash: e9f4216f260c12cc
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Member role (optional)"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.texth2v9tb"
+msgstr "Rôle du membre (facultatif)"
+
+# Source-Hash: 359c3c649396f07e
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Angle °"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.texthrnixw"
+msgstr "Angle °"
+
+# Source-Hash: 17e83a081711e5ac
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Group rotation angle"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textkhqjqr"
+msgstr "Angle de rotation du groupe"
+
+# Source-Hash: 654e1e2086cfe138
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "group"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textm1em"
+msgstr "le groupe"
+
+# Source-Hash: f7e6729d30cf78fb
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Edit"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textmekb"
+msgstr "Modifier"
+
+# Source-Hash: 5e71d697fc5cf4e1
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Remove "
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textoa1t"
+msgstr "Supprimer "
+
+# Source-Hash: 8b5d718a09cc2d2d
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Add functional zone"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textqqmuk7"
+msgstr "Ajouter une zone fonctionnelle"
+
+# Source-Hash: 76f609f0240df2fb
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Functional zone editor"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textr39me3"
+msgstr "Éditeur de zone fonctionnelle"
+
+# Source-Hash: 16a88ad57e91099a
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Redo hierarchy edit"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.textrxkhfx"
+msgstr "Rétablir la modification de hiérarchie"
+
+# Source-Hash: 1ae5025232399e12
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "{expanded, select, true {Collapse} other {Expand}} furniture group {name}"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.toggleGroup"
+msgstr "{expanded, select, true {Réduire} other {Développer}} le groupe de mobilier {name}"
+
+# Source-Hash: 07eeecae8b15a269
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "{expanded, select, true {Collapse} other {Expand}} room {name}"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.toggleRoom"
+msgstr "{expanded, select, true {Réduire} other {Développer}} la pièce {name}"
+
+# Source-Hash: de888f7b586b8e50
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "{expanded, select, true {Collapse} other {Expand}} functional zone {name}"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.toggleZone"
+msgstr "{expanded, select, true {Réduire} other {Développer}} la zone fonctionnelle {name}"
+
+# Source-Hash: bb34b3adf236f4b5
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "ΔX metres"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.x"
+msgstr "ΔX mètres"
+
+# Source-Hash: dde04337a401d250
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Group translation X"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.x2"
+msgstr "Translation du groupe X"
+
+# Source-Hash: c172f92fc65363bb
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Boundary points in X/Z metres. Start with the room outline and edit corners; no walls are created."
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.xZ"
+msgstr "Points du contour en mètres X/Z. Partez du contour de la pièce et modifiez les sommets ; aucun mur n’est créé."
+
+# Source-Hash: 0f0e43dc915a503d
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "ΔZ metres"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.z"
+msgstr "ΔZ mètres"
+
+# Source-Hash: 7df2cf4bfc9c2459
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Group translation Z"
+#: packages/editor/src/components/ui/sidebar/panels/site-panel/spatial-hierarchy.tsx
+#, fuzzy
+msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.z2"
+msgstr "Translation du groupe Z"
+
 # Source-Hash: c40163620df24a76
 # Review: required
 # AI-Provider: claude-code
@@ -26019,6 +26613,50 @@ msgstr "Passage"
 #, fuzzy
 msgid "node.floorOpening.label"
 msgstr "Trémie"
+
+# Source-Hash: cbf167a2f829bffd
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "An activity region within a room; no construction geometry."
+#: packages/nodes/src/i18n/definition-messages.ts
+#, fuzzy
+msgid "node.functionalZone.description"
+msgstr "Une zone d’activité dans une pièce, sans géométrie de construction."
+
+# Source-Hash: ad9d72455b009be7
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Functional zone"
+#: packages/nodes/src/i18n/definition-messages.ts
+#, fuzzy
+msgid "node.functionalZone.label"
+msgstr "Zone fonctionnelle"
+
+# Source-Hash: 163b4abff9057820
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "A persistent semantic furniture assembly; keeps support relationships intact."
+#: packages/nodes/src/i18n/definition-messages.ts
+#, fuzzy
+msgid "node.furnitureGroup.description"
+msgstr "Un ensemble sémantique persistant de mobilier qui préserve les relations de support."
+
+# Source-Hash: a9279ebcbda7cea9
+# Review: required
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# Review-Notes: AI draft; fluent review required.
+# English: "Furniture group"
+#: packages/nodes/src/i18n/definition-messages.ts
+#, fuzzy
+msgid "node.furnitureGroup.label"
+msgstr "Groupe de mobilier"
 
 # Source-Hash: 2f4fac2b1d39fdb1
 # Review: required

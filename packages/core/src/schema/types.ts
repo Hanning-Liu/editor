@@ -21,6 +21,8 @@ import { EyebrowVentNode } from './nodes/eyebrow-vent'
 import { FenceNode } from './nodes/fence'
 import { FenceGateNode, FenceOpeningNode } from './nodes/fence-feature'
 import { FloorOpeningNode } from './nodes/floor-opening'
+import { FunctionalZoneNode } from './nodes/functional-zone'
+import { FurnitureGroupNode } from './nodes/furniture-group'
 import { GuideNode } from './nodes/guide'
 import { GutterNode } from './nodes/gutter'
 import { HvacEquipmentNode } from './nodes/hvac-equipment'
@@ -93,6 +95,8 @@ export const AnyNode = nodeUnion([
   BuildingNode,
   ElevatorNode,
   UnitNode,
+  FunctionalZoneNode,
+  FurnitureGroupNode,
   LevelNode,
   LeanToExtensionNode,
   ColumnNode,

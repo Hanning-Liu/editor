@@ -1,0 +1,11 @@
+{
+  "catalogSync": "passed",
+  "newPanelLiteralScan": "passed",
+  "wholeRepositoryI18n": "fails on unchanged baseline Chinese UI literals",
+  "unchangedBaselineFiles": [
+    "apps/editor/components/editor-navbar.tsx",
+    "apps/editor/components/local-chat.tsx",
+    "apps/editor/components/local-studio.tsx",
+    "apps/editor/components/scene-loader.tsx"
+  ]
+}

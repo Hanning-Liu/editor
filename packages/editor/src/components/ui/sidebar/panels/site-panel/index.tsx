@@ -1,5 +1,8 @@
 'use client'
 
+import { getSpatialHierarchy } from '@pascal-app/core'
+import { RoomSpatialTree } from './spatial-hierarchy'
+
 import {
   type AnyNode,
   type AnyNodeId,
@@ -1144,7 +1147,7 @@ const UnitsSection = memo(function UnitsSection({
   }
 
   return (
-    <div className="subtle-scrollbar max-h-72 shrink-0 overflow-y-auto overflow-x-hidden">
+    <div className="subtle-scrollbar max-h-[60vh] shrink-0 overflow-y-auto overflow-x-hidden">
       <TreeNodeWrapper
         actions={
           <button
@@ -1434,7 +1437,7 @@ const RoomsSection = memo(function RoomsSection() {
   const others = levelZones.filter((zone) => zone.spaceRole !== 'room')
 
   return (
-    <div className="subtle-scrollbar max-h-72 shrink-0 overflow-y-auto overflow-x-hidden">
+    <div className="subtle-scrollbar max-h-[60vh] shrink-0 overflow-y-auto overflow-x-hidden">
       <TreeNodeWrapper
         actions={
           <button
@@ -1467,12 +1470,7 @@ const RoomsSection = memo(function RoomsSection() {
           </div>
         )}
         {rooms.map((zone, index) => (
-          <ZoneItem
-            depth={2}
-            isLast={others.length === 0 && index === rooms.length - 1}
-            key={zone.id}
-            zone={zone}
-          />
+          <RoomSpatialTree key={zone.id} roomId={zone.id} row={<ZoneItem depth={2} isLast={others.length === 0 && index === rooms.length - 1} zone={zone} />} />
         ))}
         {others.length > 0 && (
           <>
@@ -1503,9 +1501,10 @@ const ContentSection = memo(function ContentSection() {
       if (!selectedLevelId) return []
       const lvl = s.nodes[selectedLevelId] as LevelNode | undefined
       if (!lvl) return []
+      const roomItemIds = new Set(getSpatialHierarchy(s.nodes).result.rooms.filter(r => r.levelId === selectedLevelId).flatMap(r => [...r.unassignedItems.map(i => i.id), ...r.functionalZones.flatMap(a => [...a.ungroupedItems.map(i => i.id), ...a.furnitureGroups.flatMap(g => g.memberIds)])]))
       return lvl.children.filter((childId) => {
         const type = s.nodes[childId]?.type
-        return type !== 'zone' && type !== 'scan'
+        return type !== 'zone' && type !== 'scan' && type !== 'functional-zone' && type !== 'furniture-group' && !roomItemIds.has(childId)
       })
     }),
   )

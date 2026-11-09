@@ -1,3 +1,4 @@
+import { RoomSpatialTree } from './spatial-hierarchy'
 import { useScene, type ZoneNode, usePascalI18n} from '@pascal-app/core'
 import { useViewer } from '@pascal-app/viewer'
 import { memo, useCallback, useState } from 'react'
@@ -52,7 +53,7 @@ export const ZoneTreeNode = memo(function ZoneTreeNode({
 
   const defaultName = zoneDefaultName(i18n, { spaceRole }, formatAreaLabel(calculatePolygonArea(polygon), unit))
 
-  return (
+  const row = (
     <TreeNodeWrapper
       actions={<TreeNodeActions nodeId={nodeId} />}
       depth={depth}
@@ -99,6 +100,7 @@ export const ZoneTreeNode = memo(function ZoneTreeNode({
       onToggle={() => {}}
     />
   )
+  return spaceRole === 'room' ? <RoomSpatialTree roomId={nodeId} row={row} /> : row
 })
 
 /**

@@ -32,8 +32,15 @@ import { searchMaterials } from './search-materials'
 import { setCheckpoint } from './set-checkpoint'
 import { setGroundLevel } from './set-ground-level'
 import { getSite, placeBuilding } from './site'
+import {
+  editFunctionalZone,
+  editFurnitureGroup,
+  getSpatialHierarchy,
+  listFurnitureGroups,
+  transformFurnitureGroup,
+} from './spatial-hierarchy'
 import { fitStair, measureStairOperation } from './stairs'
-import type { AgentOperation, AgentOperations } from './types'
+import type { AgentOperation, AgentOperations, SceneNodes } from './types'
 import { createUnit, listUnits, setUnitMembers } from './units'
 import { verifyScene } from './verify-scene'
 import { setWallType } from './wall-type'
@@ -153,6 +160,18 @@ const SINGLE_OPERATIONS = {
   create_unit: createUnit,
   set_unit_members: setUnitMembers,
   list_units: listUnits,
+  edit_functional_zone: editFunctionalZone,
+  edit_furniture_group: editFurnitureGroup,
+  transform_furniture_group: transformFurnitureGroup,
+  get_spatial_hierarchy: getSpatialHierarchy,
+  list_functional_zones: (nodes: SceneNodes, input: { roomId?: string }) => ({
+    result: {
+      functionalZones: getSpatialHierarchy(nodes, input).result.rooms.flatMap(
+        (room) => room.functionalZones,
+      ),
+    },
+  }),
+  list_furniture_groups: listFurnitureGroups,
 } as const
 
 // add_object is no single operation: its host compiles the module first, so it exists here only as
@@ -190,3 +209,5 @@ export {
   type SessionRecord,
   startOfSession,
 } from './scene-checkpoint'
+
+export * from './spatial-hierarchy'
