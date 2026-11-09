@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "projectId": "6e52a561f3fb",
+  "areaA": "functional-zone_fu1gx64rx50jia2n",
+  "areaB": "functional-zone_se0vxkepbce6xf0b",
+  "groupA": "furniture-group_ef27zmvdy74e4t0h",
+  "groupB": "furniture-group_7fftefx0wxh1wwzk",
+  "menus": true,
+  "properties": true,
+  "inlineRename": true,
+  "selectionDerivedCreation": true,
+  "globalUndoRedo": true,
+  "groupDrop": true,
+  "hostFamilyDrop": true,
+  "invalidDropRejected": true,
+  "itemPosesUnchanged": true,
+  "saves": [
+    200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200,
+    200, 200, 200, 200
+  ],
+  "errors": []
+}

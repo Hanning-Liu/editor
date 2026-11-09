@@ -18,6 +18,7 @@ import { GROUP_MOVE_DRAG_LABEL } from '../../lib/contextual-help'
 import { isHistoryShortcut } from '../../lib/history'
 import type { WallGroupPush } from '../../lib/room-handle-drag'
 import { sfxEmitter } from '../../lib/sfx-bus'
+import { selectedFurnitureGroup, spatialRotationPivot } from '../../lib/spatial-hierarchy'
 import { isTypingTarget } from '../../lib/typing-target'
 import useAlignmentGuides from '../../store/use-alignment-guides'
 import useEditor, {
@@ -75,7 +76,11 @@ export function armGroupMove3d(args: {
 }): boolean {
   const { nodeId, clientX, clientY, pointerId, camera, raycaster, domElement } = args
   const { selectedIds, levelId } = useViewer.getState().selection
-  if (selectedIds.length < 2 || !selectedIds.includes(nodeId)) return false
+  if (
+    (selectedIds.length < 2 && !selectedFurnitureGroup(useScene.getState().nodes, selectedIds)) ||
+    !selectedIds.includes(nodeId)
+  )
+    return false
   const sceneNodes = useScene.getState().nodes
   if (classifyParticipant(sceneNodes[nodeId], levelId, sceneNodes) === null) return false
 
@@ -167,7 +172,8 @@ export function armGroupMove3d(args: {
     // point the idle keyboard rotate and the rotate gizmos orbit. Fixed for the
     // whole session: the snapshots are start placements, and `applyDelta` adds
     // the live drag delta on top of them.
-    const restCenter = planBoundsCenter(restBounds)
+    const restCenter =
+      spatialRotationPivot(useScene.getState().nodes, selectedIds) ?? planBoundsCenter(restBounds)
 
     return {
       starts,

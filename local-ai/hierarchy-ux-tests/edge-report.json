@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "inspectorTracksReassignment": true,
+  "undoReassignment": true,
+  "singleRootHandles": true,
+  "singleRootDrag": true,
+  "hostedToyPreserved": true,
+  "unselectedChairUnchanged": true,
+  "undoRestoresGraph": true,
+  "keyboardRename": true,
+  "keyboardMenu": true,
+  "errors": []
+}

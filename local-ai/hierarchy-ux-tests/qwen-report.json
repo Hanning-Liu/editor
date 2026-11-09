@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "projectId": "6e52a561f3fb",
+  "realLocalQwen": true,
+  "tools": ["get_spatial_hierarchy"],
+  "graphUnchanged": true
+}

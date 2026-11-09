@@ -28,6 +28,7 @@ import {
   pasteSystemEditorClipboardToLevel,
 } from '../../lib/scene-clipboard'
 import { emitDeleteSFX, sfxEmitter } from '../../lib/sfx-bus'
+import { spatialRotationPivot } from '../../lib/spatial-hierarchy'
 import { isTypingTarget } from '../../lib/typing-target'
 import useAlignmentGuides from '../../store/use-alignment-guides'
 import useDeleteConfirmation from '../../store/use-delete-confirmation'
@@ -116,7 +117,9 @@ export function startGroupPickUp(
   let restBounds = startBounds
   let carriedRotation = 0
   // Rotation pivot for mid-carry R/T; stable across the whole pick-up.
-  const restCenter = planBoundsCenter(restBounds)
+  const restCenter =
+    spatialRotationPivot(useScene.getState().nodes, useViewer.getState().selection.selectedIds) ??
+    planBoundsCenter(restBounds)
   // Ground plane for the 3D surface: the meshes' base when available, floor
   // level otherwise. Placements live in the level frame, so both surfaces
   // resolve into it before measuring.

@@ -1,0 +1,53 @@
+import { createMcpSession } from '../mcp-session.mjs'
+import { readFile, writeFile } from 'node:fs/promises'
+import { cloneSceneGraph } from '../editor-src/packages/core/dist/utils/clone-scene-graph.js'
+import assert from 'node:assert/strict'
+const { client, transport } = createMcpSession()
+try {
+  await client.connect(transport)
+  const r = await client.callTool({
+    name: 'create_project',
+    arguments: { name: '空间层级交互验收-20261109' },
+  })
+  const project = r.structuredContent
+  assert.ok(project.id)
+  const original = JSON.parse(
+    await readFile('hierarchy-ux-tests/seed-graph.json'),
+  )
+  const graph = cloneSceneGraph(original)
+  for (const n of Object.values(graph.nodes)) {
+    if (n.type === 'functional-zone' || n.type === 'furniture-group')
+      throw Error('Fixture unexpectedly contains semantics')
+  }
+  const response = await fetch(
+    'http://127.0.0.1:3002/api/scenes/' + project.id,
+    {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ graph, expectedVersion: project.version }),
+    },
+  )
+  assert.ok(response.ok, await response.text())
+  const all = Object.values(graph.nodes)
+  await writeFile(
+    'hierarchy-ux-tests/project.json',
+    JSON.stringify(
+      {
+        ...project,
+        roomId: all.find((n) => n.type === 'zone').id,
+        tableId: all.find(
+          (n) => n.type === 'item' && n.asset.name === 'Bedside Table',
+        ).id,
+        chairId: all.find(
+          (n) => n.type === 'item' && n.asset.name === 'Livingroom Chair',
+        ).id,
+        toyId: all.find((n) => n.type === 'item' && n.name === '验收Toy').id,
+      },
+      null,
+      2,
+    ),
+  )
+  console.log(project.id)
+} finally {
+  await client.close()
+}

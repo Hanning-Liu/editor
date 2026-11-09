@@ -1056,7 +1056,11 @@ export const FloorplanRegistryLayer = memo(function FloorplanRegistryLayer() {
           classifyParticipant(sceneNodes[id as AnyNodeId], currentLevelId, sceneNodes) !== null,
       )
       if (!anchor) return
-      startGroupMoveDrag(anchor as AnyNodeId, event)
+      startGroupMoveDrag(
+        anchor as AnyNodeId,
+        event,
+        !!(event.target as Element).closest('[data-group-move-handle]'),
+      )
     },
     [startGroupMoveDrag],
   )

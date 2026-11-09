@@ -6,6 +6,7 @@ import { type ThreeEvent, useThree } from '@react-three/fiber'
 import { useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 import { useRoomHandleDrag } from '../../lib/room-handle-drag'
+import { selectedFurnitureGroup } from '../../lib/spatial-hierarchy'
 import useEditor from '../../store/use-editor'
 import { useMovingNode } from '../../store/use-interaction-scope'
 import { useFloorplanGroupDrag } from '../editor-2d/floorplan-group-move'
@@ -45,7 +46,7 @@ export function GroupSelectionBox3D() {
 
   const participantIds = useMemo(
     () =>
-      selectedIds.length > 1
+      selectedIds.length > 1 || selectedFurnitureGroup(nodes, selectedIds)
         ? selectedIds.filter(
             (id) => classifyParticipant(nodes[id as AnyNodeId], levelId, nodes) !== null,
           )
@@ -171,6 +172,7 @@ export function GroupSelectionBox3D() {
       <primitive object={edges} />
       {/* Invisible whole-volume hit target — the box IS the drag handle. */}
       <mesh
+        name="group-move-handle"
         onPointerDown={handlePointerDown}
         onPointerEnter={applyMoveCursor}
         onPointerLeave={handlePointerLeave}

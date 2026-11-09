@@ -1,33 +1,143 @@
 'use client'
-
 import {
   type AnyNodeId,
   type FunctionalZoneNode,
   type FurnitureGroupNode,
-  type ItemNode,
-  type ZoneNode,
   editFunctionalZone,
   editFurnitureGroup,
-  transformFurnitureGroup,
   getSpatialHierarchy,
-  runAsSingleSceneHistoryStep,
   useScene,
   usePascalI18n,
 } from '@pascal-app/core'
 import { useViewer } from '@pascal-app/viewer'
-import { useMemo, useState, type ReactNode } from 'react'
-import { runUndo, runRedo } from '../../../../../lib/history'
+import {
+  ChevronRight,
+  MoreHorizontal,
+  Plus,
+  Boxes,
+  LayoutGrid,
+} from 'lucide-react'
+import {
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type DragEvent,
+} from 'react'
+import {
+  applySpatialChanges,
+  spatialRoots,
+  spatialDropChanges,
+  SPATIAL_DRAG_TYPE,
+  type SpatialDrag,
+} from '../../../../../lib/spatial-hierarchy'
+import {
+  inspectSpatial,
+  useSpatialInspector,
+} from '../../../../../store/use-spatial-inspector'
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+} from '../../../primitives/context-menu'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '../../../primitives/dropdown-menu'
+import { InlineRenameField } from './inline-rename-input'
 import { TreeNode } from './tree-node'
 
-type Choice =
-  | { kind: 'zone'; id?: string }
-  | { kind: 'group'; id?: string; areaId: string }
-const control =
-  'w-full rounded border border-border bg-background p-1.5 text-xs'
-const button =
-  'rounded border border-border px-2 py-1 text-xs hover:bg-accent disabled:opacity-40'
+type Action = { label: string; run: () => void; disabled?: boolean }
+const iconButton =
+  'flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:opacity-100'
+function RowMenu({
+  children,
+  actions,
+}: {
+  children: ReactNode
+  actions: Action[]
+}) {
+  const pending = useRef<(() => void) | null>(null)
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
+      <ContextMenuContent
+        onCloseAutoFocus={(e) => {
+          if (pending.current) {
+            e.preventDefault()
+            const run = pending.current
+            pending.current = null
+            run()
+          }
+        }}
+      >
+        {actions.map((a) => (
+          <ContextMenuItem
+            key={a.label}
+            disabled={a.disabled}
+            onSelect={() => {
+              pending.current = a.run
+            }}
+          >
+            {a.label}
+          </ContextMenuItem>
+        ))}
+      </ContextMenuContent>
+    </ContextMenu>
+  )
+}
+function MoreActions({ actions }: { actions: Action[] }) {
+  const pending = useRef<(() => void) | null>(null)
+  const i18n = usePascalI18n()
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          className={iconButton}
+          aria-label={i18n._({
+            id: 'editor.spatial.actions',
+            message: 'More actions',
+          })}
+        >
+          <MoreHorizontal size={15} />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        onCloseAutoFocus={(e) => {
+          if (pending.current) {
+            e.preventDefault()
+            const run = pending.current
+            pending.current = null
+            run()
+          }
+        }}
+      >
+        {actions.map((a) => (
+          <DropdownMenuItem
+            key={a.label}
+            disabled={a.disabled}
+            onSelect={() => {
+              pending.current = a.run
+            }}
+          >
+            {a.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+function writeDrag(e: DragEvent, drag: SpatialDrag) {
+  e.stopPropagation()
+  e.dataTransfer.effectAllowed = 'move'
+  e.dataTransfer.setData(SPATIAL_DRAG_TYPE, JSON.stringify(drag))
+}
 
-/** Semantic rows reference real items; their support tree is never rewritten. */
+/** Semantic rows and drop targets never replace the physical support tree. */
 export function RoomSpatialTree({
   roomId,
   row,
@@ -35,199 +145,171 @@ export function RoomSpatialTree({
   roomId: string
   row: ReactNode
 }) {
-  const i18n = usePascalI18n()
-  const nodes = useScene((s) => s.nodes)
-  const [expanded, setExpanded] = useState(true)
-  const [choice, setChoice] = useState<Choice | null>(null)
-  const [error, setError] = useState('')
-  const [notice, setNotice] = useState('')
+  const i18n = usePascalI18n(),
+    nodes = useScene((s) => s.nodes),
+    selectedIds = useViewer((s) => s.selection.selectedIds),
+    readOnly = useScene((s) => s.readOnly)
+  const [expanded, setExpanded] = useState(true),
+    [error, setError] = useState('')
   const reading = useMemo(
     () => getSpatialHierarchy(nodes, { roomId }).result.rooms[0],
     [nodes, roomId],
   )
   const room = nodes[roomId as AnyNodeId]
   if (room?.type !== 'zone' || !reading) return <>{row}</>
-  const candidateIds = new Set([
-    ...reading.unassignedItems.map((i) => i.id),
-    ...reading.functionalZones.flatMap((a) => [
-      ...a.ungroupedItems.map((i) => i.id),
-      ...a.furnitureGroups.flatMap((g) => g.memberIds),
-    ]),
-  ])
-  const candidates = [...candidateIds].flatMap((id) => {
-    const n = nodes[id as AnyNodeId]
-    return n?.type === 'item' ? [n] : []
-  })
-  const apply = (
-    kind: 'zone' | 'group' | 'transform',
-    input: Record<string, unknown>,
-  ) => {
+  const addZone = () => inspectSpatial(roomId, { kind: 'zone' })
+  const roomActions = [
+    {
+      label: i18n._({
+        id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textqqmuk7',
+        message: 'Add functional zone',
+      }),
+      run: addZone,
+      disabled: readOnly,
+    },
+  ]
+  const drop = (e: DragEvent, targetId: string) => {
+    if (!e.dataTransfer.types.includes(SPATIAL_DRAG_TYPE)) return
+    e.preventDefault()
+    e.stopPropagation()
     try {
-      const current = useScene.getState()
-      if (current.readOnly) throw Error('当前项目只读')
-      const outcome =
-        kind === 'zone'
-          ? editFunctionalZone(current.nodes, input)
-          : kind === 'group'
-            ? editFurnitureGroup(current.nodes, input)
-            : transformFurnitureGroup(
-                current.nodes,
-                input as unknown as { id: string },
-              )
-      if (outcome.changes)
-        runAsSingleSceneHistoryStep(useScene, () =>
-          useScene
-            .getState()
-            .applyNodeChanges(
-              outcome.changes as Parameters<typeof current.applyNodeChanges>[0],
-            ),
-        )
-      setError('')
-      setNotice(
-        i18n._({
-          id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text1flm01',
-          message: 'Applied; waiting for autosave.',
-        }),
+      const drag = JSON.parse(
+        e.dataTransfer.getData(SPATIAL_DRAG_TYPE),
+      ) as SpatialDrag
+      applySpatialChanges(
+        spatialDropChanges(useScene.getState().nodes, drag, targetId),
       )
-      return true
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
-      return false
+      setError('')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err))
     }
   }
-  const roots = (ids: string[]) =>
-    ids.filter((id) => {
-      let p = nodes[id as AnyNodeId]?.parentId
-      const seen = new Set<string>()
-      while (p && !seen.has(p)) {
-        if (ids.includes(p)) return false
-        seen.add(p)
-        p = nodes[p as AnyNodeId]?.parentId ?? null
-      }
-      return true
-    })
-  return (
-    <section
-      aria-label={i18n._({
-        id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.spatialLabel',
-        message: 'Spatial hierarchy {name}',
-        values: { name: room.name },
-      })}
-      data-room-hierarchy={roomId}
+  const itemTree = (id: string, depth: number) => (
+    <RowMenu
+      key={id}
+      actions={reading.functionalZones.map((area) => ({
+        label: i18n._({
+          id: 'editor.spatial.createGroupIn',
+          message: 'Create furniture group in {name}',
+          values: { name: area.name },
+        }),
+        disabled: readOnly,
+        run: () =>
+          inspectSpatial(roomId, {
+            kind: 'group',
+            areaId: area.id,
+            memberIds: spatialRoots(
+              nodes,
+              selectedIds.includes(id as AnyNodeId) ? selectedIds : [id],
+            ),
+          }),
+      }))}
     >
-      <div className="relative">
-        {row}
-        <button
-          type="button"
-          className="absolute left-6 top-1 h-6 w-5 rounded text-xs hover:bg-accent"
-          aria-label={i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.toggleRoom',
-            message:
-              '{expanded, select, true {Collapse} other {Expand}} room {name}',
-            values: { expanded: String(expanded), name: room.name },
-          })}
-          aria-expanded={expanded}
-          onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? '▾' : '▸'}
-        </button>
+      <div
+        data-spatial-item={id}
+        draggable={!readOnly}
+        onDragStart={(e) => {
+          const hit =
+            (e.target as HTMLElement)
+              .closest('[data-treenode-id]')
+              ?.getAttribute('data-treenode-id') ?? id
+          writeDrag(e, {
+            kind: 'items',
+            ids: selectedIds.includes(hit as AnyNodeId) ? selectedIds : [hit],
+          })
+        }}
+      >
+        <TreeNode nodeId={id as AnyNodeId} depth={depth} />
       </div>
-      {expanded && (
-        <div className="border-b border-border/50 pb-2">
-          <div className="flex flex-wrap gap-1 py-1 pl-12">
+    </RowMenu>
+  )
+  return (
+    <section data-room-hierarchy={roomId}>
+      <RowMenu actions={roomActions}>
+        <div className="group/spatial relative">
+          {row}
+          <button
+            type="button"
+            className="absolute left-6 top-1 flex size-6 items-center justify-center rounded hover:bg-accent"
+            aria-label={i18n._({
+              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.toggleRoom',
+              message:
+                '{expanded, select, true {Collapse} other {Expand}} room {name}',
+              values: { expanded: String(expanded), name: room.name },
+            })}
+            aria-expanded={expanded}
+            onClick={() => setExpanded(!expanded)}
+          >
+            <ChevronRight size={12} className={expanded ? 'rotate-90' : ''} />
+          </button>
+          <div className="absolute right-2 top-1 flex bg-background opacity-0 group-hover/spatial:opacity-100 focus-within:opacity-100">
             <button
               type="button"
-              className={button}
-              onClick={() => {
-                setChoice({ kind: 'zone' })
-                setNotice('')
-              }}
+              disabled={readOnly}
+              className={iconButton}
+              aria-label={roomActions[0]!.label}
+              onClick={addZone}
             >
-              {i18n._({
-                id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textqqmuk7',
-                message: 'Add functional zone',
-              })}
+              <Plus size={15} />
             </button>
-            <button
-              type="button"
-              className={button}
-              onClick={() => {
-                runUndo()
-                setError('')
-                setNotice(
-                  i18n._({
-                    id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.texte9b2m',
-                    message: 'Undone',
-                  }),
-                )
-              }}
-            >
-              {i18n._({
-                id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text7rs518',
-                message: 'Undo hierarchy edit',
-              })}
-            </button>
-            <button
-              type="button"
-              className={button}
-              onClick={() => {
-                runRedo()
-                setError('')
-                setNotice(
-                  i18n._({
-                    id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textegm1r',
-                    message: 'Redone',
-                  }),
-                )
-              }}
-            >
-              {i18n._({
-                id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textrxkhfx',
-                message: 'Redo hierarchy edit',
-              })}
-            </button>
+            <MoreActions actions={roomActions} />
           </div>
-          {reading.functionalZones.map((area) => (
-            <FunctionalZoneTree
-              key={area.id}
-              area={area}
-              onEdit={() => setChoice({ kind: 'zone', id: area.id })}
-              onAddGroup={() => setChoice({ kind: 'group', areaId: area.id })}
-            >
-              {area.furnitureGroups.map((group) => (
-                <FurnitureGroupTree
-                  key={group.id}
-                  group={group}
-                  onEdit={() =>
-                    setChoice({ kind: 'group', id: group.id, areaId: area.id })
-                  }
-                  onSelect={() => {
-                    useViewer.getState().setSelection({
-                      selectedIds: roots(group.memberIds) as AnyNodeId[],
-                      zoneId: null,
-                    })
-                  }}
-                >
-                  {roots(group.memberIds)
-                    .filter((id) => nodes[id as AnyNodeId])
-                    .map((id) => (
-                      <TreeNode key={id} nodeId={id as AnyNodeId} depth={5} />
-                    ))}
-                </FurnitureGroupTree>
-              ))}
-              {area.ungroupedItems.length > 0 && (
-                <div className="pl-16 text-xs text-muted-foreground">
-                  {i18n._({
-                    id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text1skhpl',
-                    message: 'Ungrouped furniture',
-                  })}
-                </div>
-              )}
-              {roots(area.ungroupedItems.map((i) => i.id)).map((id) => (
-                <TreeNode key={id} nodeId={id as AnyNodeId} depth={4} />
-              ))}
-            </FunctionalZoneTree>
-          ))}
+        </div>
+      </RowMenu>
+      {expanded && (
+        <div>
+          {reading.functionalZones.map((area) => {
+            const selection = selectedIds.filter(
+              (id) => nodes[id as AnyNodeId]?.type === 'item',
+            )
+            const addGroup = () =>
+              inspectSpatial(roomId, {
+                kind: 'group',
+                areaId: area.id,
+                memberIds: spatialRoots(nodes, selection),
+              })
+            return (
+              <SemanticRow
+                key={area.id}
+                node={area}
+                depth={3}
+                onDrop={(e) => drop(e, area.id)}
+                onSelect={() =>
+                  inspectSpatial(roomId, { kind: 'zone', id: area.id })
+                }
+                onAdd={addGroup}
+                addLabel={i18n._({
+                  id: 'editor.spatial.createGroup',
+                  message: 'Create furniture group',
+                })}
+              >
+                {area.furnitureGroups.map((group) => (
+                  <SemanticRow
+                    key={group.id}
+                    node={group}
+                    depth={4}
+                    count={group.memberIds.length}
+                    onDrop={(e) => drop(e, group.id)}
+                    onSelect={() =>
+                      inspectSpatial(roomId, {
+                        kind: 'group',
+                        id: group.id,
+                        areaId: area.id,
+                      })
+                    }
+                  >
+                    {spatialRoots(nodes, group.memberIds)
+                      .filter((id) => nodes[id as AnyNodeId])
+                      .map((id) => itemTree(id, 5))}
+                  </SemanticRow>
+                ))}
+                {spatialRoots(
+                  nodes,
+                  area.ungroupedItems.map((i) => i.id),
+                ).map((id) => itemTree(id, 4))}
+              </SemanticRow>
+            )
+          })}
           {reading.unassignedItems.length > 0 && (
             <div className="py-1 pl-12 text-xs text-muted-foreground">
               {i18n._({
@@ -237,28 +319,13 @@ export function RoomSpatialTree({
               })}
             </div>
           )}
-          {roots(reading.unassignedItems.map((i) => i.id)).map((id) => (
-            <TreeNode key={id} nodeId={id as AnyNodeId} depth={3} />
-          ))}
-          {choice && (
-            <SpatialHierarchyEditor
-              key={JSON.stringify(choice)}
-              choice={choice}
-              room={room}
-              nodes={nodes}
-              candidates={candidates}
-              apply={apply}
-              close={() => setChoice(null)}
-            />
-          )}
+          {spatialRoots(
+            nodes,
+            reading.unassignedItems.map((i) => i.id),
+          ).map((id) => itemTree(id, 3))}
           {error && (
-            <p role="alert" className="px-3 text-xs text-red-400">
+            <p role="alert" className="px-3 text-xs text-destructive">
               {error}
-            </p>
-          )}
-          {notice && (
-            <p role="status" className="px-3 text-xs text-muted-foreground">
-              {notice}
             </p>
           )}
         </div>
@@ -266,601 +333,179 @@ export function RoomSpatialTree({
     </section>
   )
 }
-
-function FunctionalZoneTree({
-  area,
+function SemanticRow({
+  node,
+  depth,
+  count,
   children,
-  onEdit,
-  onAddGroup,
-}: {
-  area: FunctionalZoneNode
-  children: ReactNode
-  onEdit: () => void
-  onAddGroup: () => void
-}) {
-  const i18n = usePascalI18n()
-  const [open, setOpen] = useState(true)
-  return (
-    <div data-functional-zone={area.id}>
-      <div className="flex min-h-8 items-center gap-1 pl-12 pr-2 text-xs">
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-label={i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.toggleZone',
-            message:
-              '{expanded, select, true {Collapse} other {Expand}} functional zone {name}',
-            values: { expanded: String(open), name: area.name },
-          })}
-          onClick={() => setOpen(!open)}
-        >
-          {open ? '▾' : '▸'}
-        </button>
-        <span
-          className="h-2 w-2 rounded-full"
-          style={{ background: area.color }}
-        />
-        <button
-          type="button"
-          className="min-w-0 flex-1 truncate text-left"
-          onClick={onEdit}
-        >
-          {area.name}
-        </button>
-        <button
-          type="button"
-          className={button}
-          aria-label={i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.editZone',
-            message: 'Edit functional zone {name}',
-            values: { name: area.name },
-          })}
-          onClick={onEdit}
-        >
-          {i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textmekb',
-            message: 'Edit',
-          })}
-        </button>
-        <button
-          type="button"
-          className={button}
-          aria-label={i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.addGroup',
-            message: 'Add furniture group {name}',
-            values: { name: area.name },
-          })}
-          onClick={onAddGroup}
-        >
-          {i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text11yvhl',
-            message: '+ Group',
-          })}
-        </button>
-      </div>
-      {open && children}
-    </div>
-  )
-}
-function FurnitureGroupTree({
-  group,
-  children,
-  onEdit,
   onSelect,
+  onAdd,
+  addLabel,
+  onDrop,
 }: {
-  group: FurnitureGroupNode
+  node: FunctionalZoneNode | FurnitureGroupNode
+  depth: number
+  count?: number
   children: ReactNode
-  onEdit: () => void
   onSelect: () => void
+  onAdd?: () => void
+  addLabel?: string
+  onDrop: (e: DragEvent) => void
 }) {
-  const i18n = usePascalI18n()
-  const [open, setOpen] = useState(true)
-  return (
-    <div data-furniture-group={group.id}>
-      <div className="flex min-h-8 items-center gap-1 pl-16 pr-2 text-xs">
-        <button
-          type="button"
-          aria-expanded={open}
-          aria-label={i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.toggleGroup',
-            message:
-              '{expanded, select, true {Collapse} other {Expand}} furniture group {name}',
-            values: { expanded: String(open), name: group.name },
-          })}
-          onClick={() => setOpen(!open)}
-        >
-          {open ? '▾' : '▸'}
-        </button>
-        <button
-          type="button"
-          className="min-w-0 flex-1 truncate text-left"
-          onClick={onSelect}
-        >
-          {group.name} · {group.memberIds.length}
-        </button>
-        <button
-          type="button"
-          className={button}
-          aria-label={i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.editGroup',
-            message: 'Edit furniture group {name}',
-            values: { name: group.name },
-          })}
-          onClick={onEdit}
-        >
-          {i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textmekb',
-            message: 'Edit',
-          })}
-        </button>
-      </div>
-      {open && children}
-    </div>
-  )
-}
-
-function SpatialHierarchyEditor({
-  choice,
-  room,
-  nodes,
-  candidates,
-  apply,
-  close,
-}: {
-  choice: Choice
-  room: ZoneNode
-  nodes: ReturnType<typeof useScene.getState>['nodes']
-  candidates: ItemNode[]
-  apply: (
-    kind: 'zone' | 'group' | 'transform',
-    input: Record<string, unknown>,
-  ) => boolean
-  close: () => void
-}) {
-  const i18n = usePascalI18n()
-  const old = choice.id ? nodes[choice.id as AnyNodeId] : undefined
-  const area = old?.type === 'functional-zone' ? old : undefined
-  const group = old?.type === 'furniture-group' ? old : undefined
-  const [name, setName] = useState(
-    old?.name ?? (choice.kind === 'zone' ? '新功能分区' : '新家具组团'),
-  )
-  const [functions, setFunctions] = useState(area?.functions.join('、') ?? '')
-  const [polygon, setPolygon] = useState<[number, number][]>(
-    area?.polygon ?? room.polygon.map((p) => [...p]),
-  )
-  const [purpose, setPurpose] = useState(group?.purpose ?? '')
-  const [members, setMembers] = useState<string[]>(group?.memberIds ?? [])
-  const [anchor, setAnchor] = useState(group?.anchorNodeId ?? '')
-  const [roles, setRoles] = useState<Record<string, string>>(
-    group?.memberRoles ?? {},
-  )
-  const [dx, setDx] = useState('0'),
-    [dz, setDz] = useState('0'),
-    [angle, setAngle] = useState('0')
-  const otherGroups = Object.values(nodes).filter(
-    (n): n is FurnitureGroupNode =>
-      n.type === 'furniture-group' && n.id !== group?.id,
-  )
-  const available = [
-    ...new Map(
-      [
-        ...candidates,
-        ...(group?.memberIds ?? []).flatMap((id) => {
-          const n = nodes[id as AnyNodeId]
-          return n?.type === 'item' ? [n] : []
-        }),
-      ].map((n) => [n.id, n]),
-    ).values(),
-  ]
-  const submit = () => {
-    const ok =
-      choice.kind === 'zone'
-        ? apply('zone', {
-            id: choice.id,
-            roomId: room.id,
-            name,
-            functions: functions
-              .split(/[、,，]/)
-              .map((s) => s.trim())
-              .filter(Boolean),
-            polygon,
-          })
-        : apply('group', {
-            id: choice.id,
-            functionalZoneId:
-              choice.kind === 'group' ? choice.areaId : undefined,
-            name,
-            purpose,
-            memberIds: members,
-            anchorNodeId: anchor || null,
-            memberRoles: Object.fromEntries(
-              Object.entries(roles).filter(([id]) => members.includes(id)),
-            ),
-          })
-    if (ok) close()
+  const i18n = usePascalI18n(),
+    readOnly = useScene((s) => s.readOnly),
+    inspection = useSpatialInspector((s) => s.inspection)
+  const [open, setOpen] = useState(true),
+    [renaming, setRenaming] = useState(false),
+    [over, setOver] = useState(false),
+    [error, setError] = useState('')
+  const rename = (name: string | undefined) => {
+    if (!name?.trim()) return
+    try {
+      const nodes = useScene.getState().nodes
+      const out =
+        node.type === 'functional-zone'
+          ? editFunctionalZone(nodes, { id: node.id, name })
+          : editFurnitureGroup(nodes, { id: node.id, name })
+      if (out.changes) applySpatialChanges(out.changes)
+      setError('')
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e))
+    }
   }
+  const actions: Action[] = [
+    {
+      label: i18n._({
+        id: 'editor.spatial.properties',
+        message: 'Spatial properties',
+      }),
+      run: onSelect,
+    },
+    {
+      label: i18n._({ id: 'editor.spatial.rename', message: 'Rename' }),
+      run: () => setRenaming(true),
+      disabled: readOnly,
+    },
+  ]
+  if (onAdd && addLabel)
+    actions.push({ label: addLabel, run: onAdd, disabled: readOnly })
+  const isZone = node.type === 'functional-zone'
   return (
     <div
-      role="group"
-      aria-label={
-        choice.kind === 'zone'
-          ? i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textr39me3',
-              message: 'Functional zone editor',
-            })
-          : i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text16rlge',
-              message: 'Furniture group editor',
-            })
-      }
-      className="m-2 space-y-2 rounded border border-border p-2"
+      {...(isZone
+        ? { 'data-functional-zone': node.id }
+        : { 'data-furniture-group': node.id })}
     >
-      <p className="text-xs font-semibold">
-        {choice.kind === 'zone'
-          ? i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textayfzqq',
-              message: 'Functional zone',
-            })
-          : i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textbwyvof',
-              message: 'Furniture group',
-            })}{' '}
-        ·{' '}
-        {old
-          ? i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textmekb',
-              message: 'Edit',
-            })
-          : i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textehj3',
-              message: 'Create',
-            })}
-      </p>
-      <label className="block text-xs">
-        {i18n._({
-          id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.texteyrn',
-          message: 'Name',
-        })}
-        <input
-          className={control}
-          aria-label={i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textc5vh0o',
-            message: 'Hierarchy name',
-          })}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </label>
-      {choice.kind === 'zone' ? (
-        <>
-          <label className="block text-xs">
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text1jjt7m',
-              message: 'Functions (comma separated)',
-            })}
-            <input
-              className={control}
-              aria-label={i18n._({
-                id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textap1cmq',
-                message: 'Zone functions',
-              })}
-              value={functions}
-              onChange={(e) => setFunctions(e.target.value)}
-            />
-          </label>
-          <p className="text-xs text-muted-foreground">
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.xZ',
-              message:
-                'Boundary points in X/Z metres. Start with the room outline and edit corners; no walls are created.',
-            })}
-          </p>
-          <div className="max-h-40 space-y-1 overflow-y-auto">
-            {polygon.map((p, i) => (
-              <div className="flex gap-1" key={'corner-' + i}>
-                <input
-                  className={control}
-                  type="number"
-                  step="0.1"
-                  aria-label={i18n._({
-                    id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.pointX',
-                    message: 'Boundary point {index} X',
-                    values: { index: i + 1 },
-                  })}
-                  value={p[0]}
-                  onChange={(e) =>
-                    setPolygon(
-                      polygon.map((q, j) =>
-                        i === j ? [Number(e.target.value), q[1]] : q,
-                      ),
-                    )
+      <RowMenu actions={actions}>
+        <div
+          data-spatial-row={node.id}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.target !== e.currentTarget) return
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              onSelect()
+            } else if (e.key === 'F2' && !readOnly) {
+              e.preventDefault()
+              e.stopPropagation()
+              setRenaming(true)
+            }
+          }}
+          draggable={!readOnly && !isZone && !renaming}
+          onDragStart={(e) => writeDrag(e, { kind: 'group', id: node.id })}
+          onDragOver={(e) => {
+            if (!readOnly && e.dataTransfer.types.includes(SPATIAL_DRAG_TYPE)) {
+              e.preventDefault()
+              e.stopPropagation()
+              e.dataTransfer.dropEffect = 'move'
+              setOver(true)
+            }
+          }}
+          onDragLeave={() => setOver(false)}
+          onDrop={(e) => {
+            setOver(false)
+            onDrop(e)
+          }}
+          onClick={onSelect}
+          onDoubleClick={() => !readOnly && setRenaming(true)}
+          className={
+            'group/spatial flex h-8 cursor-pointer items-center gap-1 border-b border-border/50 pr-2 text-sm ' +
+            (over
+              ? 'bg-primary/15 ring-1 ring-primary'
+              : inspection?.choice.id === node.id
+                ? 'bg-accent/50'
+                : 'hover:bg-accent/30')
+          }
+          style={{ paddingLeft: depth * 12 + 12 }}
+        >
+          <button
+            type="button"
+            className="flex size-5 shrink-0 items-center justify-center"
+            aria-label={i18n._(
+              isZone
+                ? {
+                    id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.toggleZone',
+                    message:
+                      '{expanded, select, true {Collapse} other {Expand}} functional zone {name}',
+                    values: { expanded: String(open), name: node.name },
                   }
-                />
-                <input
-                  className={control}
-                  type="number"
-                  step="0.1"
-                  aria-label={i18n._({
-                    id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.pointZ',
-                    message: 'Boundary point {index} Z',
-                    values: { index: i + 1 },
-                  })}
-                  value={p[1]}
-                  onChange={(e) =>
-                    setPolygon(
-                      polygon.map((q, j) =>
-                        i === j ? [q[0], Number(e.target.value)] : q,
-                      ),
-                    )
-                  }
-                />
-                <button
-                  type="button"
-                  className={button}
-                  disabled={polygon.length <= 3}
-                  aria-label={i18n._({
-                    id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.removePoint',
-                    message: 'Delete boundary point {index}',
-                    values: { index: i + 1 },
-                  })}
-                  onClick={() => setPolygon(polygon.filter((_, j) => j !== i))}
-                >
-                  −
-                </button>
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            className={button}
-            onClick={() => {
-              const a = polygon.at(-1)!,
-                b = polygon[0]!
-              setPolygon([...polygon, [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]])
+                : {
+                    id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.toggleGroup',
+                    message:
+                      '{expanded, select, true {Collapse} other {Expand}} furniture group {name}',
+                    values: { expanded: String(open), name: node.name },
+                  },
+            )}
+            aria-expanded={open}
+            onClick={(e) => {
+              e.stopPropagation()
+              setOpen(!open)
             }}
           >
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text2cwspw',
-              message: 'Add boundary point',
-            })}
+            <ChevronRight size={12} className={open ? 'rotate-90' : ''} />
           </button>
-        </>
-      ) : (
-        <>
-          <label className="block text-xs">
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textgcw8wa',
-              message: 'Group purpose',
-            })}
-            <input
-              className={control}
-              aria-label={i18n._({
-                id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textgcw8wa',
-                message: 'Group purpose',
-              })}
-              value={purpose}
-              onChange={(e) => setPurpose(e.target.value)}
-            />
-          </label>
-          <p className="text-xs text-muted-foreground">
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text9vhvpz',
-              message:
-                'Membership keeps furniture in place; supported objects follow their host.',
-            })}
-          </p>
-          <div className="max-h-44 space-y-1 overflow-y-auto">
-            {available.map((item) => {
-              const owner = otherGroups.find((g) =>
-                g.memberIds.includes(item.id),
-              )
-              return (
-                <div key={item.id}>
-                  <label className="flex items-center gap-1 text-xs">
-                    <input
-                      type="checkbox"
-                      aria-label={i18n._({
-                        id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.memberLabel',
-                        message: 'Group member {name}',
-                        values: { name: item.name ?? item.asset.name },
-                      })}
-                      checked={members.includes(item.id)}
-                      disabled={!!owner}
-                      onChange={(e) => {
-                        setMembers(
-                          e.target.checked
-                            ? [...members, item.id]
-                            : members.filter((id) => id !== item.id),
-                        )
-                        if (!e.target.checked && anchor === item.id)
-                          setAnchor('')
-                      }}
-                    />
-                    {item.name ?? item.asset.name}
-                    {owner
-                      ? i18n._({
-                          id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text13eo2n',
-                          message: '(already grouped)',
-                        })
-                      : ''}
-                  </label>
-                  {members.includes(item.id) && (
-                    <input
-                      className={control}
-                      aria-label={i18n._({
-                        id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.roleLabel',
-                        message: 'Member role {name}',
-                        values: { name: item.name ?? item.asset.name },
-                      })}
-                      placeholder={i18n._({
-                        id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.texth2v9tb',
-                        message: 'Member role (optional)',
-                      })}
-                      value={roles[item.id] ?? ''}
-                      onChange={(e) =>
-                        setRoles({ ...roles, [item.id]: e.target.value })
-                      }
-                    />
-                  )}
-                </div>
-              )
-            })}
+          {isZone ? (
+            <LayoutGrid size={14} style={{ color: node.color }} />
+          ) : (
+            <Boxes size={14} className="text-muted-foreground" />
+          )}
+          <InlineRenameField
+            name={node.name}
+            defaultName={node.name}
+            isEditing={renaming}
+            onRename={rename}
+            onStopEditing={() => setRenaming(false)}
+            className="min-w-0 flex-1 truncate"
+          />
+          {count !== undefined && (
+            <span className="text-xs text-muted-foreground">{count}</span>
+          )}
+          <div
+            className="ml-auto flex opacity-0 group-hover/spatial:opacity-100 focus-within:opacity-100"
+            onClick={(e) => e.stopPropagation()}
+            onDoubleClick={(e) => e.stopPropagation()}
+          >
+            {onAdd && (
+              <button
+                type="button"
+                disabled={readOnly}
+                className={iconButton}
+                aria-label={addLabel}
+                onClick={onAdd}
+              >
+                <Plus size={14} />
+              </button>
+            )}
+            <MoreActions actions={actions} />
           </div>
-          <label className="block text-xs">
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textdfxjts',
-              message: 'Rotation anchor',
-            })}
-            <select
-              className={control}
-              aria-label={i18n._({
-                id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textgd1ibh',
-                message: 'Group anchor',
-              })}
-              value={anchor}
-              onChange={(e) => setAnchor(e.target.value)}
-            >
-              <option value="">
-                {i18n._({
-                  id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text1t2qgq',
-                  message: 'Root member centre',
-                })}
-              </option>
-              {members.map((id) => (
-                <option key={id} value={id}>
-                  {nodes[id as AnyNodeId]?.name ?? id}
-                </option>
-              ))}
-            </select>
-          </label>
-        </>
+        </div>
+      </RowMenu>
+      {error && (
+        <p role="alert" className="text-xs text-destructive">
+          {error}
+        </p>
       )}
-      <div className="flex flex-wrap gap-1">
-        <button type="button" className={button} onClick={submit}>
-          {i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textaggoao',
-            message: 'Save hierarchy',
-          })}
-        </button>
-        <button type="button" className={button} onClick={close}>
-          {i18n._({
-            id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textaweu1h',
-            message: 'Close editor',
-          })}
-        </button>
-        {old && (
-          <button
-            type="button"
-            className={button}
-            onClick={() => {
-              if (apply(choice.kind, { id: old.id, delete: true })) close()
-            }}
-          >
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textoa1t',
-              message: 'Remove ',
-            })}
-            {choice.kind === 'zone'
-              ? i18n._({
-                  id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text1bfvwx',
-                  message: 'zone and groups',
-                })
-              : i18n._({
-                  id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textm1em',
-                  message: 'group',
-                })}
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text1l1flz',
-              message: ' (keep furniture)',
-            })}
-          </button>
-        )}
-      </div>
-      {group && (
-        <fieldset className="space-y-1 border-t border-border pt-2">
-          <legend className="text-xs">
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text1gzjhg',
-              message: 'Group transform · rotate then translate',
-            })}
-          </legend>
-          <div className="grid grid-cols-3 gap-1">
-            <label className="text-xs">
-              {i18n._({
-                id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.x',
-                message: 'ΔX metres',
-              })}
-              <input
-                aria-label={i18n._({
-                  id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.x2',
-                  message: 'Group translation X',
-                })}
-                className={control}
-                type="number"
-                step="0.1"
-                value={dx}
-                onChange={(e) => setDx(e.target.value)}
-              />
-            </label>
-            <label className="text-xs">
-              {i18n._({
-                id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.z',
-                message: 'ΔZ metres',
-              })}
-              <input
-                aria-label={i18n._({
-                  id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.z2',
-                  message: 'Group translation Z',
-                })}
-                className={control}
-                type="number"
-                step="0.1"
-                value={dz}
-                onChange={(e) => setDz(e.target.value)}
-              />
-            </label>
-            <label className="text-xs">
-              {i18n._({
-                id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.texthrnixw',
-                message: 'Angle °',
-              })}
-              <input
-                aria-label={i18n._({
-                  id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textkhqjqr',
-                  message: 'Group rotation angle',
-                })}
-                className={control}
-                type="number"
-                step="15"
-                value={angle}
-                onChange={(e) => setAngle(e.target.value)}
-              />
-            </label>
-          </div>
-          <button
-            type="button"
-            className={button}
-            onClick={() => {
-              if (
-                apply('transform', {
-                  id: group.id,
-                  translate: [Number(dx), Number(dz)],
-                  angleDegrees: Number(angle),
-                })
-              ) {
-                setDx('0')
-                setDz('0')
-                setAngle('0')
-              }
-            }}
-          >
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text1rih4t',
-              message: 'Apply group transform',
-            })}
-          </button>
-        </fieldset>
-      )}
+      {open && children}
     </div>
   )
 }

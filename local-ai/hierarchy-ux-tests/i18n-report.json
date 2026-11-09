@@ -1,0 +1,11 @@
+{
+  "newCatalogsSynchronized": true,
+  "remainingLiteralGuardPaths": [
+    "apps/editor/components/editor-navbar.tsx",
+    "apps/editor/components/local-chat.tsx",
+    "apps/editor/components/local-studio.tsx",
+    "apps/editor/components/scene-loader.tsx"
+  ],
+  "allRemainingPathsUnchangedFromBase": true,
+  "wholeCheckPassed": false
+}

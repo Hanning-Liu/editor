@@ -18,6 +18,7 @@ import { GROUP_MOVE_DRAG_LABEL, GROUP_ROTATE_DRAG_LABEL } from '../../lib/contex
 import { isHistoryShortcut } from '../../lib/history'
 import { sfxEmitter } from '../../lib/sfx-bus'
 import { intersectSpatialDragPlane } from '../../lib/spatial-drag-plane'
+import { selectedFurnitureGroup, spatialRotationPivot } from '../../lib/spatial-hierarchy'
 import { getSpatialPointerId, spatialPointerInput } from '../../lib/spatial-pointer-input'
 import { isTypingTarget } from '../../lib/typing-target'
 import useEditor, { isAngleSnapActive } from '../../store/use-editor'
@@ -83,7 +84,7 @@ export function GroupRotateHandle() {
   )
 
   const shouldRender =
-    participantIds.length >= 2 &&
+    (participantIds.length >= 2 || !!selectedFurnitureGroup(nodes, selectedIds)) &&
     mode !== 'delete' &&
     !movingNode &&
     !isFloorplanHovered &&
@@ -143,6 +144,8 @@ function GroupRotateHandleInner({ ids, meshEpoch }: { ids: string[]; meshEpoch: 
           matrix,
         )
       : new Vector3((box.min.x + box.max.x) / 2, 0, (box.min.z + box.max.z) / 2)
+    const anchor = spatialRotationPivot(useScene.getState().nodes, ids)
+    if (anchor) pivot.set(anchor[0], 0, anchor[1]).applyMatrix4(matrix)
     pivot.y = box.min.y
     const corner = plan
       ? new Vector3(plan.maxX + CORNER_OFFSET, 0, plan.maxZ + CORNER_OFFSET).applyMatrix4(matrix)
@@ -438,6 +441,7 @@ function GroupRotateHandleInner({ ids, meshEpoch }: { ids: string[]; meshEpoch: 
             pass. A proper fix would enable EDITOR_LAYER on the portal
             raycaster from inside the portal. */}
         <mesh
+          name="group-rotate-handle"
           frustumCulled={false}
           geometry={hitGeometry}
           material={hitMaterial}

@@ -14,6 +14,7 @@ import {
   resumeSpaceDetection,
   useLiveNodeOverrides,
   useLiveTransforms,
+  usePascalI18n,
   useScene,
 } from '@pascal-app/core'
 import { useViewer } from '@pascal-app/viewer'
@@ -27,6 +28,7 @@ import { formatLinearMeasurement } from '../../lib/measurements'
 import type { WallGroupPush } from '../../lib/room-handle-drag'
 import { useRoomHandleDrag } from '../../lib/room-handle-drag'
 import { sfxEmitter } from '../../lib/sfx-bus'
+import { selectedFurnitureGroup, spatialRotationPivot } from '../../lib/spatial-hierarchy'
 import { isTypingTarget } from '../../lib/typing-target'
 import useAlignmentGuides from '../../store/use-alignment-guides'
 import useEditor, {
@@ -100,7 +102,11 @@ export function startFloorplanGroupMove(
   opts: { immediate?: boolean; onClickFallthrough?: () => void } = {},
 ): boolean {
   const { selectedIds, levelId } = useViewer.getState().selection
-  if (selectedIds.length < 2 || !selectedIds.includes(nodeId)) return false
+  if (
+    (selectedIds.length < 2 && !selectedFurnitureGroup(useScene.getState().nodes, selectedIds)) ||
+    !selectedIds.includes(nodeId)
+  )
+    return false
   const sceneNodes = useScene.getState().nodes
   // The pressed element itself must transform — dragging a selected door /
   // window (which rides its host wall) keeps today's single-node behavior.
@@ -177,7 +183,8 @@ export function startFloorplanGroupMove(
     // Rotation pivot for mid-drag R/T — the START footprint's center, the same
     // point the 3D body drag, the idle keyboard rotate and the rotate gizmos
     // orbit. Stable across the drag; rotations re-seed around the same point.
-    const restCenter = planBoundsCenter(restBounds)
+    const restCenter =
+      spatialRotationPivot(useScene.getState().nodes, selectedIds) ?? planBoundsCenter(restBounds)
 
     return {
       starts,
@@ -460,7 +467,8 @@ export function startFloorplanGroupRotate(event: {
   pointerId: number
 }): boolean {
   const { selectedIds, levelId } = useViewer.getState().selection
-  if (selectedIds.length < 2) return false
+  if (selectedIds.length < 2 && !selectedFurnitureGroup(useScene.getState().nodes, selectedIds))
+    return false
   const nodes = useScene.getState().nodes
   const participantIds = selectedIds.filter(
     (id) => classifyParticipant(nodes[id as AnyNodeId], levelId, nodes) !== null,
@@ -474,7 +482,7 @@ export function startFloorplanGroupRotate(event: {
   if (!bounds) return false
   // Same pivot as the dashed box the handles hang off (and as the 3D rotate
   // gizmo): its centre, not the anchor points' centre.
-  const [pivotX, pivotZ] = planBoundsCenter(bounds)
+  const [pivotX, pivotZ] = spatialRotationPivot(nodes, selectedIds) ?? planBoundsCenter(bounds)
   const pivot = { x: pivotX, z: pivotZ }
   const startPlan = clientToPlan(event.clientX, event.clientY)
   if (!startPlan) return false
@@ -650,6 +658,7 @@ export const FloorplanGroupSelectionBox = memo(function FloorplanGroupSelectionB
   onPointerDown?: (event: ReactPointerEvent<SVGGElement>) => void
   onRotatePointerDown?: (event: ReactPointerEvent<SVGGElement>) => void
 }) {
+  const i18n = usePascalI18n()
   const selectedIds = useViewer((s) => s.selection.selectedIds)
   const levelId = useViewer((s) => s.selection.levelId)
   const unit = useViewer((s) => s.unit)
@@ -686,7 +695,11 @@ export const FloorplanGroupSelectionBox = memo(function FloorplanGroupSelectionB
   const meshEpoch = useMeshSettleEpoch(nodes)
   const box = useMemo(() => {
     void meshEpoch
-    if (selectedIds.length < 2 || !levelId) return null
+    if (
+      (selectedIds.length < 2 && !selectedFurnitureGroup(useScene.getState().nodes, selectedIds)) ||
+      !levelId
+    )
+      return null
     const participantIds = selectedIds.filter(
       (id) => classifyParticipant(nodes[id as AnyNodeId], levelId, nodes) !== null,
     )
@@ -765,6 +778,26 @@ export const FloorplanGroupSelectionBox = memo(function FloorplanGroupSelectionB
           />
         </g>
       ) : null}
+      {interactive && (
+        <g
+          data-group-move-handle
+          transform={`translate(${box.x + box.width / 2} ${box.z - pad - 16 * unitsPerPixel}) scale(${unitsPerPixel})`}
+          onPointerDown={(event) => {
+            event.stopPropagation()
+            onPointerDown?.(event)
+          }}
+          style={{ cursor: 'move' }}
+        >
+          <title>{i18n._({ id: 'editor.nodeActionMenu.move', message: 'Move' })}</title>
+          <circle r={8} fill="var(--background)" stroke={stroke} strokeWidth={1.2} />
+          <path
+            d="M-4 0H4M0-4V4M-4 0L-2-2M-4 0L-2 2M4 0L2-2M4 0L2 2M0-4L-2-2M0-4L2-2M0 4L-2 2M0 4L2 2"
+            stroke={stroke}
+            strokeWidth={1.1}
+            fill="none"
+          />
+        </g>
+      )}
       {/* Corner rotate handles — the 2D counterpart of the 3D rotate gizmo:
           drag a corner to spin the group (15° steps, Shift = free). */}
       {interactive && onRotatePointerDown

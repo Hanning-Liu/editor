@@ -65,3 +65,7 @@
 国际化检查的目录同步、新节点登记及新面板文案扫描通过。全仓 `i18n:check` 仍因基线已有的 local-chat、local-studio、local-studio-preview、editor-navbar 中文字面量而失败；`i18n-report.json` 记录实际涉及文件并确认这些文件相对基线未改。未绕过该检查或扩大字面量允许名单。
 
 开发验证时曾出现 Next 开发缓存的 `HMR hash mismatch` 刷新循环；保留旧缓存并重建后，网页完整验收通过。3D 场景切换仍可能出现基线 React/drei 的同步 unmount 控制台警告；本次网页测试没有未处理的 pageerror。
+
+## Interaction update
+
+The permanent tree buttons have been replaced by context menus, inspector cards, direct transform handles and semantic drag/drop. See [the interaction update and acceptance evidence](SPATIAL-HIERARCHY-UX.md).

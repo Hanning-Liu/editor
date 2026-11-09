@@ -1,4 +1,6 @@
 'use client'
+import {SpatialHierarchyPanel} from './spatial-hierarchy-panel'
+import {useSpatialInspector} from '../../../store/use-spatial-inspector'
 
 import {
   type AnyNode,
@@ -220,6 +222,7 @@ export function PanelManager({
   inspectorFooter?: React.ReactNode
   multiSelectionFooter?: React.ReactNode
 }) {
+  const spatialInspection = useSpatialInspector(s=>s.inspection)
   const isMobile = useIsMobile()
   const room = useSelectedRoom()
   const selectedIds = useViewer((s) => s.selection.selectedIds)
@@ -295,6 +298,7 @@ export function PanelManager({
   )
 
   function renderPanel() {
+    if(spatialInspection) return <SpatialHierarchyPanel />
     if (room && selectedIds.length === 0) return <RoomPanel room={room} />
     if (selectedNodeType === 'floor-opening' && selectedIds[0])
       return <FloorOpeningPanel key={selectedIds[0]} openingId={selectedIds[0]} />
