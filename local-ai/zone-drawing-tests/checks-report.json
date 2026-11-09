@@ -1,0 +1,28 @@
+{
+  "focusedTests": {
+    "passed": 475,
+    "failed": 0,
+    "files": 7
+  },
+  "builds": [
+    "core",
+    "mcp",
+    "nodes"
+  ],
+  "typechecks": [
+    "packages/editor",
+    "apps/editor"
+  ],
+  "i18n": {
+    "catalogSyncPassed": true,
+    "wholeCheckPassed": false,
+    "literalGuardFailures": [
+      "apps/editor/components/editor-navbar.tsx",
+      "apps/editor/components/local-chat.tsx",
+      "apps/editor/components/local-studio.tsx",
+      "apps/editor/components/scene-loader.tsx"
+    ],
+    "allFourUnchangedFromBase": true
+  },
+  "base": "e072b7cd401ec1b3c3f582e3a09c917b6d1912e4"
+}

@@ -143,6 +143,8 @@
     }
   },
   "files": [
+    "LICENSES",
+    "THIRD-PARTY-NOTICES.md",
     "dist",
     "README.md"
   ],

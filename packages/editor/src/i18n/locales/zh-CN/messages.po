@@ -15218,39 +15218,6 @@ msgstr "未分区家具 · {length}"
 msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.memberLabel"
 msgstr "组团成员 {name}"
 
-# Source-Hash: 12cd8c6ddcb3690a
-# Review: required
-# AI-Provider: OpenAI
-# AI-Model: Codex
-# Review-Notes: AI draft; fluent review required.
-# English: "Boundary point {index} X"
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-#, fuzzy
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.pointX"
-msgstr "边界点 {index} X"
-
-# Source-Hash: 7f02ba4e57a9b592
-# Review: required
-# AI-Provider: OpenAI
-# AI-Model: Codex
-# Review-Notes: AI draft; fluent review required.
-# English: "Boundary point {index} Z"
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-#, fuzzy
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.pointZ"
-msgstr "边界点 {index} Z"
-
-# Source-Hash: a11332f23f2d94f2
-# Review: required
-# AI-Provider: OpenAI
-# AI-Model: Codex
-# Review-Notes: AI draft; fluent review required.
-# English: "Delete boundary point {index}"
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-#, fuzzy
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.removePoint"
-msgstr "删除边界点 {index}"
-
 # Source-Hash: 36fe6f4af5b2e690
 # Review: required
 # AI-Provider: OpenAI
@@ -15349,17 +15316,6 @@ msgstr "应用整体变换"
 #, fuzzy
 msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1t2qgq"
 msgstr "根成员中心"
-
-# Source-Hash: 6aea958f3e5ce082
-# Review: required
-# AI-Provider: OpenAI
-# AI-Model: Codex
-# Review-Notes: AI draft; fluent review required.
-# English: "Add boundary point"
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-#, fuzzy
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text2cwspw"
-msgstr "增加边界点"
 
 # Source-Hash: 0fbf34ffb6d5ac65
 # Review: required
@@ -15613,17 +15569,6 @@ msgstr "ΔX 米"
 #, fuzzy
 msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.x2"
 msgstr "组团平移 X"
-
-# Source-Hash: c172f92fc65363bb
-# Review: required
-# AI-Provider: OpenAI
-# AI-Model: Codex
-# Review-Notes: AI draft; fluent review required.
-# English: "Boundary points in X/Z metres. Start with the room outline and edit corners; no walls are created."
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-#, fuzzy
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.xZ"
-msgstr "边界点采用 X/Z 米，以房间轮廓为初始边界逐点编辑，不生成墙体。"
 
 # Source-Hash: 0f0e43dc915a503d
 # Review: required
@@ -18337,6 +18282,296 @@ msgstr "墙体类型：新建、编辑或复制 {label}"
 #, fuzzy
 msgid "editor.youCanRetryTheSceneOr"
 msgstr "您可以重试场景，或在不重新加载整个应用的情况下返回首页。"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Active hole"
+# Source-Hash: 43a7474f9578591c
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.activeHole"
+msgstr "当前孔洞"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Active part"
+# Source-Hash: 01a5ab8b07d7323d
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.activePart"
+msgstr "当前分块"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Add hole"
+# Source-Hash: a6979b3f978926aa
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.addHole"
+msgstr "添加孔洞"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Add part"
+# Source-Hash: 16b7300b9765fff3
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.addPart"
+msgstr "添加分块"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Advanced coordinates"
+# Source-Hash: 6e2b815bf08802d7
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.advanced"
+msgstr "高级坐标编辑"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Apply outline"
+# Source-Hash: 114bd7b4ad226014
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.apply"
+msgstr "应用轮廓"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Cancel outline"
+# Source-Hash: 829353c482d2106f
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.cancel"
+msgstr "取消轮廓"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "This room is already fully covered."
+# Source-Hash: 7d349df3ec8ff052
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.covered"
+msgstr "房间已被完整覆盖。"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Drag in the 2D view to draw a rectangle."
+# Source-Hash: 4b697df3c6b2d6e7
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.drag"
+msgstr "在二维视图中拖动绘制矩形。"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Edit boundary"
+# Source-Hash: e90092eedbc8b173
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.edit"
+msgstr "编辑边界"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Outline cannot be applied: {reason}. Check boundaries and holes. If the scene changed, preview again."
+# Source-Hash: 9a96a7f0ec0b1dce
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.error"
+msgstr "无法应用轮廓：{reason}。请检查边界和孔洞；若场景已变化，请重新预览。"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Drag vertices or edges. Double-click an edge to add a vertex; right-click a vertex to remove it."
+# Source-Hash: 4e3297140a993cd5
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.handles"
+msgstr "拖动顶点或边线。双击边线添加顶点；右键顶点删除。"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Hole {index}"
+# Source-Hash: b4a26ed2eccacee1
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.hole"
+msgstr "孔洞 {index}"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Holes must be inside their part and must not touch or overlap other boundaries"
+# Source-Hash: d71a3362bcdb9607
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.holeInvalid"
+msgstr "孔洞必须位于对应分块内，且不能与其他边界接触或重叠"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Use at least three distinct vertices with no crossing edges"
+# Source-Hash: 556b96d99da0fe96
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.invalid"
+msgstr "请使用至少三个不同顶点，并避免边线交叉"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Geometry parts JSON"
+# Source-Hash: 9e3ec6cd0e3d90b3
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.json"
+msgstr "几何分块 JSON"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "The outline crosses the room boundary"
+# Source-Hash: 3b4647e63820cb91
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.outside"
+msgstr "轮廓越出了房间边界"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Parts of the same zone must not overlap"
+# Source-Hash: 022f3c2143083553
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.overlap"
+msgstr "同一分区的分块不能相互重叠"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Part {index}"
+# Source-Hash: 0278e0e2bd8d17c8
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.part"
+msgstr "分块 {index}"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Click vertices; click the first point or press Enter to close. Backspace removes a point."
+# Source-Hash: e066a9a434faba06
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.points"
+msgstr "单击添加顶点；点击起点或按 Enter 闭合。Backspace 撤回一个点。"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Draw polygon"
+# Source-Hash: fc0bcb2f4987f52b
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.polygon"
+msgstr "绘制多边形"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Preview coordinates"
+# Source-Hash: 04a2486c5209cd59
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.preview"
+msgstr "预览坐标"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Draw rectangle"
+# Source-Hash: 0927232f20201c89
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.rectangle"
+msgstr "绘制矩形"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Fill remaining area"
+# Source-Hash: a6673aaffdcb0372
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.remaining"
+msgstr "补齐剩余区域"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Remove hole"
+# Source-Hash: 4b861ac28a2a2036
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.removeHole"
+msgstr "删除孔洞"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Remove part"
+# Source-Hash: efacc56be8641863
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.removePart"
+msgstr "删除分块"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "The outline covers a room opening"
+# Source-Hash: af11e9a550339714
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.roomVoid"
+msgstr "轮廓覆盖了房间的洞口"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "The scene changed after this preview"
+# Source-Hash: b2766606396809b1
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.stale"
+msgstr "预览后场景发生了变化"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "{parts} parts · {holes} holes · {area} m²"
+# Source-Hash: ed80c1ba07a29dae
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.summary"
+msgstr "{parts} 个分块 · {holes} 个孔洞 · {area} 平方米"
 
 # Source-Hash: bafa390e07160f3c
 # Review: required

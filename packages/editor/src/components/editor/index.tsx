@@ -123,6 +123,7 @@ import { FloorplanModeCoordinator } from './floorplan-mode-coordinator'
 import { FloorplanPanel } from './floorplan-panel'
 import { FollowPascal } from './follow-pascal'
 import { FootprintHeightHandle } from './footprint-height-handle'
+import { FunctionalZoneOverlay } from './functional-zone-overlay'
 import { Grid } from './grid'
 import { GroupFloatingActionMenu } from './group-floating-action-menu'
 import { GroupRotateHandle } from './group-rotate-handle'
@@ -948,6 +949,7 @@ const ViewerSceneContent = memo(function ViewerSceneContent({
       {!noEditing && <FootprintHeightHandle />}
       {!noEditing && <GroupRotateHandle />}
       {!noEditing && <GroupSelectionBox3D />}
+      {!noEditing && <FunctionalZoneOverlay />}
       {!noEditing && <WallOpeningHighlights />}
       {!noEditing && <SlabHoleHighlights />}
       {!noEditing && <WallMoveSideHandles />}

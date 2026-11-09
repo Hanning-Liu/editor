@@ -11,6 +11,7 @@ export type {
 export {
   editFunctionalZone,
   editFurnitureGroup,
+  getFunctionalZoneRemainder,
   getSpatialHierarchy,
   transformFurnitureGroup,
 } from './agent-operations/spatial-hierarchy'
@@ -372,6 +373,7 @@ export {
   framingPostTopAt,
   isFramingPost,
 } from './lib/framing-post'
+export * from './lib/functional-zone-geometry'
 export {
   ceilingSeatY,
   isScriptedNode,

@@ -228,6 +228,7 @@ import {
   RotationAngleOverlay,
 } from '../editor-2d/renderers/floorplan-registry-layer'
 import { FloorplanVoronoiLayer } from '../editor-2d/renderers/floorplan-voronoi-layer'
+import { FunctionalZoneDraft } from '../editor-2d/renderers/functional-zone-draft'
 import { FunctionalZoneLayer } from '../editor-2d/renderers/functional-zone-layer'
 import { buildSvgPolylinePath, formatPolygonPath } from '../editor-2d/svg-paths'
 import { snapToHalf } from '../tools/item/placement-math'
@@ -8889,6 +8890,8 @@ export function FloorplanPanel({
 
   const handleNavigationPointerDown = useCallback(
     (event: ReactPointerEvent<SVGSVGElement>) => {
+      // A draft vertex owns its context menu; right-drag elsewhere still turns the plan.
+      if (event.button === 2 && (event.target as Element).closest('[data-zone-vertex]')) return
       if (event.button === 1 || (event.button === 0 && floorplanSpacePanPressedRef.current)) {
         event.preventDefault()
         event.stopPropagation()
@@ -11759,6 +11762,7 @@ export function FloorplanPanel({
                 {activeDrawingType !== 'site-plan' && <FloorplanOpenWallEndsLayer />}
                 <FloorplanMeasurementToolLayer />
                 <FloorplanRegisteredToolLayer />
+                {activeDrawingType !== 'site-plan' && <FunctionalZoneDraft />}
                 {floorplanSceneSlot}
               </FloorplanRenderProvider>
               {/* Cursor-driven placement ghost for movingNode when the

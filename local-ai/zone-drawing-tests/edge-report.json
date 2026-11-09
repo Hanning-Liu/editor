@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "invalidPolygonBlocked": true,
+  "outsideVertexBlocked": true,
+  "cancelDoesNotSave": true,
+  "fullyCoveredBlocked": true,
+  "stalePreviewBlocked": true,
+  "restoredGraphExact": true,
+  "errors": []
+}

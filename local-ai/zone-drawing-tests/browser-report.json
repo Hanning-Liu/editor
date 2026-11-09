@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "projectId": "627706cfbcfd",
+  "zoneA": "functional-zone_4ttqmko278wcpoy0",
+  "zoneB": "functional-zone_ph8ga3s4yap2m01z",
+  "rectangle": true,
+  "polygon": true,
+  "holes": true,
+  "multipart": true,
+  "backspace": true,
+  "vertexAndEdgeDrag": true,
+  "insertRemoveVertex": true,
+  "partAndHoleRemovalPreview": true,
+  "outsideRejected": true,
+  "previewDoesNotSave": true,
+  "undoRedo": true,
+  "remaining": true,
+  "refresh": true,
+  "render2D3D": [
+    {
+      "id": "functional-zone_4ttqmko278wcpoy0",
+      "meshes": 2,
+      "triangles": 10,
+      "areaM2": 14.375
+    },
+    {
+      "id": "functional-zone_ph8ga3s4yap2m01z",
+      "meshes": 2,
+      "triangles": 14,
+      "areaM2": 33.625
+    }
+  ],
+  "furnitureAndSupportUnchanged": true,
+  "saves": [
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200,
+    200
+  ],
+  "errors": []
+}

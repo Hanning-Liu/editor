@@ -15218,39 +15218,6 @@ msgstr "Mobilier non affecté · {length}"
 msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.memberLabel"
 msgstr "Membre du groupe {name}"
 
-# Source-Hash: 12cd8c6ddcb3690a
-# Review: required
-# AI-Provider: OpenAI
-# AI-Model: Codex
-# Review-Notes: AI draft; fluent review required.
-# English: "Boundary point {index} X"
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-#, fuzzy
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.pointX"
-msgstr "Point du contour {index} X"
-
-# Source-Hash: 7f02ba4e57a9b592
-# Review: required
-# AI-Provider: OpenAI
-# AI-Model: Codex
-# Review-Notes: AI draft; fluent review required.
-# English: "Boundary point {index} Z"
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-#, fuzzy
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.pointZ"
-msgstr "Point du contour {index} Z"
-
-# Source-Hash: a11332f23f2d94f2
-# Review: required
-# AI-Provider: OpenAI
-# AI-Model: Codex
-# Review-Notes: AI draft; fluent review required.
-# English: "Delete boundary point {index}"
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-#, fuzzy
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.removePoint"
-msgstr "Supprimer le point du contour {index}"
-
 # Source-Hash: 36fe6f4af5b2e690
 # Review: required
 # AI-Provider: OpenAI
@@ -15349,17 +15316,6 @@ msgstr "Appliquer la transformation du groupe"
 #, fuzzy
 msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1t2qgq"
 msgstr "Centre des membres racines"
-
-# Source-Hash: 6aea958f3e5ce082
-# Review: required
-# AI-Provider: OpenAI
-# AI-Model: Codex
-# Review-Notes: AI draft; fluent review required.
-# English: "Add boundary point"
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-#, fuzzy
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text2cwspw"
-msgstr "Ajouter un point au contour"
 
 # Source-Hash: 0fbf34ffb6d5ac65
 # Review: required
@@ -15613,17 +15569,6 @@ msgstr "ΔX mètres"
 #, fuzzy
 msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.x2"
 msgstr "Translation du groupe X"
-
-# Source-Hash: c172f92fc65363bb
-# Review: required
-# AI-Provider: OpenAI
-# AI-Model: Codex
-# Review-Notes: AI draft; fluent review required.
-# English: "Boundary points in X/Z metres. Start with the room outline and edit corners; no walls are created."
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-#, fuzzy
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.xZ"
-msgstr "Points du contour en mètres X/Z. Partez du contour de la pièce et modifiez les sommets ; aucun mur n’est créé."
 
 # Source-Hash: 0f0e43dc915a503d
 # Review: required
@@ -18337,6 +18282,296 @@ msgstr "Types de mur : créer, modifier ou dupliquer {label}"
 #, fuzzy
 msgid "editor.youCanRetryTheSceneOr"
 msgstr "Vous pouvez relancer la scène ou revenir à l’accueil sans recharger toute l’application."
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Active hole"
+# Source-Hash: 43a7474f9578591c
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.activeHole"
+msgstr "Trou actif"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Active part"
+# Source-Hash: 01a5ab8b07d7323d
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.activePart"
+msgstr "Partie active"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Add hole"
+# Source-Hash: a6979b3f978926aa
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.addHole"
+msgstr "Ajouter un trou"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Add part"
+# Source-Hash: 16b7300b9765fff3
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.addPart"
+msgstr "Ajouter une partie"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Advanced coordinates"
+# Source-Hash: 6e2b815bf08802d7
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.advanced"
+msgstr "Coordonnées avancées"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Apply outline"
+# Source-Hash: 114bd7b4ad226014
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.apply"
+msgstr "Appliquer le contour"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Cancel outline"
+# Source-Hash: 829353c482d2106f
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.cancel"
+msgstr "Annuler le contour"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "This room is already fully covered."
+# Source-Hash: 7d349df3ec8ff052
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.covered"
+msgstr "La pièce est déjà entièrement couverte."
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Drag in the 2D view to draw a rectangle."
+# Source-Hash: 4b697df3c6b2d6e7
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.drag"
+msgstr "Faites glisser dans la vue 2D pour tracer un rectangle."
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Edit boundary"
+# Source-Hash: e90092eedbc8b173
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.edit"
+msgstr "Modifier la limite"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Outline cannot be applied: {reason}. Check boundaries and holes. If the scene changed, preview again."
+# Source-Hash: 9a96a7f0ec0b1dce
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.error"
+msgstr "Impossible d’appliquer le contour : {reason}. Vérifiez les limites et les trous. Si la scène a changé, relancez l’aperçu."
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Drag vertices or edges. Double-click an edge to add a vertex; right-click a vertex to remove it."
+# Source-Hash: 4e3297140a993cd5
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.handles"
+msgstr "Déplacez les sommets ou les arêtes. Double-cliquez sur une arête pour ajouter un sommet ; faites un clic droit sur un sommet pour le supprimer."
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Hole {index}"
+# Source-Hash: b4a26ed2eccacee1
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.hole"
+msgstr "Trou {index}"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Holes must be inside their part and must not touch or overlap other boundaries"
+# Source-Hash: d71a3362bcdb9607
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.holeInvalid"
+msgstr "Les trous doivent rester dans leur partie sans toucher ni chevaucher les autres limites"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Use at least three distinct vertices with no crossing edges"
+# Source-Hash: 556b96d99da0fe96
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.invalid"
+msgstr "Utilisez au moins trois sommets distincts sans arêtes croisées"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Geometry parts JSON"
+# Source-Hash: 9e3ec6cd0e3d90b3
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.json"
+msgstr "Parties géométriques JSON"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "The outline crosses the room boundary"
+# Source-Hash: 3b4647e63820cb91
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.outside"
+msgstr "Le contour dépasse les limites de la pièce"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Parts of the same zone must not overlap"
+# Source-Hash: 022f3c2143083553
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.overlap"
+msgstr "Les parties d’une même zone ne doivent pas se chevaucher"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Part {index}"
+# Source-Hash: 0278e0e2bd8d17c8
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.part"
+msgstr "Partie {index}"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Click vertices; click the first point or press Enter to close. Backspace removes a point."
+# Source-Hash: e066a9a434faba06
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.points"
+msgstr "Cliquez pour ajouter des sommets ; cliquez sur le premier point ou appuyez sur Entrée pour fermer. Retour arrière retire un point."
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Draw polygon"
+# Source-Hash: fc0bcb2f4987f52b
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.polygon"
+msgstr "Tracer un polygone"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Preview coordinates"
+# Source-Hash: 04a2486c5209cd59
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.preview"
+msgstr "Aperçu des coordonnées"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Draw rectangle"
+# Source-Hash: 0927232f20201c89
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.rectangle"
+msgstr "Tracer un rectangle"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Fill remaining area"
+# Source-Hash: a6673aaffdcb0372
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.remaining"
+msgstr "Compléter la zone restante"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Remove hole"
+# Source-Hash: 4b861ac28a2a2036
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.removeHole"
+msgstr "Supprimer le trou"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "Remove part"
+# Source-Hash: efacc56be8641863
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.removePart"
+msgstr "Supprimer la partie"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "The outline covers a room opening"
+# Source-Hash: af11e9a550339714
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.roomVoid"
+msgstr "Le contour recouvre une ouverture de la pièce"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "The scene changed after this preview"
+# Source-Hash: b2766606396809b1
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.stale"
+msgstr "La scène a changé depuis cet aperçu"
+
+# AI-Provider: OpenAI
+# AI-Model: Codex
+# English: "{parts} parts · {holes} holes · {area} m²"
+# Source-Hash: ed80c1ba07a29dae
+# Review: required
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+#, fuzzy
+msgid "editor.zoneDrawing.summary"
+msgstr "{parts} parties · {holes} trous · {area} m²"
 
 # Source-Hash: bafa390e07160f3c
 # Review: required

@@ -130,7 +130,10 @@ function contextForProfile(
 // a whole-footprint translate: no direction to set → the no-angle 'polygon'
 // set. Without an entry here the tool has no snap context at all, so Shift
 // cycling and the HUD chip stay dead while it drives placement.
-const TOOL_SNAP_CONTEXTS: Record<string, SnapContext> = { room: 'polygon' }
+const TOOL_SNAP_CONTEXTS: Record<string, SnapContext> = {
+  room: 'polygon',
+  'functional-zone': 'polygon',
+}
 
 /**
  * The active snapping context, derived from what the user is doing — fully

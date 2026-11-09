@@ -1,5 +1,6 @@
-import { useScene } from '@pascal-app/core'
+import { polygonInteriorPoint, useScene, zoneParts } from '@pascal-app/core'
 import { useViewer } from '@pascal-app/viewer'
+import { zonePath } from '../../../lib/functional-zone-drawing'
 
 export function FunctionalZoneLayer() {
   const nodes = useScene((s) => s.nodes)
@@ -12,12 +13,12 @@ export function FunctionalZoneLayer() {
         )
         .map((n) => {
           if (n.type !== 'functional-zone') return null
-          const x = n.polygon.reduce((s, p) => s + p[0], 0) / n.polygon.length,
-            z = n.polygon.reduce((s, p) => s + p[1], 0) / n.polygon.length
+          const [x, z] = polygonInteriorPoint({ polygon: n.polygon, holes: n.holes })
           return (
             <g key={n.id} data-functional-zone-outline={n.id}>
-              <polygon
-                points={n.polygon.map((p) => p.join(',')).join(' ')}
+              <path
+                d={zonePath(zoneParts(n))}
+                fillRule="evenodd"
                 fill={n.color}
                 fillOpacity={0.08}
                 stroke={n.color}

@@ -540,6 +540,19 @@
       }
     },
     {
+      "name": "get_functional_zone_remainder",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      },
+      "justifications": {
+        "readOnlyHint": "Computes the remaining functional-zone geometry without writing the scene.",
+        "destructiveHint": "Only returns a preview; no nodes or geometry are changed.",
+        "openWorldHint": "Uses only the active scene room and functional zones."
+      }
+    },
+    {
       "name": "get_level_summary",
       "annotations": {
         "readOnlyHint": true,

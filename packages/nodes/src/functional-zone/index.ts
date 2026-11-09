@@ -1,7 +1,7 @@
 import { FunctionalZoneNode, type NodeDefinition } from '@pascal-app/core'
 export const functionalZoneDefinition: NodeDefinition<typeof FunctionalZoneNode> = {
   kind: 'functional-zone',
-  schemaVersion: 1,
+  schemaVersion: 2,
   schema: FunctionalZoneNode,
   category: 'site',
   defaults: () => ({
@@ -18,8 +18,11 @@ export const functionalZoneDefinition: NodeDefinition<typeof FunctionalZoneNode>
       [1, 1],
       [0, 1],
     ],
+    holes: [],
+    parts: [],
     color: '#a78bfa',
   }),
+  snapProfile: 'structural',
   dirtyTracking: false,
   capabilities: { duplicable: false, deletable: false, presettable: false },
   presentation: {

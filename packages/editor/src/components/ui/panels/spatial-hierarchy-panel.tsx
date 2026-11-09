@@ -1,6 +1,9 @@
 'use client'
 import {
   type AnyNodeId,
+  zoneParts,
+  zoneGeometry,
+  type ZonePart,
   type ItemNode,
   type ZoneNode,
   type FurnitureGroupNode,
@@ -18,6 +21,8 @@ import {
   spatialSelectionKey,
   type SpatialChoice as Choice,
 } from '../../../store/use-spatial-inspector'
+import { useFunctionalZoneDraft } from '../../../store/use-functional-zone-draft'
+import { FunctionalZoneControls } from './functional-zone-controls'
 import { PanelWrapper } from './panel-wrapper'
 const control =
   'w-full rounded border border-border bg-background p-1.5 text-xs'
@@ -131,12 +136,15 @@ function SpatialHierarchyEditor({
   const old = choice.id ? nodes[choice.id as AnyNodeId] : undefined
   const area = old?.type === 'functional-zone' ? old : undefined
   const group = old?.type === 'furniture-group' ? old : undefined
+  const drawing = useFunctionalZoneDraft((s) => !!s.draft)
   const [name, setName] = useState(
     old?.name ?? (choice.kind === 'zone' ? '新功能分区' : '新家具组团'),
   )
   const [functions, setFunctions] = useState(area?.functions.join('、') ?? '')
-  const [polygon, setPolygon] = useState<[number, number][]>(
-    area?.polygon ?? room.polygon.map((p) => [...p]),
+  const [geometry] = useState<ZonePart[]>(
+    area
+      ? zoneParts(area)
+      : [{ polygon: room.polygon, holes: room.holes ?? [] }],
   )
   const [purpose, setPurpose] = useState(group?.purpose ?? '')
   const [members, setMembers] = useState<string[]>(
@@ -183,7 +191,7 @@ function SpatialHierarchyEditor({
               .split(/[、,，]/)
               .map((s) => s.trim())
               .filter(Boolean),
-            polygon,
+            ...zoneGeometry(geometry),
           })
         : apply('group', {
             id: choice.id,
@@ -269,82 +277,25 @@ function SpatialHierarchyEditor({
               onChange={(e) => setFunctions(e.target.value)}
             />
           </label>
-          <p className="text-xs text-muted-foreground">
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.xZ',
-              message:
-                'Boundary points in X/Z metres. Start with the room outline and edit corners; no walls are created.',
-            })}
-          </p>
-          <div className="max-h-40 space-y-1 overflow-y-auto">
-            {polygon.map((p, i) => (
-              <div className="flex gap-1" key={'corner-' + i}>
-                <input
-                  className={control}
-                  type="number"
-                  step="0.1"
-                  aria-label={i18n._({
-                    id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.pointX',
-                    message: 'Boundary point {index} X',
-                    values: { index: i + 1 },
-                  })}
-                  value={p[0]}
-                  onChange={(e) =>
-                    setPolygon(
-                      polygon.map((q, j) =>
-                        i === j ? [Number(e.target.value), q[1]] : q,
-                      ),
-                    )
-                  }
-                />
-                <input
-                  className={control}
-                  type="number"
-                  step="0.1"
-                  aria-label={i18n._({
-                    id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.pointZ',
-                    message: 'Boundary point {index} Z',
-                    values: { index: i + 1 },
-                  })}
-                  value={p[1]}
-                  onChange={(e) =>
-                    setPolygon(
-                      polygon.map((q, j) =>
-                        i === j ? [q[0], Number(e.target.value)] : q,
-                      ),
-                    )
-                  }
-                />
-                <button
-                  type="button"
-                  className={button}
-                  disabled={polygon.length <= 3}
-                  aria-label={i18n._({
-                    id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.removePoint',
-                    message: 'Delete boundary point {index}',
-                    values: { index: i + 1 },
-                  })}
-                  onClick={() => setPolygon(polygon.filter((_, j) => j !== i))}
-                >
-                  −
-                </button>
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            className={button}
-            onClick={() => {
-              const a = polygon.at(-1)!,
-                b = polygon[0]!
-              setPolygon([...polygon, [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]])
+          <FunctionalZoneControls
+            roomId={room.id}
+            nodeId={area?.id}
+            geometry={geometry}
+            onApply={(parts) => {
+              const ok = apply('zone', {
+                id: choice.id,
+                roomId: room.id,
+                name,
+                functions: functions
+                  .split(/[、,，]/)
+                  .map((s) => s.trim())
+                  .filter(Boolean),
+                ...zoneGeometry(parts),
+              })
+              if (ok) close()
+              return ok
             }}
-          >
-            {i18n._({
-              id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.text2cwspw',
-              message: 'Add boundary point',
-            })}
-          </button>
+          />
         </>
       ) : (
         <>
@@ -457,7 +408,12 @@ function SpatialHierarchyEditor({
         </>
       )}
       <div className="flex flex-wrap gap-1">
-        <button type="button" className={button} onClick={submit}>
+        <button
+          type="button"
+          className={button}
+          disabled={drawing}
+          onClick={submit}
+        >
           {i18n._({
             id: 'editor.sidebar.panels.sitePanel.spatialHierarchy.textaggoao',
             message: 'Save hierarchy',

@@ -99,7 +99,13 @@ export function classifyParticipant(
   levelId: string | null,
   sceneNodes: Record<string, AnyNode | undefined>,
 ): ParticipantKind | null {
-  if (!node || !isInGroupTransformScope(node, levelId, sceneNodes)) return null
+  if (
+    !node ||
+    node.type === 'functional-zone' ||
+    node.type === 'furniture-group' ||
+    !isInGroupTransformScope(node, levelId, sceneNodes)
+  )
+    return null
   const shape = classifyPlacementShape(node)
   if (shape) return shape
   const start = (node as { start?: unknown }).start

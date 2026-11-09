@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "projectId": "47104b4663ac",
+  "realLocalQwen": true,
+  "multipartZoneId": "functional-zone_hp5ppee2pl7xfupi",
+  "remainderZoneId": "functional-zone_4c4yfftznd7tg0el",
+  "tools": [
+    "get_spatial_hierarchy",
+    "get_zones",
+    "discover_tools",
+    "list_functional_zones",
+    "edit_functional_zone",
+    "get_functional_zone_remainder",
+    "read_pascal_resource",
+    "discover_tools",
+    "edit_functional_zone",
+    "get_spatial_hierarchy",
+    "verify_scene"
+  ],
+  "oneIdPerLogicalZone": true,
+  "holesAndPartsPreserved": true,
+  "furnitureAndSupportUnchanged": true,
+  "initialPreviewHadUnneededExclusion": true,
+  "correctedGuidancePreviewVerified": true
+}

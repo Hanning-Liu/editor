@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 const id = z.string().min(1)
 const point = z.array(z.number().finite()).length(2)
+const ring = z.array(point).min(3).max(200)
+const part = z.object({ polygon: ring, holes: z.array(ring).max(100).default([]) })
 export const getSpatialHierarchyTool = {
   name: 'get_spatial_hierarchy',
   title: 'Get spatial hierarchy',
@@ -16,6 +18,13 @@ export const listFunctionalZonesTool = {
     'List independent functional zones inside a room, or all rooms. Returns functions, plan polygons in metres and roomId. These regions never create walls, floors or additional rooms.',
   input: { roomId: id.optional() },
 }
+export const getFunctionalZoneRemainderTool = {
+  name: 'get_functional_zone_remainder',
+  title: 'Preview remaining functional-zone area',
+  description:
+    'Read-only exact difference: room footprint (excluding room holes) minus the union of existing functional zones. Returns all disjoint parts and holes, areaM2 and empty. When creating a new zone, OMIT excludeId: existing zones must be subtracted. Pass excludeId ONLY for that same existing zone being replaced. edit_functional_zone uses id (not excludeId) for an edit. Coordinates are level-local [x,z] metres; creates nothing. Apply via edit_functional_zone with fillRemaining:true to compute from the latest scene.',
+  input: { roomId: id, excludeId: id.optional() },
+}
 export const listFurnitureGroupsTool = {
   name: 'list_furniture_groups',
   title: 'List furniture groups',
@@ -27,13 +36,16 @@ export const editFunctionalZoneTool = {
   name: 'edit_functional_zone',
   title: 'Edit functional zone',
   description:
-    'Create or edit an independent functional zone. Creation needs roomId, name and polygon ([x,z] metres); edits name id. Omitted fields stay unchanged. Polygon must be simple and inside its room, outside holes; zones may overlap. delete removes zone and group records, preserving furniture. Refuses room_required, outside_room, invalid_polygon.',
+    'Create or edit an independent functional zone. Creation needs roomId, name and polygon ([x,z] metres), or fillRemaining:true; edits name id. holes excludes interiors of the primary polygon. parts holds additional disjoint polygon/holes components under the same zone ID. fillRemaining computes room minus the union of the other zones, including holes; it replaces this zone geometry, excluding itself. Preview with get_functional_zone_remainder first. Omitted fields stay unchanged. Each component must be simple and inside the room, excluding room holes; zones may overlap. delete removes zone and group records, preserving furniture. Refuses room_required, outside_room, invalid_polygon.',
   input: {
     id: id.optional(),
     roomId: id.optional(),
     name: z.string().trim().min(1).max(120).optional(),
     functions: z.array(z.string().trim().min(1).max(80)).max(20).optional(),
-    polygon: z.array(point).min(3).max(200).optional(),
+    polygon: ring.optional(),
+    holes: z.array(ring).max(100).optional(),
+    parts: z.array(part).max(100).optional(),
+    fillRemaining: z.boolean().optional(),
     color: z
       .string()
       .regex(/^#[0-9a-fA-F]{6}$/)
@@ -71,6 +83,7 @@ export const transformFurnitureGroupTool = {
 }
 export const SPATIAL_HIERARCHY_TOOLS = [
   getSpatialHierarchyTool,
+  getFunctionalZoneRemainderTool,
   listFunctionalZonesTool,
   listFurnitureGroupsTool,
   editFunctionalZoneTool,

@@ -86,6 +86,7 @@ export const READ_TOOLS = inventory
 	.map((t) => t.name);
 export const INITIAL_TOOLS = [
 	"get_spatial_hierarchy",
+	"get_functional_zone_remainder",
 	"list_levels",
 	"get_walls",
 	"get_zones",

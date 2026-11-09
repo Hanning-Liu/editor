@@ -544,6 +544,7 @@ const SHARED_TOOLS: SharedTool[] = [
     operation: AGENT_OPERATIONS[contract.name as keyof typeof AGENT_OPERATIONS] as AgentOperation,
     annotations: [
       'get_spatial_hierarchy',
+      'get_functional_zone_remainder',
       'list_functional_zones',
       'list_furniture_groups',
     ].includes(contract.name)

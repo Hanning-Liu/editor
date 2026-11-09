@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "realLocalQwen": true,
+  "newZonePreviewEmpty": true,
+  "replacingOwnZonePreviewAreaM2": 33,
+  "correctExclusion": true,
+  "readOnlyGraphUnchanged": true,
+  "tools": [
+    "get_spatial_hierarchy",
+    "get_functional_zone_remainder",
+    "get_functional_zone_remainder"
+  ],
+  "invalidIdsRejectedThenRecovered": true
+}

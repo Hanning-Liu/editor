@@ -1,6 +1,13 @@
 import { refuse } from '../agent-tools/refusal'
+import {
+  subtractZoneParts,
+  validateZoneParts,
+  zoneArea,
+  zoneContains,
+  zoneGeometry,
+  zoneParts,
+} from '../lib/functional-zone-geometry'
 import { findLevelAncestorId } from '../lib/node-ancestry'
-import { pointInPolygon, polygonsOverlap, segmentsIntersect } from '../lib/polygon-relations'
 import { composePoses, eulerPose, matrixEuler, rotateVector } from '../procedural-items/spatial'
 import { FunctionalZoneNode, FurnitureGroupNode, type ItemNode, type ZoneNode } from '../schema'
 import { itemLevelPose } from './item-space'
@@ -8,13 +15,15 @@ import { readRooms } from './room-readings'
 import { queryNodes } from './scene-queries'
 import type { AgentOperationOutcome, SceneNodes } from './types'
 
-type Point = [number, number]
 export type EditFunctionalZoneInput = {
   id?: string
   roomId?: string
   name?: string
   functions?: string[]
   polygon?: number[][]
+  holes?: number[][][]
+  parts?: { polygon: number[][]; holes?: number[][][] }[]
+  fillRemaining?: boolean
   color?: string
   delete?: boolean
 }
@@ -53,45 +62,48 @@ function groupOf(nodes: SceneNodes, id: string): FurnitureGroupNode {
     refuse('furniture_group_not_found', 'Choose an existing furniture group.', { id })
   return group
 }
-function polygonArea(poly: Point[]) {
-  return (
-    Math.abs(
-      poly.reduce((sum, p, i) => {
-        const q = poly[(i + 1) % poly.length]!
-        return sum + p[0] * q[1] - q[0] * p[1]
-      }, 0),
-    ) / 2
-  )
-}
-function cross(a: Point, b: Point, c: Point) {
-  return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
-}
-function properCross(a: Point, b: Point, c: Point, d: Point) {
-  return cross(a, b, c) * cross(a, b, d) < -1e-12 && cross(c, d, a) * cross(c, d, b) < -1e-12
-}
-function validatePolygon(poly: Point[], room: ZoneNode) {
-  if (polygonArea(poly) < 0.001) refuse('invalid_polygon', 'Functional zone needs a non-zero area.')
-  for (let i = 0; i < poly.length; i++) {
-    const a = poly[i]!,
-      b = poly[(i + 1) % poly.length]!
-    if (Math.hypot(b[0] - a[0], b[1] - a[1]) < 1e-6)
-      refuse('invalid_polygon', 'Repeated consecutive corners.')
-    for (let j = i + 1; j < poly.length; j++) {
-      if (j === i + 1 || (i === 0 && j === poly.length - 1)) continue
-      if (segmentsIntersect(a, b, poly[j]!, poly[(j + 1) % poly.length]!))
-        refuse('invalid_polygon', 'Functional zone boundary crosses itself.')
-    }
-    if (!pointInPolygon(a, room.polygon))
-      refuse('outside_room', 'Functional zone must stay inside its room.')
-    for (let j = 0; j < room.polygon.length; j++)
-      if (properCross(a, b, room.polygon[j]!, room.polygon[(j + 1) % room.polygon.length]!))
-        refuse('outside_room', 'Functional zone edge crosses its room boundary.')
-    if (!pointInPolygon([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], room.polygon))
-      refuse('outside_room', 'Functional zone edge leaves its room.')
+function validateGeometry(zone: FunctionalZoneNode, room: ZoneNode) {
+  try {
+    validateZoneParts(zoneParts(zone), room)
+  } catch (e) {
+    const code = e instanceof Error ? e.message : 'invalid_polygon'
+    refuse(
+      code,
+      code === 'room_hole_overlap'
+        ? 'Functional zone overlaps a room opening.'
+        : code === 'outside_room'
+          ? 'Functional zone crosses its room boundary.'
+          : 'Functional-zone geometry must be simple, non-overlapping and inside the room, with valid holes.',
+      {},
+    )
   }
-  for (const hole of room.holes ?? [])
-    if (polygonsOverlap(poly, hole))
-      refuse('room_hole_overlap', 'Functional zone overlaps a room opening.')
+}
+export function getFunctionalZoneRemainder(
+  nodes: SceneNodes,
+  input: { roomId: string; excludeId?: string },
+) {
+  const room = roomOf(nodes, input.roomId)
+  if (input.excludeId && areaOf(nodes, input.excludeId).roomId !== room.id)
+    refuse('room_mismatch', 'The excluded zone must belong to this room.')
+  const cutters = queryNodes<FunctionalZoneNode>(nodes, { type: 'functional-zone' }).filter(
+    (n) => n.roomId === room.id && n.id !== input.excludeId,
+  )
+  for (const n of cutters) validateGeometry(n, room)
+  const parts = subtractZoneParts(
+    [{ polygon: room.polygon, holes: room.holes ?? [] }],
+    cutters.flatMap(zoneParts),
+  )
+  return {
+    result: {
+      roomId: room.id,
+      parts,
+      partCount: parts.length,
+      holeCount: parts.reduce((n, p) => n + p.holes.length, 0),
+      areaM2: zoneArea(parts),
+      empty: parts.length === 0,
+      units: 'meters',
+    },
+  }
 }
 
 export function editFunctionalZone(
@@ -116,6 +128,13 @@ export function editFunctionalZone(
   const room = roomOf(nodes, input.roomId ?? old?.roomId)
   const level = room.parentId ? nodes[room.parentId] : undefined
   if (level?.type !== 'level') refuse('room_level_required', 'The room must belong to a level.')
+  if (input.fillRemaining && (input.polygon || input.holes || input.parts))
+    refuse('ambiguous_geometry', 'Use fillRemaining or explicit geometry, not both.')
+  const remaining = input.fillRemaining
+    ? getFunctionalZoneRemainder(nodes, { roomId: room.id, excludeId: old?.id }).result.parts
+    : undefined
+  if (remaining && !remaining.length)
+    refuse('empty_remainder', 'The room is already fully covered.')
   const next = FunctionalZoneNode.parse({
     ...old,
     ...(input.id ? { id: input.id } : {}),
@@ -125,9 +144,12 @@ export function editFunctionalZone(
     name: input.name ?? old?.name,
     functions: input.functions ?? old?.functions,
     polygon: input.polygon ?? old?.polygon,
+    holes: input.holes ?? old?.holes,
+    parts: input.parts ?? old?.parts,
+    ...(remaining ? zoneGeometry(remaining) : {}),
     color: input.color ?? old?.color,
   })
-  validatePolygon(next.polygon, room)
+  validateGeometry(next, room)
   if (
     old &&
     old.parentId !== level.id &&
@@ -340,10 +362,19 @@ export function getSpatialHierarchy(nodes: SceneNodes, input: { roomId?: string 
           const n = nodes[p.id]
           if (n?.type !== 'item' || assigned.has(p.id)) return false
           const pose = itemLevelPose(n, byId)
-          return pose && pointInPolygon([pose.position[0], pose.position[2]], area.polygon)
+          return pose && zoneContains(zoneParts(area), [pose.position[0], pose.position[2]])
         })
         .map((p) => describe(p.id))
-      return { ...area, furnitureGroups, ungroupedItems: ungrouped }
+      return {
+        ...area,
+        geometrySummary: {
+          partCount: zoneParts(area).length,
+          holeCount: zoneParts(area).reduce((n, p) => n + p.holes.length, 0),
+          areaM2: zoneArea(zoneParts(area)),
+        },
+        furnitureGroups,
+        ungroupedItems: ungrouped,
+      }
     })
     const unassignedItems = room.pieces
       .filter(
@@ -360,7 +391,7 @@ export function getSpatialHierarchy(nodes: SceneNodes, input: { roomId?: string 
   ]) {
     if (n.type === 'functional-zone') {
       try {
-        validatePolygon(n.polygon, roomOf(nodes, n.roomId))
+        validateGeometry(n, roomOf(nodes, n.roomId))
       } catch (e) {
         issues.push({ id: n.id, code: 'invalid_functional_zone', message: String(e) })
       }
@@ -370,7 +401,7 @@ export function getSpatialHierarchy(nodes: SceneNodes, input: { roomId?: string 
         const area = areaOf(nodes, n.functionalZoneId)
         for (const item of membersOf(nodes, n)) {
           const pose = itemLevelPose(item, byId)
-          if (pose && !pointInPolygon([pose.position[0], pose.position[2]], area.polygon))
+          if (pose && !zoneContains(zoneParts(area), [pose.position[0], pose.position[2]]))
             issues.push({ id: item.id, groupId: n.id, code: 'outside_functional_zone' })
         }
       } catch (e) {

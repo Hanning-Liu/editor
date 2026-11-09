@@ -35,6 +35,7 @@ import { getSite, placeBuilding } from './site'
 import {
   editFunctionalZone,
   editFurnitureGroup,
+  getFunctionalZoneRemainder,
   getSpatialHierarchy,
   listFurnitureGroups,
   transformFurnitureGroup,
@@ -161,6 +162,7 @@ const SINGLE_OPERATIONS = {
   set_unit_members: setUnitMembers,
   list_units: listUnits,
   edit_functional_zone: editFunctionalZone,
+  get_functional_zone_remainder: getFunctionalZoneRemainder,
   edit_furniture_group: editFurnitureGroup,
   transform_furniture_group: transformFurnitureGroup,
   get_spatial_hierarchy: getSpatialHierarchy,

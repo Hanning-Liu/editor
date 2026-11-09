@@ -36,6 +36,7 @@ const TOOL_POLICIES = [
       'get_walls',
       'get_zones',
       'get_spatial_hierarchy',
+      'get_functional_zone_remainder',
       'list_functional_zones',
       'list_furniture_groups',
       'list_levels',

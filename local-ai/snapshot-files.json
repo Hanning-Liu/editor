@@ -44,8 +44,8 @@
     },
     {
       "path": "all-tools.json",
-      "sha256": "a190623ba6ca6dbe65c369ccfe730025a41965e4c6fc529271488495739ac72f",
-      "bytes": 635734
+      "sha256": "2045217af3ba1c57676fcba7b9b41b67f7c0496ef29d982ef26f7728b8d47772",
+      "bytes": 638866
     },
     {
       "path": "brief-probe.mjs",
@@ -69,8 +69,8 @@
     },
     {
       "path": "chat-server.mjs",
-      "sha256": "7b37ee406c2d0f7def73caa416f21640e990b323e5cc93068c90deb0fda615c9",
-      "bytes": 33330
+      "sha256": "be4dddb40ff458114cc5603ee7362dda1a52214ee5f48e8021da43638a7cd26a",
+      "bytes": 33707
     },
     {
       "path": "controls-tests/check-api.mjs",
@@ -469,8 +469,8 @@
     },
     {
       "path": "tool-registry.mjs",
-      "sha256": "714b071dace41c77c99ade326937a98816bcf75d5c201c92d44c8790d5c8e2f6",
-      "bytes": 6947
+      "sha256": "9a40ccd7a03ae63614ac1418ce547f3822269e1940f11fc6c97fab21e6e6e3cc",
+      "bytes": 6981
     },
     {
       "path": "tool-schemas.json",

@@ -69,3 +69,7 @@
 ## Interaction update
 
 The permanent tree buttons have been replaced by context menus, inspector cards, direct transform handles and semantic drag/drop. See [the interaction update and acceptance evidence](SPATIAL-HIERARCHY-UX.md).
+
+## Interactive outlines
+
+Functional zones now support mouse-drawn rectangles/polygons, direct boundary editing, multipart outlines, holes and exact remaining-area preview. See [usage, representation and acceptance evidence](FUNCTIONAL-ZONE-DRAWING.md).

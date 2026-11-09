@@ -233,7 +233,7 @@ export {
 } from './nodes/fence'
 export { type FenceFeatureNode, FenceGateNode, FenceOpeningNode } from './nodes/fence-feature'
 export { FloorOpeningNode } from './nodes/floor-opening'
-export { FunctionalZoneNode } from './nodes/functional-zone'
+export { FunctionalZoneNode, FunctionalZonePart } from './nodes/functional-zone'
 export { FurnitureGroupNode } from './nodes/furniture-group'
 export { GuideNode, GuideScaleReference } from './nodes/guide'
 export {

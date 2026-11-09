@@ -1,0 +1,16 @@
+{
+  "repository": "Hanning-Liu/label-studio",
+  "localHead": "1a3b226afaf7b95632eb4dd7c13801b1e84abd53",
+  "sourceDirty": false,
+  "files": [
+    {
+      "path": "hanning/frontend/domain/occupancy/geometry.js",
+      "sha256": "0d610fe881bdc275593757e60323363a884e04835a2d024372b41eac508d0644"
+    },
+    {
+      "path": "examples/occupancy-v1/geometry-cases.json",
+      "sha256": "0b47c59942a5c55338e085e93783bb336688cbdda5d6b944f730036153978683"
+    }
+  ],
+  "adaptation": "Topology, stable area and numerical-fragment rules adapted to level-local metres. Seven fixtures include expected outputs computed by the existing Label Studio difference/area functions. Hole triangulation for Label Studio result storage is intentionally not ported: Pascal retains native holes and logical multipart identity."
+}

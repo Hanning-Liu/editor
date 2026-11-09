@@ -6121,18 +6121,6 @@ msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.memberLabel"
 msgstr "Group member {name}"
 
 #: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.pointX"
-msgstr "Boundary point {index} X"
-
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.pointZ"
-msgstr "Boundary point {index} Z"
-
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.removePoint"
-msgstr "Delete boundary point {index}"
-
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
 msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.roleLabel"
 msgstr "Member role {name}"
 
@@ -6167,10 +6155,6 @@ msgstr "Apply group transform"
 #: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
 msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text1t2qgq"
 msgstr "Root member centre"
-
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text2cwspw"
-msgstr "Add boundary point"
 
 #: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
 msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.text9vhvpz"
@@ -6263,10 +6247,6 @@ msgstr "ΔX metres"
 #: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
 msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.x2"
 msgstr "Group translation X"
-
-#: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
-msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.xZ"
-msgstr "Boundary points in X/Z metres. Start with the room outline and edit corners; no walls are created."
 
 #: packages/editor/src/components/ui/panels/spatial-hierarchy-panel.tsx
 msgid "editor.sidebar.panels.sitePanel.spatialHierarchy.z"
@@ -7352,6 +7332,122 @@ msgstr "Wall types: new, edit or duplicate {label}"
 #: packages/editor/src/components/editor/index.tsx
 msgid "editor.youCanRetryTheSceneOr"
 msgstr "You can retry the scene or return home without reloading the whole app shell."
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.activeHole"
+msgstr "Active hole"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.activePart"
+msgstr "Active part"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.addHole"
+msgstr "Add hole"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.addPart"
+msgstr "Add part"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.advanced"
+msgstr "Advanced coordinates"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.apply"
+msgstr "Apply outline"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.cancel"
+msgstr "Cancel outline"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.covered"
+msgstr "This room is already fully covered."
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.drag"
+msgstr "Drag in the 2D view to draw a rectangle."
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.edit"
+msgstr "Edit boundary"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.error"
+msgstr "Outline cannot be applied: {reason}. Check boundaries and holes. If the scene changed, preview again."
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.handles"
+msgstr "Drag vertices or edges. Double-click an edge to add a vertex; right-click a vertex to remove it."
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.hole"
+msgstr "Hole {index}"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.holeInvalid"
+msgstr "Holes must be inside their part and must not touch or overlap other boundaries"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.invalid"
+msgstr "Use at least three distinct vertices with no crossing edges"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.json"
+msgstr "Geometry parts JSON"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.outside"
+msgstr "The outline crosses the room boundary"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.overlap"
+msgstr "Parts of the same zone must not overlap"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.part"
+msgstr "Part {index}"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.points"
+msgstr "Click vertices; click the first point or press Enter to close. Backspace removes a point."
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.polygon"
+msgstr "Draw polygon"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.preview"
+msgstr "Preview coordinates"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.rectangle"
+msgstr "Draw rectangle"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.remaining"
+msgstr "Fill remaining area"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.removeHole"
+msgstr "Remove hole"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.removePart"
+msgstr "Remove part"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.roomVoid"
+msgstr "The outline covers a room opening"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.stale"
+msgstr "The scene changed after this preview"
+
+#: packages/editor/src/components/ui/panels/functional-zone-controls.tsx
+msgid "editor.zoneDrawing.summary"
+msgstr "{parts} parts · {holes} holes · {area} m²"
 
 #: packages/nodes/src/i18n/definition-messages.ts
 msgid "node.beam.description"
