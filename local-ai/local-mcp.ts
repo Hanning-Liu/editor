@@ -2,6 +2,8 @@ import { editorUrl, assetFetch } from "./connection.mjs";
 import { createRemoteSceneStore, remoteArtifacts } from "./remote-scene-store.mjs";
 import "./editor-src/packages/mcp/dist/bridge/node-shims.js";
 import { SceneBridge } from "./editor-src/packages/mcp/dist/bridge/scene-bridge.js";
+import { createSceneOperations } from './editor-src/packages/mcp/dist/operations/scene-operations.js';
+import { registerSpatialReferenceTools } from './spatial-reference-tools.ts';
 import { createPascalMcpServer } from "./editor-src/packages/mcp/dist/server.js";
 import {
 	createSceneStore,
@@ -73,9 +75,11 @@ connectStdio(() => {
 	const bridge = new SceneBridge();
 	bridge.loadDefault();
 	bridge.clearHistory();
+	const operations = createSceneOperations({ bridge, store });
 	const server = createPascalMcpServer({
 		bridge,
 		store,
+		operations,
     catalog,
 		geometryScripts: geometry,
 		assetViews: createAssetViewLoader(
@@ -133,5 +137,6 @@ connectStdio(() => {
 		},
 	});
   registerStudioTools(server,bridge);
+  registerSpatialReferenceTools(server,operations);
   return server;
 });

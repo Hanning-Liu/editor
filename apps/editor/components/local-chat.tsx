@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { SpatialDecision } from './spatial-decision'
 
 type Attachment = { id: string; name: string; mime: string; size: number; note?: string }
 type Message = {
@@ -39,6 +40,7 @@ type Step = {
   name?: string
   state?: string
   args?: unknown
+  spatialDecisions?: unknown[]
   result?: unknown
   context?: Context
   latest?: Usage
@@ -512,6 +514,20 @@ export function LocalChat({ sceneId }: { sceneId: string }) {
                   <summary>
                     {s.state === 'done' ? '✓' : s.state === 'error' ? '×' : '…'} {s.name}
                   </summary>
+                  <SpatialDecision value={s.result} />
+                  {s.spatialDecisions?.map((d, index) => (
+                    <SpatialDecision
+                      key={index}
+                      value={d}
+                      parameters={s.args}
+                      rejected={s.state === 'error'}
+                    />
+                  ))}
+                  <SpatialDecision
+                    value={(s.result as { spatialDecision?: unknown } | undefined)?.spatialDecision}
+                    parameters={s.args}
+                    rejected
+                  />
                   <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-all text-[10px]">
                     {JSON.stringify({ args: s.args, result: s.result }, null, 2)}
                   </pre>

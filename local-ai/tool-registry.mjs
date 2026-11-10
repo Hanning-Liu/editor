@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { SPATIAL_READ_TOOLS } from './spatial-reference.mjs';
 const inventory = JSON.parse(
 	readFileSync(new URL("./all-tools.json", import.meta.url)),
 );
@@ -29,7 +30,7 @@ const groups = [
 		"furniture",
 		"家具布局",
 		"目录家具与整屋布局",
-		"search_assets place_items move_node furnish_room place_in_room view_assets",
+		"search_assets place_items move_node furnish_room place_in_room view_assets spatial_set_furniture_front",
 	],
 	[
 		"materials",
@@ -76,15 +77,16 @@ export const PLUGINS = groups.map(([id, name, description, names]) => ({
 	...(id === "inspect" ? { required: true } : {}),
 }));
 const grouped = new Set(PLUGINS.flatMap((p) => p.tools));
-export const READ_TOOLS = inventory
+export const READ_TOOLS = [...SPATIAL_READ_TOOLS, ...inventory
 	.filter(
 		(t) =>
 			!BLOCKED.has(t.name) &&
 			!grouped.has(t.name) &&
 			t.annotations?.readOnlyHint,
 	)
-	.map((t) => t.name);
+	.map((t) => t.name)];
 export const INITIAL_TOOLS = [
+	...SPATIAL_READ_TOOLS,
 	"get_spatial_hierarchy",
 	"get_functional_zone_remainder",
 	"list_levels",

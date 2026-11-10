@@ -63,6 +63,7 @@ og-test
 # Local AI runtime data (source lives in local-ai/)
 *.log
 /local-ai/node_modules/
+/local-ai/editor-src
 /local-ai/pascal-home/
 /local-ai/studio-data/
 /local-ai/chat-data/
