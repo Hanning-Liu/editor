@@ -1,4 +1,4 @@
-import { spatialSceneHash } from './spatial-reference.mjs'
+import { spatialSceneHash, relativeWallDecision } from './spatial-reference.mjs'
 
 const relationPatterns = {
   right: /右(?:侧|边|方|手)?|\bright\b/i,
@@ -23,9 +23,10 @@ export function relativeRequestPolicy(text,nodes) {
   const referenceFrame=/屏幕|画面|镜头|相机|camera|screen/i.test(text) ? 'camera_unavailable'
     : /世界|全局|world/i.test(text) ? 'world'
     : /面对(?:这|该|这张|这个)?(?:沙发|家具|椅|桌)|站在.*正面|面向.*正面|从.*正面看|facing.front/i.test(text) ? 'facing_front' : 'use_direction'
+  const namedRooms=Object.values(nodes).filter(n=>n.type==='zone' && (!n.spaceRole || n.spaceRole==='room') && (text.includes(n.id) || (n.name && n.name.length>1 && text.toLowerCase().includes(n.name.toLowerCase()))))
   const expectedTools=/门|\bdoor\b/i.test(text) ? ['add_door'] : /窗|\bwindow\b/i.test(text) ? ['add_window'] : []
   if (/门.*窗|窗.*门|door.*window|window.*door/i.test(text)) expectedTools.push(...['add_door','add_window'].filter(n=>!expectedTools.includes(n)))
-  return {subjectId:candidates.length===1?candidates[0].id:null,candidates:candidates.map(n=>({id:n.id,name:n.name||n.asset.name})),
+  return {roomId:namedRooms.length===1?namedRooms[0].id:null,subjectId:candidates.length===1?candidates[0].id:null,candidates:candidates.map(n=>({id:n.id,name:n.name||n.asset.name})),
     relations,referenceFrame,expectedTools,
     readOnly:/^\s*(只读|仅查看|仅检查|请只读|请仅|read.only)/i.test(text)||/(?:不要|不得|不)(?:修改|编辑)(?:任何)?(?:场景|项目|模型)/.test(text),
     referenceDescription:referenceFrame==='use_direction'?'默认采用沿家具使用方向（座椅坐姿），不是站在家具正面看':referenceFrame==='facing_front'?'采用站在家具正面、面向家具的观察者方向':referenceFrame==='world'?'采用明确的世界轴：右+X、前-Z':'当前没有相机证据，不能猜测屏幕相对方向',
@@ -73,6 +74,10 @@ export function assertRelativeWallEdit(name,args,policy,resolutions,nodes) {
     }
     const decision=fresh.find(r=>r.selection?.wallId===input.wallId)
     if (!decision) reject('relative_wall_mismatch',`工具提出的墙与方位解析不一致；当前可选墙为 ${fresh.map(r=>r.selection?.name).join('、')}，不执行该编辑。`,fresh.at(-1))
+    const unqualified=relativeWallDecision(nodes,{subjectId:policy.subjectId,referenceFrame:policy.referenceFrame,relation:decision.relation})
+    if ((policy.roomId && decision.room?.id!==policy.roomId) ||
+        (unqualified.status==='ambiguous_room' && (!policy.roomId || decision.room?.id!==policy.roomId)))
+      reject('room_confirmation_required','多个房间包含参照家具，必须由用户明确房间；不能由模型用 roomId 消除歧义。',decision)
     if (input.nodeId) reject('relative_new_opening_required','相对墙体新开门窗不能借 nodeId 重建其他位置的既有构件。',decision)
     const t=input.t ?? input.position ?? .5
     const width=input.width ?? (call.tool==='add_door'?.9:1.5)

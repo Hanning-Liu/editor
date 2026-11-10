@@ -74,3 +74,11 @@ test('common front/back wall phrasings also require the frame guard',()=>{
  for(const text of ['给沙发后墙开窗','给沙发背面的墙开窗','add a window in the wall behind the sofa']) assert.deepEqual(relativeRequestPolicy(text,nodes).relations,['back'])
  for(const text of ['给沙发前墙开窗','给沙发对着的墙开窗']) assert.deepEqual(relativeRequestPolicy(text,nodes).relations,['front'])
 })
+
+test('an agent-supplied roomId cannot silently disambiguate overlapping rooms',()=>{
+ const nodes=fixture();nodes.zone_other={...structuredClone(nodes.zone_r),id:'zone_other',name:'Other'}
+ const decision=relativeWallDecision(nodes,{subjectId:'item_sofa',referenceFrame:'use_direction',relation:'right',roomId:'zone_r'})
+ assert.equal(decision.status,'resolved')
+ assert.throws(()=>assertRelativeWallEdit('add_door',args,relativeRequestPolicy(request,nodes),[decision],nodes),{code:'room_confirmation_required'})
+ assert.equal(assertRelativeWallEdit('add_door',args,relativeRequestPolicy('在 Room 沙发右边的墙上加门',nodes),[decision],nodes).length,1)
+})

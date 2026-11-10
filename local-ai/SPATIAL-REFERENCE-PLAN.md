@@ -10,4 +10,10 @@ Baseline: `297b6ac`, branch `codex/furniture-relative-reference`.
 
 Conventions: default seating references follow the direction of use (sitting facing forward); right is forward × world up. Facing the front of an object reverses the observer's forward and right. World axes are explicitly labelled. No camera-relative claim is made without camera evidence.
 
-Status: implementation in progress.
+Status: completed on 2026-11-10. See `SPATIAL-REFERENCE-ACCEPTANCE.md`.
+
+- Native local and cloud MCP: 16 direction/rotation combinations per deployment, metadata-only calibration, undo and reload passed.
+- Real Qwen via local webpage: yaw 90°, four directions plus right-side door passed.
+- Real Qwen via ModelScope webpage: yaw 180°, four directions plus right-side door passed; decision cards and submitted parameters survived reload.
+- Injected missing-evidence and wrong-wall proposals were blocked before the one correct edit.
+- Original 20 local and 2 cloud scene graphs remained unchanged. Both acceptance scenes preserved existing furniture and support links.
