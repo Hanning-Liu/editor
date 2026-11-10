@@ -1,4 +1,5 @@
 import { editorFetch, publicUrl } from './connection.mjs'
+import { setTimeout as wait } from 'node:timers/promises'
 
 export function createRemoteSceneStore() {
   if (!process.env.PASCAL_SCENE_API_TOKEN) throw Error('Remote scene store requires PASCAL_SCENE_API_TOKEN')
@@ -37,10 +38,17 @@ export function remoteArtifacts() {
     return '/api/artifacts/' + sha256
   }
   return {
-    async storeArtifact({ sha256, bytes }) {
-      const response = await editorFetch(artifactPath(sha256), { method: 'PUT', body: bytes })
-      if (!response.ok) throw Error('Cloud artifact upload failed: ' + response.status)
-      return sha256
+    async storeArtifact({ sha256, bytes, signal }) {
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const response = await editorFetch(artifactPath(sha256), { method: 'PUT', body: bytes,
+          ...(signal ? { signal: AbortSignal.any([signal, AbortSignal.timeout(60000)]) } : {}) })
+        if (response.ok) { await response.arrayBuffer(); return sha256 }
+        if (![429, 503].includes(response.status) || attempt === 4)
+          throw Error('Cloud artifact upload failed: ' + response.status)
+        const retry = Number(response.headers.get('Retry-After') ?? NaN)
+        await response.arrayBuffer()
+        await wait(Math.min(30000, Math.max(100, Number.isFinite(retry) ? retry * 1000 : 1000 * 2 ** attempt)), undefined, { signal })
+      }
     },
     async readArtifact({ sha256 }) {
       const response = await editorFetch(artifactPath(sha256))

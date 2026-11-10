@@ -56,32 +56,45 @@ export async function renderScene(sceneId, request, signal) {
 				"?local-render=1"),
 			{ waitUntil: "domcontentloaded", timeout: 90000 },
 		);
-		try { await page.waitForFunction(
-			() =>
-				typeof window.pascalLocalCapture === "function" &&
-				window.pascalLocalReady?.() &&
-				document.querySelector("canvas"),
-			null, { timeout: 45000 },
-		); } catch {
-			const state = await page.evaluate(() => ({
-				title: document.title,
-				canvas: Boolean(document.querySelector('canvas')),
-				capture: typeof window.pascalLocalCapture,
-				ready: Boolean(window.pascalLocalReady?.()),
-				text: document.body.innerText.slice(0, 500),
-			}));
-			throw Error('capture_not_ready: ' + JSON.stringify(state));
+		// Hosting platforms can wrap the editor in an iframe. The capture
+		// bridge belongs to the actual editor frame, not that hosting shell.
+		let captureFrame;
+		const readyUntil = Date.now() + 45000;
+		while (!captureFrame && Date.now() < readyUntil) {
+			for (const frame of page.frames()) {
+				try {
+					if (await frame.evaluate(() => typeof window.pascalLocalCapture === 'function' && window.pascalLocalReady?.() && Boolean(document.querySelector('canvas')))) {
+						captureFrame = frame;
+						break;
+					}
+				} catch { /* A hosting frame can navigate while its app loads. */ }
+			}
+			if (!captureFrame) await page.waitForTimeout(250);
+		}
+		if (!captureFrame) {
+			const states = [];
+			for (const frame of page.frames()) {
+				try {
+					states.push(await frame.evaluate(() => ({
+						location: location.origin + location.pathname,
+						title: document.title, canvas: Boolean(document.querySelector('canvas')),
+						capture: typeof window.pascalLocalCapture, ready: Boolean(window.pascalLocalReady?.()),
+						text: document.body.innerText.slice(0, 300),
+					})));
+				} catch {}
+			}
+			throw Error('capture_not_ready: ' + JSON.stringify(states));
 		}
 		await page.waitForTimeout(6000);
 		if (request.exportGlb) {
-			const file = await page.evaluate(async () => window.pascalLocalExport());
+			const file = await captureFrame.evaluate(async () => window.pascalLocalExport());
 			return {
 				bytes: Buffer.from(file.base64, "base64"),
 				warnings: file.warnings,
 			};
 		}
 		const { pose, size, interior, presentation } = request;
-		const image = await page.evaluate(
+		const image = await captureFrame.evaluate(
 			async (input) => window.pascalLocalCapture(input),
 			{
 				standardSize: size,

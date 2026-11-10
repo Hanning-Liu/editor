@@ -11,7 +11,7 @@
 | 魔搭 | haniNGC7635/pascal-local-ai，免费2CPU/8GB，7860；数据库与Tailscale状态在 /mnt/workspace/pascal |
 | 阿里云 | /opt/pascal-ai-gateway；独立 pascal-ai-gateway / pascal-ai-tailnet 服务；仅私网9080 |
 | Mac生产工作节点 | /Users/Bill_Admin/Research/pascal-cloud-worker；Chat18091 / Studio18092 |
-| Mac生产任务/素材 | cloud-production/studio-data；Chat记录在chat-data；不要删除或与沙盒混用 |
+| Mac生产任务/素材 | cloud-production/studio-data为工作副本；生成文件同步到云端pascal.db.artifacts；Chat记录在chat-data；不要删除或与沙盒混用 |
 | Mac生产配置 | /Users/Bill_Admin/Research/pascal-cloud-gateway-evidence/production-worker.env，仅本机账号可读 |
 | 原本地编辑器 | /Users/Bill_Admin/Research/pascal-local-qwen38，3002/18081/18082保持独立 |
 | 验收沙盒 | 3003 / Chat18093 / Studio18094，生成素材独立 |
@@ -46,3 +46,9 @@ sudo systemctl status pascal-ai-gateway.service pascal-ai-tailnet.service
 停止本次新增的Mac生产LaunchAgent及阿里云pascal-ai-*，即可停止云AI。保留工作节点产物目录、云数据库和Tailscale状态以便恢复。只关闭本次新增的Tailscale Serve18091/18092/9080映射，禁止全局serve reset。原jia-you-xin-jie空间、小程序及私人后台不纳入代理，也无需更改。
 
 小程序部署前一致性备份为/var/backups/pascal-ai-gateway/predeploy-mini.sqlite；本次不替换原数据库和既有备份。
+
+## 素材持久化
+
+云端生成任务完成后，将预览、模型、2D俯视图、材质贴图及下载清单按SHA256上传云素材库，再标记成功。画布与下载使用云端不可变素材URL；本机AI离线时，已保存场景的模型与贴图仍可读取。Studio任务列表与新的生成仍依赖本机工作节点。
+
+若上传中断，重试会继续发布已生成的文件，不重新运行推理。魔搭持久盘不支持硬链接，素材存储会在校验SHA256后使用完整临时文件重命名发布。

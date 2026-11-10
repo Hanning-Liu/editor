@@ -39,7 +39,9 @@ export async function list() {
   return out.sort((a, b) => b.createdAt.localeCompare(a.createdAt))
 }
 export const fileUrl = (j, name) =>
-  `/api/local-studio?sceneId=${j.sceneId}&action=file&jobId=${j.id}&name=${encodeURIComponent(name)}`
+  j.cloudArtifacts?.[name]
+    ? `/api/artifacts/${j.cloudArtifacts[name]}?name=${encodeURIComponent(name)}`
+    : `/api/local-studio?sceneId=${j.sceneId}&action=file&jobId=${j.id}&name=${encodeURIComponent(name)}`
 export async function generatedAssets() {
   return (await list())
     .filter((j) => j.status === 'succeeded' && j.result?.kind === 'model')

@@ -41,7 +41,7 @@ export async function editorFetch(path, init = {}) {
 }
 
 export function assetFetch(input, init) {
-  const url = new URL(typeof input === 'string' ? input : input.url || input.href)
+  const url = new URL(typeof input === 'string' ? input : input.url || input.href, PUBLIC_ORIGIN)
   const callback = editorAssetUrl(url.href)
   return callback ? editorFetch(callback, init) : fetch(input, init)
 }

@@ -74,6 +74,7 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
     [x, setX] = useState(0),
     [z, setZ] = useState(0),
     [rotation, setRotation] = useState(0)
+  const [downloading, setDownloading] = useState<string | null>(null)
   const [settings, setSettings] = useState({
     resolution: 768,
     imageStrength: 0.8,
@@ -193,6 +194,30 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
     const data = await r.json()
     if (!r.ok) throw Error(data.error || '请求失败')
     return data
+  }
+  async function downloadFile(file: { name: string; url: string }) {
+    if (downloading) return
+    setDownloading(file.name)
+    try {
+      // Fetch within the editor frame: hosting shells can intercept a direct
+      // download navigation and substitute their HTML application wrapper.
+      const response = await fetch(file.url + '&download=1')
+      if (!response.ok || response.headers.get('content-type')?.includes('text/html'))
+        throw Error('下载失败，请刷新素材后重试')
+      const url = URL.createObjectURL(await response.blob())
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = file.name
+      document.body.append(anchor)
+      anchor.click()
+      anchor.remove()
+      setTimeout(() => URL.revokeObjectURL(url), 30000)
+      setNotice('文件已开始下载：' + file.name)
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : '下载失败')
+    } finally {
+      setDownloading(null)
+    }
   }
   async function submit() {
     setBusy(true)
@@ -539,7 +564,10 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
                       />
                       <img
                         className="max-h-72 rounded-xl"
-                        src={base + '&action=file&jobId=' + focus.id + '&name=tiled.png'}
+                        src={
+                          focus.result.downloads.find((file) => file.name === 'tiled.png')?.url ||
+                          base + '&action=file&jobId=' + focus.id + '&name=tiled.png'
+                        }
                         alt="4×4 平铺预览"
                       />
                       {focus.result.estimated && (
@@ -554,7 +582,10 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
                       <Preview
                         key={focus.id}
                         kind="model"
-                        url={base + '&action=file&jobId=' + focus.id + '&name=model.glb'}
+                        url={
+                          focus.result.downloads.find((file) => file.name === 'model.glb')?.url ||
+                          base + '&action=file&jobId=' + focus.id + '&name=model.glb'
+                        }
                         roughness={0.6}
                         metalness={0}
                       />
@@ -578,7 +609,18 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
                   )}
                   <div role="group" className="flex flex-wrap gap-2" aria-label="Studio 下载文件">
                     {focus.result.downloads.map((f) => (
-                      <a className={button} key={f.name} href={f.url + '&download=1'} download>
+                      <a
+                        className={button}
+                        key={f.name}
+                        href={f.url + '&download=1'}
+                        download
+                        aria-busy={downloading === f.name}
+                        aria-disabled={!!downloading}
+                        onClick={(event) => {
+                          event.preventDefault()
+                          void downloadFile(f)
+                        }}
+                      >
                         <Download className="mr-1 inline size-3" />
                         {f.name}
                       </a>

@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto'
-import { link, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { link, mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 
 /** Immutable artifacts beside the SQLite scene database. */
@@ -26,7 +26,23 @@ export class DiskArtifactStore {
     try {
       await writeFile(temporary, data, { flag: 'wx' })
       // A hard link publishes complete bytes atomically without replacing another writer's file.
-      await link(temporary, path)
+      try {
+        await link(temporary, path)
+      } catch (error) {
+        if (
+          !['ENOTSUP', 'EOPNOTSUPP', 'EPERM'].includes((error as NodeJS.ErrnoException).code ?? '')
+        )
+          throw error
+        // Some cloud volumes cannot hard-link. Rename still publishes complete
+        // bytes atomically; concurrent writers of this verified hash have
+        // identical content. Preserve an existing file when already present.
+        try {
+          await readFile(path)
+        } catch (readError) {
+          if ((readError as NodeJS.ErrnoException).code !== 'ENOENT') throw readError
+          await rename(temporary, path)
+        }
+      }
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error
     } finally {

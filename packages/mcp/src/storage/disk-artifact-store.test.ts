@@ -1,9 +1,10 @@
-import { expect, test } from 'bun:test'
+import { expect, spyOn, test } from 'bun:test'
 import { createHash } from 'node:crypto'
+import * as fs from 'node:fs/promises'
 import { mkdtemp, readdir, rm, stat } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { DiskArtifactStore } from '@pascal-app/mcp/storage'
+import { DiskArtifactStore } from './disk-artifact-store'
 
 test('artifacts survive reopening, verify content, and never replace an existing hash', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'pascal-artifacts-'))
@@ -23,6 +24,27 @@ test('artifacts survive reopening, verify content, and never replace an existing
     await expect(reopened.read('../house.json')).rejects.toThrow('Invalid artifact hash')
     expect(await reopened.read('0'.repeat(64))).toBeNull()
   } finally {
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('cloud volumes without hard links publish complete verified artifacts', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'pascal-cloud-artifacts-'))
+  const unsupported = spyOn(fs, 'link').mockRejectedValue(
+    Object.assign(Error('unsupported'), { code: 'ENOTSUP' }),
+  )
+  try {
+    const store = new DiskArtifactStore(join(dir, 'pascal.db'))
+    const bytes = new Uint8Array(560041).fill(137)
+    const sha = createHash('sha256').update(bytes).digest('hex')
+    await Promise.all([store.put(sha, bytes), store.put(sha, bytes)])
+    expect(await store.read(sha)).toEqual(bytes)
+    const original = await stat(join(store.directory, sha))
+    await store.put(sha, bytes)
+    expect((await stat(join(store.directory, sha))).ino).toBe(original.ino)
+    expect(await readdir(store.directory)).toEqual([sha])
+  } finally {
+    unsupported.mockRestore()
     await rm(dir, { recursive: true, force: true })
   }
 })

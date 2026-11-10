@@ -6,6 +6,7 @@ import path from 'node:path'
 import { capabilities, DATA, ROOT } from './config.mjs'
 import { save, get, list, dir, fileUrl } from './store.mjs'
 import { generate } from './engine.mjs'
+import { publishCloudAssets } from './cloud-assets.mjs'
 import { createMcpSession } from '../mcp-session.mjs'
 import { currentScene, recordEdit } from '../scene-journal.mjs'
 const queue = [],
@@ -35,11 +36,16 @@ async function drain() {
       j.phase = '准备生成'
       await save(j)
       try {
-        j.result = await generate(j, controller.signal, async (phase) => {
+        j.result ||= await generate(j, controller.signal, async (phase) => {
           if (controller.signal.aborted) return
           j.phase = phase
           await save(j)
         })
+        if (process.env.PASCAL_REMOTE_STORE === '1') {
+          j.phase = '正在同步云端素材'
+          await save(j)
+          await publishCloudAssets(j, controller.signal)
+        }
         controller.signal.throwIfAborted()
         j.status = 'succeeded'
         j.phase = '已完成'

@@ -16,6 +16,7 @@ for(const type of types){
  for(const file of files){
   const response=await assetFetch(file.url+'&download=1');assert.ok(response.ok,file.name)
   const bytes=Buffer.from(await response.arrayBuffer());assert.ok(bytes.length>0)
+  if(job.cloudArtifacts?.[file.name])assert.equal(createHash('sha256').update(bytes).digest('hex'),job.cloudArtifacts[file.name]);else if(file.name!=='manifest.json'){const source=await readFile(path.join(process.env.STUDIO_DATA_DIR,'jobs',job.id,file.name));assert.ok(bytes.equals(source),file.name+' changed in transport')}
   if(file.name.endsWith('.png'))assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a')
   if(file.name.endsWith('.glb'))assert.equal(bytes.subarray(0,4).toString(),'glTF')
   if(file.name.endsWith('.zip'))assert.equal(bytes.subarray(0,2).toString(),'PK')
@@ -30,13 +31,13 @@ for(const type of types){
   const response=await editorFetch(api+'&action=apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});applied=await response.json();assert.ok(response.ok,JSON.stringify(applied));assert.ok(applied.ok)
  }else applied={previousApplicationVerified:true}
  const after=await scene()
- if(type==='render'){if(!applied.previousApplicationVerified)assert.deepEqual(after.graph,before.graph);assert.ok(after.thumbnailUrl.includes(job.id))}
- if(['material','pbr'].includes(type))assert.ok(JSON.stringify(after.graph).includes(job.id))
+ if(type==='render'){if(!applied.previousApplicationVerified)assert.deepEqual(after.graph,before.graph);assert.equal(after.thumbnailUrl,new URL(job.result.downloads.find(f=>f.name==='result.png').url,process.env.PASCAL_PUBLIC_URL).href)}
+ if(['material','pbr'].includes(type))assert.ok(Object.values(job.result.mapUrls).some(url=>JSON.stringify(after.graph).includes(new URL(url,process.env.PASCAL_PUBLIC_URL).href)))
  if(['blender','trellis'].includes(type)){
   const item=Object.values(after.graph.nodes).find(n=>n.type==='item'&&n.asset.id==='studio-'+job.id)
   assert.ok(item?.asset.floorPlanUrl);assert.ok(item.asset.src.startsWith(process.env.PASCAL_PUBLIC_URL));assert.ok(job.result.projection.alphaCoverage>0)
  }
  for(const item of protectedItems){const actual=after.graph.nodes[item.id];for(const k of ['parentId','position','rotation','scale'])assert.deepEqual(actual[k],item[k],item.id+' '+k+' changed')}
- report.push({type,id:job.id,downloads:verified,application:applied,version:after.version,originalFurniturePreserved:true,apiReadbackVerified:true})
+ report.push({type,id:job.id,downloads:verified,application:applied,version:after.version,originalFurniturePreserved:true,apiReadbackVerified:true,byteExactTransport:true})
  await writeFile(path.join(out,'apply-download-report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({type,downloaded:verified.length,applied:true,version:after.version}))
 }

@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, expect, test } from 'bun:test'
 import { createHash } from 'node:crypto'
-import { mkdtemp, rm } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { GET as getArtifact, PUT as putArtifact } from '../app/api/artifacts/[sha256]/route'
@@ -57,6 +57,8 @@ afterAll(() => {
     'PASCAL_EDITOR_URL',
     'PASCAL_PUBLIC_URL',
     'PASCAL_DATA_DIR',
+    'PASCAL_REMOTE_STORE',
+    'STUDIO_DATA_DIR',
   ]) {
     if (savedEnv[key] === undefined) delete process.env[key]
     else process.env[key] = savedEnv[key]
@@ -166,4 +168,63 @@ test('generated geometry artifacts upload to cloud and survive a byte-exact read
   await expect(artifacts.storeArtifact({ sha256, bytes: new Uint8Array([1]) })).rejects.toThrow(
     'upload failed: 400',
   )
+})
+
+test('cloud image downloads expose exact size, image MIME and a safe attachment filename', async () => {
+  const bytes = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 1, 2, 3])
+  const sha256 = createHash('sha256').update(bytes).digest('hex')
+  await artifacts.storeArtifact({ sha256, bytes })
+  const response = await callbacks.editorFetch(
+    `/api/artifacts/${sha256}?name=floorplan.png&download=1`,
+  )
+  expect(response.headers.get('content-type')).toBe('image/png')
+  expect(response.headers.get('content-length')).toBe(String(bytes.length))
+  expect(response.headers.get('content-disposition')).toBe('attachment; filename="floorplan.png"')
+  expect(new Uint8Array(await response.arrayBuffer())).toEqual(bytes)
+  const unsafe = await callbacks.editorFetch(`/api/artifacts/${sha256}?name=../private&download=1`)
+  expect(unsafe.headers.has('content-disposition')).toBe(false)
+})
+
+test('generated Studio models publish to cloud storage with preview, floorplan and download URLs', async () => {
+  process.env.PASCAL_REMOTE_STORE = '1'
+  process.env.STUDIO_DATA_DIR = join(root, 'studio')
+  const { publishCloudAssets } = await import('../../../local-ai/studio/cloud-assets.mjs')
+  const { dir, get } = await import('../../../local-ai/studio/store.mjs')
+  const job = {
+    id: '12345678-1234-1234-1234-123456789012',
+    sceneId: 'publication-test',
+    status: 'succeeded',
+    name: 'Cloud stool',
+    type: 'blender',
+    settings: {},
+    applications: [],
+    result: {
+      kind: 'model',
+      preview: 'preview.png',
+      floorPlan: 'floorplan.png',
+      files: ['model.glb', 'floorplan.png'],
+      dimensions: [1, 1, 1],
+    },
+  }
+  await mkdir(dir(job.id), { recursive: true })
+  for (const [name, bytes] of Object.entries({
+    'preview.png': [137, 80, 78, 71, 13, 10, 26, 10],
+    'floorplan.png': [137, 80, 78, 71, 13, 10, 26, 10, 0],
+    'model.glb': [103, 108, 84, 70, 2],
+  }))
+    await writeFile(join(dir(job.id), name), new Uint8Array(bytes))
+  await publishCloudAssets(job)
+  const persisted = await get(job.id)
+  expect(persisted.result.previewUrl).toStartWith('/api/artifacts/')
+  expect(persisted.result.floorPlanUrl).toStartWith('/api/artifacts/')
+  for (const file of persisted.result.downloads) {
+    const response = await callbacks.editorFetch(file.url)
+    expect(response.status).toBe(200)
+    const bytes = new Uint8Array(await response.arrayBuffer())
+    if (file.name === 'manifest.json')
+      expect(JSON.parse(new TextDecoder().decode(bytes)).id).toBe(job.id)
+    else expect(bytes).toEqual(new Uint8Array(await readFile(join(dir(job.id), file.name))))
+  }
+  await publishCloudAssets(job)
+  expect((await get(job.id)).cloudArtifacts).toEqual(persisted.cloudArtifacts)
 })

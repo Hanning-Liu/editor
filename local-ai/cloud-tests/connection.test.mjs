@@ -27,9 +27,12 @@ test('worker credentials are scoped to API callbacks and public assets use the A
     await assetFetch('https://catalog.example.org/model.glb')
     assert.equal(calls[2].url, 'https://catalog.example.org/model.glb')
     assert.equal(calls[2].init, undefined)
+    await assetFetch('/api/local-studio?action=file&name=floorplan.png')
+    assert.equal(calls[3].url, process.env.PASCAL_EDITOR_URL + '/api/local-studio?action=file&name=floorplan.png')
+    assert.equal(calls[3].init.headers.get('Authorization'), 'Bearer unit-platform-token')
     assert.equal(editorAssetUrl('https://example.ms.show.evil.test/asset'), null)
     await assert.rejects(editorFetch('https://catalog.example.org/private'), /Cross-origin/)
-    assert.equal(calls.length, 3)
+    assert.equal(calls.length, 4)
   } finally { globalThis.fetch = originalFetch }
 })
 
@@ -52,4 +55,16 @@ test('Blender and image model child processes do not inherit service credentials
   const keys = JSON.parse(stdout)
   assert.ok(keys.includes('HF_HUB_OFFLINE'))
   assert.ok(!keys.some(key => key.startsWith('PASCAL_')))
+})
+
+test('immutable cloud uploads retry a transient platform rate limit', async () => {
+  const { remoteArtifacts } = await import('../remote-scene-store.mjs')
+  const originalFetch = globalThis.fetch
+  let calls = 0
+  globalThis.fetch = async () => ++calls === 1
+    ? new Response(null, { status: 429, headers: { 'Retry-After': '0' } }) : new Response('{}')
+  try {
+    assert.equal(await remoteArtifacts().storeArtifact({ sha256: 'a'.repeat(64), bytes: new Uint8Array([1]) }), 'a'.repeat(64))
+    assert.equal(calls, 2)
+  } finally { globalThis.fetch = originalFetch }
 })

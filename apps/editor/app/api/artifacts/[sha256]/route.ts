@@ -23,11 +23,22 @@ export async function GET(request: Request, { params }: { params: Promise<{ sha2
   const bytes = await new DiskArtifactStore(resolveDefaultDatabasePath()).read(sha256)
   if (!bytes) return sceneApiJson(request, { error: 'not_found' }, { status: 404 })
   const glb = new TextDecoder().decode(bytes.subarray(0, 4)) === 'glTF'
+  const png =
+    bytes
+      .subarray(0, 8)
+      .every((value, index) => value === [137, 80, 78, 71, 13, 10, 26, 10][index]) &&
+    bytes.length >= 8
+  const filename = new URL(request.url).searchParams.get('name')
+  const download = new URL(request.url).searchParams.get('download') === '1'
   return withSceneApiHeaders(
     request,
     new Response(bytes as BodyInit, {
       headers: {
-        'Content-Type': glb ? 'model/gltf-binary' : 'text/plain; charset=utf-8',
+        'Content-Type': glb ? 'model/gltf-binary' : png ? 'image/png' : 'application/octet-stream',
+        'Content-Length': String(bytes.byteLength),
+        ...(download && filename && /^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,80}$/.test(filename)
+          ? { 'Content-Disposition': `attachment; filename="${filename}"` }
+          : {}),
         'Cache-Control': 'private, max-age=31536000, immutable',
       },
     }),
