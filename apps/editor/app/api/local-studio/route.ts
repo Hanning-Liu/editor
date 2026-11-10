@@ -14,7 +14,22 @@ async function proxy(request: Request) {
   if (!sceneId || !/^[A-Za-z0-9_-]{1,64}$/.test(sceneId))
     return Response.json({ error: '无效项目ID' }, { status: 400 })
   const action = query.get('action') || 'list'
-  if (!['list', 'config', 'get', 'file', 'submit', 'apply', 'cancel', 'retry'].includes(action))
+  if (
+    ![
+      'list',
+      'config',
+      'get',
+      'file',
+      'submit',
+      'apply',
+      'cancel',
+      'retry',
+      'orientation',
+      'orientation-batch',
+      'orientation-review',
+      'orientation-cancel',
+    ].includes(action)
+  )
     return Response.json({ error: '无效操作' }, { status: 400 })
   if (action !== 'file' && !(await (await getSceneOperations()).loadStoredScene(sceneId)))
     return Response.json({ error: '项目不存在' }, { status: 404 })

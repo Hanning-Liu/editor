@@ -13,7 +13,7 @@ export const BLOCKED = new Map([
 	["photo_to_scene", "此操作替换当前场景；请用图片分析与建模工具"],
 ]);
 const groups = [
- ["studio", "本地 Studio", "FLUX效果图、无缝材质、PBR、Qwen Blender与TRELLIS.2异步生成", "local_studio_capabilities submit_local_studio list_local_studio_jobs get_local_studio_job cancel_local_studio_job"],
+ ["studio", "本地 Studio", "FLUX效果图、无缝材质、PBR、Qwen Blender与TRELLIS.2异步生成", "local_studio_capabilities submit_local_studio list_local_studio_jobs get_local_studio_job cancel_local_studio_job request_local_studio_orientation"],
 	[
 		"rooms",
 		"房间与门窗",
@@ -187,6 +187,7 @@ export function isMutation(t) {
 		![
 			"submit_local_studio",
 			"cancel_local_studio_job",
+            "request_local_studio_orientation",
 			"design_brief",
 			"set_checkpoint",
 			"validate_design",

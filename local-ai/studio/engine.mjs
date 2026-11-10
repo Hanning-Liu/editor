@@ -171,7 +171,7 @@ async function makeCode(job, signal) {
         {
           role: 'system',
           content:
-            'You write small Blender bpy furniture modules. Return ONLY JSON {"code":"..."}. The module imports bpy and defines build(params), creating the requested mesh objects with materials. params has width (X), depth (Y), height (Z), in meters; bottom at Z=0. Do not define params yourself. Use short, simple code, max 100 lines. No files, no network, no subprocess, no scene resets, no rendering or exporting. No bpy.ops.wm calls. Use context-free mesh operators or bpy data API. Create real solid furniture parts; do not replace requested furniture by an unrelated primitive. Use Principled materials with named finish slots. Blender cube dimensions must be exact: primitive_cube_add(size=1) creates a 1-meter cube. Set obj.dimensions = (width, depth, height) for each box and then apply scale; never divide these dimensions by 2 for a size=1 cube. Place legs so their top faces touch the underside of the seat; rails must span between and touch their legs. Requested structural furniture must have connected supporting parts, not floating or exploded components. The host will render and export.',
+            'You write small Blender bpy furniture modules. Return ONLY JSON {"code":"...","orientation":{"frontAxisBlender":"-Y","frontRole":"seated_forward"}}. For directional furniture, build the semantic front facing Blender -Y; chair/sofa front is seated forward, bed front is the foot side, cabinet/desk front is the operating face. Use frontRole none for symmetric furniture. The module imports bpy and defines build(params), creating the requested mesh objects with materials. params has width (X), depth (Y), height (Z), in meters; bottom at Z=0. Do not define params yourself. Use short, simple code, max 100 lines. No files, no network, no subprocess, no scene resets, no rendering or exporting. No bpy.ops.wm calls. Use context-free mesh operators or bpy data API. Create real solid furniture parts; do not replace requested furniture by an unrelated primitive. Use Principled materials with named finish slots. Blender cube dimensions must be exact: primitive_cube_add(size=1) creates a 1-meter cube. Set obj.dimensions = (width, depth, height) for each box and then apply scale; never divide these dimensions by 2 for a size=1 cube. Place legs so their top faces touch the underside of the seat; rails must span between and touch their legs. Requested structural furniture must have connected supporting parts, not floating or exploded components. The host will render and export.',
         },
         {
           role: 'user',
@@ -198,8 +198,10 @@ async function makeCode(job, signal) {
     .replace(/\s*```$/, '')
     .trim()
   let code
+  delete job.generatorOrientation
   try {
-    code = JSON.parse(text).code
+    const parsed=JSON.parse(text);code=parsed.code
+    if(parsed.orientation?.frontAxisBlender==='-Y' && ['seated_forward','foot_side','operating_face','none'].includes(parsed.orientation.frontRole)){job.generatorOrientation={...parsed.orientation,source:'generator_declared'};await save(job)}
   } catch {
     throw Error('Qwen没有返回可解析的代码JSON')
   }

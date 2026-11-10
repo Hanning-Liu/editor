@@ -29,6 +29,7 @@ export async function publishCloudAssets(job, signal) {
   }
   result.previewUrl = fileUrl(job, result.preview)
   if (result.floorPlan) result.floorPlanUrl = fileUrl(job, result.floorPlan)
+  if(result.orientationDetails?.views) result.orientationDetails.views=result.orientationDetails.views.map(view=>({...view,url:fileUrl(job,view.file)}))
   if (result.maps) result.mapUrls = Object.fromEntries(Object.entries(result.maps).map(([key, name]) => [key, fileUrl(job, name)]))
   result.downloads = result.files.map(name => ({ name, url: fileUrl(job, name) }))
   const manifest = Buffer.from(JSON.stringify({ schemaVersion: 1, id: job.id, sceneId: job.sceneId, sceneVersion: job.sceneVersion, name: job.name, type: job.type, prompt: job.prompt, settings: job.settings, createdAt: job.createdAt, sourceJobId: job.sourceJobId, capture: job.capture, result }, null, 2))

@@ -5,7 +5,8 @@ import { randomUUID } from 'node:crypto'
 import path from 'node:path'
 import { capabilities, DATA, ROOT } from './config.mjs'
 import { save, get, list, dir, fileUrl } from './store.mjs'
-import { generate } from './engine.mjs'
+import { generate, processRun } from './engine.mjs'
+import { ensureOrientation, orientationResult, reviewOrientation, ORIENTATION_FILES } from './orientation.mjs'
 import { publishCloudAssets } from './cloud-assets.mjs'
 import { createMcpSession } from '../mcp-session.mjs'
 import { currentScene, recordEdit } from '../scene-journal.mjs'
@@ -15,19 +16,31 @@ let submitTail = Promise.resolve()
 let draining = false,
   closing = false
 const applyLocks = new Set()
-for (const j of await list())
+for (const j of await list()) {
+  if(j.orientationTask && ['running','queued'].includes(j.orientationTask.status)){j.orientationTask.status='interrupted';j.orientationTask.phase='朝向识别中断，可重新识别';await save(j)}
   if (['running', 'queued'].includes(j.status)) {
     j.status = 'interrupted'
     j.phase = '服务中断，可继续已有任务'
     await save(j)
   }
+}
 async function drain() {
   if (draining || closing) return
   draining = true
   try {
     while (queue.length && !closing) {
-      const id = queue.shift(),
-        j = await get(id)
+      const task = queue.shift(), id = typeof task === 'string' ? task : task.id, j = await get(id)
+      if(typeof task === 'object' && task.kind === 'orientation'){
+        if(j.orientationTask?.status!=='queued')continue
+        const controller=new AbortController();running.set(id,controller);j.orientationTask.status='running';await save(j)
+        try{
+          const record=await ensureOrientation(j,processRun,controller.signal,async phase=>{j.orientationTask.phase=phase;await save(j)},{force:task.force})
+          await orientationResult(j,record);await publishCloudAssets(j,controller.signal)
+          j.orientationTask.status='succeeded';j.orientationTask.phase=record.status==='accepted'?'正面识别完成':record.status==='symmetric'?'没有唯一正面':'识别完成，待复核'
+        }catch(e){j.orientationTask.status=controller.signal.aborted?(closing?'interrupted':'cancelled'):'failed';j.orientationTask.error=String(e.message||e).slice(-3000);j.orientationTask.phase='朝向任务未完成，可重试'}
+        finally{j.orientationTask.finishedAt=new Date().toISOString();await save(j);running.delete(id)}
+        continue
+      }
       if (j.status !== 'queued') continue
       const controller = new AbortController()
       running.set(id, controller)
@@ -41,6 +54,11 @@ async function drain() {
           j.phase = phase
           await save(j)
         })
+        if(j.result.kind==='model'){
+          await save(j)
+          const record=await ensureOrientation(j,processRun,controller.signal,async phase=>{j.phase=phase;await save(j)})
+          await orientationResult(j,record)
+        }
         if (process.env.PASCAL_REMOTE_STORE === '1') {
           j.phase = '正在同步云端素材'
           await save(j)
@@ -167,6 +185,19 @@ async function submit(sceneId, b) {
     await save(j)
     throw e
   }
+}
+async function requestOrientation(b){
+ const jobs=b.jobIds?b.jobIds.map(String):[String(b.jobId||'')]
+ if(!jobs.length||jobs.length>100)throw Error('批量识别最多100个资产')
+ const results=[]
+ const selected=await Promise.all([...new Set(jobs)].map(get))
+ for(const j of selected)if(j.status!=='succeeded'||j.result?.kind!=='model'||!['blender','trellis'].includes(j.type))throw Error('请选择已完成的家具模型')
+ for(const j of selected){
+  const id=j.id
+  if(running.has(id)||queue.some(q=>(typeof q==='string'?q:q.id)===id)){results.push({id,status:'already_queued'});continue}
+  j.orientationTask={id:randomUUID(),status:'queued',phase:'等待正面识别',createdAt:new Date().toISOString()};await save(j);queue.push({id,kind:'orientation',force:b.force===true});results.push({id,status:'queued'})
+ }
+ void drain();return {jobs:results}
 }
 async function apply(sceneId, b) {
   if (applyLocks.has(sceneId)) throw Error('该项目正在应用其他素材')
@@ -397,6 +428,7 @@ const server = createServer(async (req, res) => {
           'preview.png',
           'floorplan.png',
           'floorplan.json',
+          ...ORIENTATION_FILES,
           'input.png',
           'raw.png',
           'basecolor.png',
@@ -477,6 +509,18 @@ const server = createServer(async (req, res) => {
       result = await next
     } else if (req.method === 'POST' && action === 'apply')
       result = await apply(sceneId, b)
+    else if(req.method==='POST' && ['orientation','orientation-batch'].includes(action)) {
+      const next=submitTail.catch(()=>{}).then(()=>requestOrientation(b));submitTail=next;result=await next
+    } else if(req.method==='POST' && action==='orientation-review'){
+      const next=submitTail.catch(()=>{}).then(async()=>{
+      const j=await get(b.jobId);if(j.status!=='succeeded'||j.result?.kind!=='model'||running.has(j.id)||queue.some(q=>(typeof q==='string'?q:q.id)===j.id))throw Error('请等识别任务完成后复核')
+      const record=await reviewOrientation(j,b);await orientationResult(j,record);await publishCloudAssets(j,new AbortController().signal)
+      if(j.orientationTask){j.orientationTask.status='succeeded';j.orientationTask.phase='资产人工确认完成';delete j.orientationTask.error}
+      await save(j);return j
+      });submitTail=next;result=await next
+    } else if(req.method==='POST' && action==='orientation-cancel'){
+      const j=await get(b.jobId);if(j.orientationTask?.status==='running')running.get(j.id)?.abort();else if(j.orientationTask?.status==='queued'){j.orientationTask.status='cancelled';j.orientationTask.phase='朝向识别已取消';await save(j)}result=j
+    }
     else if (req.method === 'POST' && action === 'cancel') {
       const j = await get(b.jobId)
       if (j.sceneId !== sceneId) throw Error('不能取消其他项目的任务')

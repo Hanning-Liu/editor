@@ -75,6 +75,8 @@ export function assertRelativeWallEdit(name,args,policy,resolutions,nodes) {
     const decision=fresh.find(r=>r.selection?.wallId===input.wallId)
     if (!decision) reject('relative_wall_mismatch',`工具提出的墙与方位解析不一致；当前可选墙为 ${fresh.map(r=>r.selection?.name).join('、')}，不执行该编辑。`,fresh.at(-1))
     const unqualified=relativeWallDecision(nodes,{subjectId:policy.subjectId,referenceFrame:policy.referenceFrame,relation:decision.relation})
+    if (unqualified.orientation?.recordHash!==decision.orientation?.recordHash || ['needs_calibration','no_unique_front'].includes(unqualified.status))
+      reject('scene_conflict','资产朝向证据已变化，请重新解析再编辑。',{...decision,status:'stale_resolution'})
     if ((policy.roomId && decision.room?.id!==policy.roomId) ||
         (unqualified.status==='ambiguous_room' && (!policy.roomId || decision.room?.id!==policy.roomId)))
       reject('room_confirmation_required','多个房间包含参照家具，必须由用户明确房间；不能由模型用 roomId 消除歧义。',decision)

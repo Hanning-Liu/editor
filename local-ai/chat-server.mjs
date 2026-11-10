@@ -635,7 +635,7 @@ async function run(id, text, res, controller, options) {
 						value.ok !== false
 					)
 						edited = true;
-					if (name === "submit_local_studio" && !result.isError && value.id) studioSubmitted = true;
+					if (((name === "submit_local_studio" && value.id) || (name === "request_local_studio_orientation" && value.jobs?.length)) && !result.isError) studioSubmitted = true;
 					if (name === "design_brief" && !result.isError) briefPrepared = true;
 					if (result.isError || value.ok === false) failures.set(name, value);
 					else failures.delete(name);

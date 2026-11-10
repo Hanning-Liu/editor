@@ -3,6 +3,12 @@ import { type AnyNode, deriveSlotId, nodeSlotDeclarations } from '@pascal-app/co
 import { Check, ChevronLeft, Download, ImagePlus, Play, RefreshCw, Square, X } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useEffect, useRef, useState } from 'react'
+import {
+  type OrientationDetails,
+  type OrientationSnapshot,
+  type OrientationTask,
+  StudioOrientation,
+} from './studio-orientation'
 
 const Preview = dynamic(() => import('./local-studio-preview'), { ssr: false })
 type SceneNode = {
@@ -27,6 +33,8 @@ type Job = {
   error?: string
   settings: { roughness: number; metalness: number; tileSizeMeters: number }
   result?: {
+    orientation?: OrientationSnapshot
+    orientationDetails?: OrientationDetails
     kind: string
     previewUrl: string
     mapUrls?: Record<string, string>
@@ -37,6 +45,7 @@ type Job = {
     metrics?: { seconds?: number }
     downloads: { name: string; url: string }[]
   }
+  orientationTask?: OrientationTask
   applications?: unknown[]
 }
 type Config = {
@@ -56,6 +65,8 @@ const status: Record<string, string> = {
 }
 export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: () => void }) {
   const base = '/api/local-studio?sceneId=' + sceneId
+  const loadingJobs = useRef(false)
+  const [reviewFront, setReviewFront] = useState<number[] | null>(null)
   const [config, setConfig] = useState<Config | null>(null),
     [jobs, setJobs] = useState<Job[]>([]),
     [selected, setSelected] = useState<string | null>(null),
@@ -162,9 +173,17 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
     return s as Scene
   }
   async function load() {
-    const r = await fetch(base + '&library=' + (library ? '1' : '0'))
-    if (!r.ok) throw Error((await r.json()).error)
-    setJobs((await r.json()).jobs)
+    if (loadingJobs.current) return
+    loadingJobs.current = true
+    try {
+      const r = await fetch(base + '&library=' + (library ? '1' : '0'), {
+        signal: AbortSignal.timeout(60000),
+      })
+      if (!r.ok) throw Error((await r.json()).error)
+      setJobs((await r.json()).jobs)
+    } finally {
+      loadingJobs.current = false
+    }
   }
   useEffect(() => {
     let live = true
@@ -182,7 +201,9 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
   }, [sceneId])
   useEffect(() => {
     void load().catch((e) => setNotice(e.message))
-    const t = setInterval(() => void load().catch(() => {}), 2000)
+    const t = setInterval(() => {
+      if (document.visibilityState === 'visible') void load().catch(() => {})
+    }, 2000)
     return () => clearInterval(t)
   }, [sceneId, library])
   async function post(action: string, body: unknown) {
@@ -194,6 +215,23 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
     const data = await r.json()
     if (!r.ok) throw Error(data.error || '请求失败')
     return data
+  }
+  async function orientationAction(action: string, body: Record<string, unknown>) {
+    setBusy(true)
+    setNotice('')
+    try {
+      await post(action, body)
+      await load()
+      setNotice(
+        action === 'orientation-review'
+          ? '资产朝向已保存，实例手动修正保持优先。'
+          : '朝向任务已提交，可继续编辑。',
+      )
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : String(error))
+    } finally {
+      setBusy(false)
+    }
   }
   async function downloadFile(file: { name: string; url: string }) {
     if (downloading) return
@@ -327,6 +365,32 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
         <strong>本地 Studio</strong>
         <span className="hidden text-xs text-muted-foreground sm:block">效果图 · 材质 · 模型</span>
         <div className="flex-1" />
+        <button
+          className={button}
+          aria-label="补齐已有模型朝向"
+          disabled={
+            busy ||
+            !jobs.some(
+              (j) =>
+                j.status === 'succeeded' &&
+                j.result?.kind === 'model' &&
+                !j.result.orientation &&
+                !['queued', 'running'].includes(j.orientationTask?.status || ''),
+            )
+          }
+          onClick={() =>
+            void orientationAction('orientation-batch', {
+              jobIds: jobs
+                .filter(
+                  (j) =>
+                    j.status === 'succeeded' && j.result?.kind === 'model' && !j.result.orientation,
+                )
+                .map((j) => j.id),
+            })
+          }
+        >
+          补齐模型朝向
+        </button>
         <button
           className={button}
           onClick={() => void loadScene().then(() => load())}
@@ -588,7 +652,25 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
                         }
                         roughness={0.6}
                         metalness={0}
+                        front={
+                          reviewFront ||
+                          (focus.result.orientation?.status === 'accepted'
+                            ? focus.result.orientation.frontLocal
+                            : undefined)
+                        }
                       />
+                      {focus.status === 'succeeded' && (
+                        <StudioOrientation
+                          key={`${focus.id}-${focus.result.orientation?.recordHash || 'unidentified'}`}
+                          jobId={focus.id}
+                          orientation={focus.result.orientation}
+                          details={focus.result.orientationDetails}
+                          task={focus.orientationTask}
+                          busy={busy}
+                          onAction={orientationAction}
+                          onPreview={setReviewFront}
+                        />
+                      )}
                       {focus.result.floorPlanUrl && (
                         <figure className="space-y-2">
                           <figcaption className="text-xs text-muted-foreground">
@@ -608,23 +690,25 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
                     </>
                   )}
                   <div role="group" className="flex flex-wrap gap-2" aria-label="Studio 下载文件">
-                    {focus.result.downloads.map((f) => (
-                      <a
-                        className={button}
-                        key={f.name}
-                        href={f.url + '&download=1'}
-                        download
-                        aria-busy={downloading === f.name}
-                        aria-disabled={!!downloading}
-                        onClick={(event) => {
-                          event.preventDefault()
-                          void downloadFile(f)
-                        }}
-                      >
-                        <Download className="mr-1 inline size-3" />
-                        {f.name}
-                      </a>
-                    ))}
+                    {focus.result.downloads
+                      .filter((f) => !/^orientation-(?:v\d|response|views)/.test(f.name))
+                      .map((f) => (
+                        <a
+                          className={button}
+                          key={f.name}
+                          href={f.url + '&download=1'}
+                          download
+                          aria-busy={downloading === f.name}
+                          aria-disabled={!!downloading}
+                          onClick={(event) => {
+                            event.preventDefault()
+                            void downloadFile(f)
+                          }}
+                        >
+                          <Download className="mr-1 inline size-3" />
+                          {f.name}
+                        </a>
+                      ))}
                   </div>
                 </>
               )}
@@ -766,7 +850,9 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
                   <button
                     className={button}
                     aria-label="应用 Studio 结果"
-                    disabled={busy || (kind === 'material' && !role)}
+                    disabled={
+                      busy || focus.status !== 'succeeded' || (kind === 'material' && !role)
+                    }
                     onClick={() => void apply()}
                   >
                     <Check className="mr-1 inline size-4" />
@@ -848,6 +934,9 @@ export function LocalStudio({ sceneId, onClose }: { sceneId: string; onClose: ()
                   {status[j.status] || j.status} ·{' '}
                   {config?.types.find((t) => t.id === j.type)?.label || j.type}
                 </span>
+                {j.result?.orientation?.status === 'needs_review' && (
+                  <span className="block text-xs text-amber-400">正面朝向待复核</span>
+                )}
               </span>
             </button>
           ))}

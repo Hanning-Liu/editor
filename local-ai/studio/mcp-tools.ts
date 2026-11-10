@@ -41,6 +41,7 @@ export function registerStudioTools(server: any, bridge: any) {
           readOnlyHint: ![
             'submit_local_studio',
             'cancel_local_studio_job',
+            'request_local_studio_orientation',
           ].includes(name),
           destructiveHint: false,
         },
@@ -62,6 +63,12 @@ export function registerStudioTools(server: any, bridge: any) {
     '查看本地Studio生成类型、可用环境与任务队列。',
     z.object({}),
     () => request('config'),
+  )
+  register(
+    'request_local_studio_orientation',
+    '为已生成的Studio家具请求本地VLM多视图正面识别。只提交异步资产任务，不移动场景家具；未知正面先识别，待Studio完成或人工复核后再解析墙体。不要把任务提交当成正面已确认。',
+    z.object({jobId:z.string().uuid(),force:z.boolean().optional()}),
+    (args:any)=>request('orientation',args,'POST'),
   )
   register(
     'submit_local_studio',
@@ -114,11 +121,12 @@ export function registerStudioTools(server: any, bridge: any) {
   )
   register(
     'get_local_studio_job',
-    '读取Studio任务进度、错误和生成文件链接。',
+    '读取当前项目Studio任务，或已完成共享家具资产的朝向识别进度、错误和文件链接。',
     z.object({ jobId: z.string().uuid() }),
     async (args: any) => {
       const j = await request('get', args)
-      if (j.sceneId !== scene()) throw Error('只能读取当前项目任务')
+      if (j.sceneId !== scene() && !(j.status === 'succeeded' && j.result?.kind === 'model'))
+        throw Error('只能读取当前项目任务或已完成的共享家具资产')
       return j
     },
   )

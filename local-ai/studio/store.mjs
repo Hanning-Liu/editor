@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs'
+import { modelHash } from './orientation-store.mjs'
+import { validRecord, snapshot } from './orientation-policy.mjs'
 import { publicUrl } from '../connection.mjs'
 import { mkdir, readFile, writeFile, rename, readdir } from 'node:fs/promises'
 import path from 'node:path'
@@ -45,11 +48,15 @@ export const fileUrl = (j, name) =>
 export async function generatedAssets() {
   return (await list())
     .filter((j) => j.status === 'succeeded' && j.result?.kind === 'model')
-    .map((j) => ({
+    .map((j) => {
+      const src=publicUrl(fileUrl(j,'model.glb'));let orientation
+      try{const r=JSON.parse(readFileSync(path.join(dir(j.id),'orientation.json'),'utf8'));const hash=modelHash(path.join(dir(j.id),'model.glb'));if(validRecord(r,hash))orientation=snapshot(r,'studio-'+j.id,src)}catch{}
+      return ({
       id: 'studio-' + j.id,
       category: 'furniture',
       name: j.name,
-      src: publicUrl(fileUrl(j, 'model.glb')),
+      src,
+      ...(orientation?{orientation}:{}),
       thumbnail: publicUrl(fileUrl(j, 'preview.png')),
       dimensions: j.result.dimensions,
       ...(j.result.floorPlanUrl
@@ -60,5 +67,5 @@ export async function generatedAssets() {
       offset: [0, 0, 0],
       tags: ['studio', 'local', 'generated'],
       functionTags: ['studio-generated'],
-    }))
+    })})
 }

@@ -96,6 +96,25 @@ const assetSchema = z.object({
   // Optional top-down 2D image shown inside the item's footprint on the
   // floor plan. When present, replaces the default diagonal-cross marker.
   floorPlanUrl: z.string().optional(),
+  // Snapshot from the asset's model-hash-bound orientation record. Instance
+  // metadata.spatialReference is a separate, higher-priority user override.
+  orientation: z
+    .object({
+      version: z.literal(1),
+      modelSha256: z.string().regex(/^[a-f0-9]{64}$/),
+      recordHash: z.string().regex(/^[a-f0-9]{64}$/),
+      status: z.enum(['accepted', 'needs_review', 'symmetric']),
+      source: z.enum(['vlm_inferred', 'asset_user_confirmed', 'generator_verified']),
+      assetId: z.string(),
+      assetSrc: z.string(),
+      frontLocal: z
+        .tuple([z.number().finite(), z.number().finite(), z.number().finite()])
+        .optional(),
+      frontRole: z.string(),
+      category: z.string(),
+      reason: z.string(),
+    })
+    .optional(),
   // Where the item came from in the catalog. Used by the editor's items
   // panel to filter Library / Community / Mine. The server populates it
   // from `items.userId`: null → 'library', current user → 'mine',

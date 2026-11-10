@@ -1,3 +1,4 @@
+import { generatedOrientation } from './studio/orientation-store.mjs'
 import { createHash } from 'node:crypto'
 import { rotateVector } from './editor-src/packages/core/dist/procedural-items/spatial.js'
 import { roomWallFaces } from './editor-src/packages/core/dist/agent-operations/room-faces.js'
@@ -31,6 +32,13 @@ function orientation(item) {
         !saved.frontLocal.every(Number.isFinite) || !unit(saved.frontLocal) || !saved.evidenceQuote)
       return { status: 'needs_calibration', message: '家具正面标定无效或资产已替换，请重新确认。' }
     return { frontLocal: unit(saved.frontLocal), source: 'user_confirmed', evidence: saved.evidenceQuote }
+  }
+  const assetRef=generatedOrientation(item) || item.asset.orientation
+  if(assetRef){
+    if(assetRef.assetId && (assetRef.assetId!==item.asset.id||assetRef.assetSrc!==item.asset.src))return {status:'needs_calibration',message:'资产朝向与当前模型绑定不一致。'}
+    if(assetRef.status==='symmetric')return {status:'no_unique_front',message:'此资产没有唯一正面，请明确世界坐标或设置实例使用方向。'}
+    if(assetRef.status!=='accepted'||!Array.isArray(assetRef.frontLocal)||assetRef.frontLocal.length!==3||!assetRef.frontLocal.every(Number.isFinite)||Math.abs(assetRef.frontLocal[1])>1e-6||!unit(assetRef.frontLocal))return {status:'needs_calibration',message:assetRef.reason||'资产朝向尚待复核。'}
+    return {frontLocal:unit(assetRef.frontLocal),source:assetRef.source,evidence:assetRef.reason,recordHash:assetRef.recordHash,modelSha256:assetRef.modelSha256}
   }
   // One reviewed built-in asset. Names, category labels and yaw=0 alone are not front evidence.
   if (item.asset.id === 'sofa' && item.asset.src === '/items/sofa/model.glb' && item.asset.source === 'library')

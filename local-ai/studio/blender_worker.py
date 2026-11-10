@@ -56,4 +56,5 @@ for name,pos,power in [('Key',(radius,-radius,radius*1.5),70),('Fill',(-radius,-
 scene.render.image_settings.file_format='PNG';scene.render.filepath=str(d/'preview.png');scene.render.film_transparent=True
 bpy.ops.wm.save_as_mainfile(filepath=str(d/'source.blend'));bpy.ops.render.render(write_still=True)
 result={'kind':'model','preview':'preview.png','files':['model.glb','source.blend']+(['source.py'] if j['type']=='blender' else ['input.png']),'dimensions':[round(size.x,5),round(size.z,5),round(size.y,5)],'originalDimensionsBlenderXYZ':original,'faces':sum(len(o.data.polygons) for o in meshes),'method': 'Qwen generated bpy' if j['type']=='blender' else 'TRELLIS.2 + Blender normalization','metrics':{'postprocessSeconds':round(__import__('time').time()-t,3)}}
+if j.get('generatorOrientation'):result['generatorOrientation']={**j['generatorOrientation'],'frontLocal':[0,0,1],'coordinateFrame':'glb-local'}
 (d/'result.json').write_text(json.dumps(result,ensure_ascii=False,indent=2));print('Studio 模型整理完成',flush=True)

@@ -2,19 +2,43 @@
 import { Bounds, OrbitControls, useGLTF, useTexture } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Suspense, useMemo } from 'react'
-import { NoColorSpace, RepeatWrapping, SRGBColorSpace } from 'three'
+import { Box3, NoColorSpace, RepeatWrapping, SRGBColorSpace, Vector3 } from 'three'
 
 type Props = {
+  front?: number[]
   kind: string
   url: string
   maps?: Record<string, string>
   roughness: number
   metalness: number
 }
-function Model({ url }: { url: string }) {
+function Model({ url, front }: { url: string; front?: number[] }) {
   const gltf = useGLTF(url)
   const model = useMemo(() => gltf.scene.clone(true), [gltf.scene])
-  return <primitive object={model} />
+  const arrow = useMemo(() => {
+    if (
+      !front ||
+      front.length !== 3 ||
+      !front.every(Number.isFinite) ||
+      Math.hypot(...front) < 1e-6
+    )
+      return null
+    const box = new Box3().setFromObject(model),
+      size = box.getSize(new Vector3()),
+      center = box.getCenter(new Vector3())
+    center.y = box.max.y + Math.max(size.x, size.z) * 0.08
+    return {
+      direction: new Vector3(...front).normalize(),
+      origin: center,
+      length: Math.max(size.x, size.z) * 0.65,
+    }
+  }, [model, front])
+  return (
+    <group>
+      <primitive object={model} />
+      {arrow && <arrowHelper args={[arrow.direction, arrow.origin, arrow.length, 0xa78bfa]} />}
+    </group>
+  )
 }
 function Surface({
   maps,
@@ -66,7 +90,7 @@ export default function LocalStudioPreview(p: Props) {
         <Suspense fallback={null}>
           <Bounds fit clip observe margin={1.25}>
             {p.kind === 'model' ? (
-              <Model url={p.url} />
+              <Model url={p.url} front={p.front} />
             ) : (
               <Surface
                 maps={p.maps || { baseColor: p.url }}
