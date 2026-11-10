@@ -3,8 +3,8 @@ import { spatialSceneHash } from './spatial-reference.mjs'
 const relationPatterns = {
   right: /右(?:侧|边|方|手)?|\bright\b/i,
   left: /左(?:侧|边|方|手)?|\bleft\b/i,
-  front: /前(?:方|面|侧|边)|正对|对面|\bfront\b/i,
-  back: /后(?:方|面|侧|边)|背后|\bback\b/i,
+  front: /前(?:方|面|侧|边|墙)|正对|对面|对着|\bfront\b/i,
+  back: /后(?:方|面|侧|边|墙)|背后|背面|\bback\b|\bbehind\b/i,
 }
 const aliases = [
   {words:['沙发','sofa','couch'],match:/sofa|couch|沙发/i},

@@ -68,3 +68,9 @@ test('preserving furniture is not a global read-only instruction',()=>{
  assert.equal(p.readOnly,false)
  assert.equal(relativeRequestPolicy('沙发右侧是哪堵墙？不要修改场景。',nodes).readOnly,true)
 })
+
+test('common front/back wall phrasings also require the frame guard',()=>{
+ const nodes=fixture()
+ for(const text of ['给沙发后墙开窗','给沙发背面的墙开窗','add a window in the wall behind the sofa']) assert.deepEqual(relativeRequestPolicy(text,nodes).relations,['back'])
+ for(const text of ['给沙发前墙开窗','给沙发对着的墙开窗']) assert.deepEqual(relativeRequestPolicy(text,nodes).relations,['front'])
+})
