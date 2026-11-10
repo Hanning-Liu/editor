@@ -11,7 +11,7 @@ import {
   Square,
   X,
 } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type Attachment = { id: string; name: string; mime: string; size: number; note?: string }
 type Message = {
@@ -113,6 +113,7 @@ export function LocalChat({ sceneId }: { sceneId: string }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [steps, setSteps] = useState<Step[]>([])
   const [showTests, setShowTests] = useState(false)
+  const [showLatest, setShowLatest] = useState(false)
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
   const [requestAccepted, setRequestAccepted] = useState(false)
@@ -131,7 +132,8 @@ export function LocalChat({ sceneId }: { sceneId: string }) {
   const [context, setContext] = useState<Context>({})
   const [totals, setTotals] = useState<Totals | null>(null)
   const [latest, setLatest] = useState<Usage | null>(null)
-  const bottom = useRef<HTMLDivElement>(null)
+  const transcript = useRef<HTMLDivElement>(null)
+  const followLatest = useRef(true)
   const controller = useRef<AbortController | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
   const prefsSaving = useRef(false)
@@ -141,11 +143,16 @@ export function LocalChat({ sceneId }: { sceneId: string }) {
 
   useEffect(() => {
     let disposed = false
+    let loadingHistory = false
+    const reads = new AbortController()
+    const readSignal = () => AbortSignal.any([reads.signal, AbortSignal.timeout(60000)])
     setReady(false)
+    followLatest.current = true
+    setShowLatest(false)
     setAttachments([])
     setInput('')
     setPanel(null)
-    void fetch(`${url}&action=config`)
+    void fetch(`${url}&action=config`, { signal: readSignal() })
       .then(async (r) => {
         if (!r.ok) throw Error(await r.text())
         const c = await r.json()
@@ -155,8 +162,10 @@ export function LocalChat({ sceneId }: { sceneId: string }) {
         if (!disposed) setStatus(`配置加载失败：${e}`)
       })
     async function load() {
+      if (disposed || loadingHistory) return
+      loadingHistory = true
       try {
-        const res = await fetch(url)
+        const res = await fetch(url, { signal: readSignal() })
         if (!res.ok) throw new Error(await res.text())
         const h = await res.json()
         if (disposed || controller.current || prefsSaving.current) return
@@ -175,25 +184,47 @@ export function LocalChat({ sceneId }: { sceneId: string }) {
         setReady(true)
       } catch (e) {
         if (!disposed) setStatus(`连接失败：${e}`)
+      } finally {
+        loadingHistory = false
       }
     }
     void load()
     const timer = setInterval(() => {
-      if (!controller.current && !prefsSaving.current) void load()
+      if (!document.hidden && !controller.current && !prefsSaving.current) void load()
     }, 4000)
     return () => {
       disposed = true
       clearInterval(timer)
+      reads.abort()
       controller.current?.abort()
       controller.current = null
     }
   }, [url])
 
-  // New transcript entries and execution events reveal the latest message.
+  const scrollToLatest = useCallback(() => {
+    const viewport = transcript.current
+    if (!viewport) return
+    followLatest.current = true
+    viewport.scrollTo({ top: viewport.scrollHeight })
+    setShowLatest(false)
+  }, [])
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: scroll when visible transcript data changes
   useEffect(() => {
-    bottom.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, steps, status])
+    if (!followLatest.current) return
+    const frame = requestAnimationFrame(scrollToLatest)
+    return () => cancelAnimationFrame(frame)
+  }, [messages, steps, status, busy, scrollToLatest])
+
+  useEffect(() => {
+    const viewport = transcript.current
+    if (!viewport) return
+    const observer = new ResizeObserver(() => {
+      if (followLatest.current) scrollToLatest()
+    })
+    observer.observe(viewport)
+    return () => observer.disconnect()
+  }, [scrollToLatest])
 
   async function updatePrefs(next: Preferences) {
     if (prefsSaving.current) return
@@ -276,6 +307,7 @@ export function LocalChat({ sceneId }: { sceneId: string }) {
       sent = attachments
     setInput('')
     setAttachments([])
+    followLatest.current = true
     setBusy(true)
     setRequestAccepted(false)
     setSteps([])
@@ -350,169 +382,194 @@ export function LocalChat({ sceneId }: { sceneId: string }) {
 
   return (
     <section
-      className="flex h-full min-h-0 flex-col bg-background text-foreground"
+      className="flex h-full min-h-0 flex-col overflow-hidden bg-background text-foreground"
       data-testid="local-chat"
     >
-      <div className="border-b border-border px-4 py-3">
+      <div className="shrink-0 border-b border-border px-4 py-3">
         <h2 className="font-semibold">本地 AI</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           {current?.label || 'Qwen3.8'} · {effort?.name || '快速'} · 目录家具与自定义建模
         </p>
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto p-4" aria-live="polite">
-        {!messages.length && (
-          <p className="text-sm text-muted-foreground">
-            描述房间或家具布局，也可以附上户型图、PDF 或设计说明。
-          </p>
-        )}
-        {!!messages.filter((m) => m.origin === 'development-test').length && (
-          <div className="mb-3 rounded-lg border border-border p-3 text-xs text-muted-foreground">
-            <p>早期开发验收记录已折叠，包含测试中断和旧版报错，不属于你的操作。</p>
-            <button
-              type="button"
-              className="mt-2 underline"
-              aria-expanded={showTests}
-              onClick={() => setShowTests((v) => !v)}
-            >
-              {showTests ? '收起' : '查看'}开发验收记录（
-              {messages.filter((m) => m.origin === 'development-test').length}条）
-            </button>
-          </div>
-        )}
-        {messages
-          .filter((m) => showTests || m.origin !== 'development-test')
-          .map((m, i) => (
-            <div
-              key={`${i}-${m.role}`}
-              className={`mb-3 whitespace-pre-wrap break-words rounded-xl p-3 text-sm leading-relaxed ${m.role === 'user' ? 'bg-accent' : m.error ? 'border border-red-500/40' : 'border border-border'}`}
-            >
-              <div className="mb-1 text-xs text-muted-foreground">
-                {m.role === 'user'
-                  ? '你'
-                  : `${m.actor === 'system' ? '系统' : config?.models.find((x) => x.id === m.modelId)?.label || 'Qwen'}${m.effort ? ` · ${config?.efforts.find((x) => x.id === m.effort)?.name || m.effort}` : ''}`}
-              </div>
-              {m.at && (
-                <div className="mb-2 text-[10px] text-muted-foreground">
-                  {new Date(m.at).toLocaleString('zh-CN')}
-                </div>
-              )}
-              {m.notice && (
-                <p className="mb-2 rounded bg-accent p-2 text-xs text-muted-foreground">
-                  {m.notice}
-                </p>
-              )}
-              {m.content}
-              {m.details && (
-                <details className="mt-2 text-xs text-muted-foreground">
-                  <summary>技术诊断</summary>
-                  <pre className="max-h-32 overflow-auto whitespace-pre-wrap break-all">
-                    {m.details}
-                  </pre>
-                </details>
-              )}
-              {!!m.attachments?.length && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {m.attachments.map((a) => (
-                    <a
-                      key={a.id}
-                      href={`${url}&action=asset&ref=${a.id}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="rounded-md border border-border px-2 py-1 text-xs"
-                    >
-                      <Paperclip className="mr-1 inline size-3" />
-                      {a.name}
-                      {a.mime.startsWith('image/') && (
-                        <img
-                          src={`${url}&action=asset&ref=${a.id}`}
-                          alt={a.name}
-                          className="mt-1 max-h-24 max-w-full rounded"
-                        />
-                      )}
-                      {a.note && <span className="block text-muted-foreground">{a.note}</span>}
-                    </a>
-                  ))}
-                </div>
-              )}
+      <div className="relative min-h-0 flex-1">
+        <div
+          ref={transcript}
+          className="h-full overflow-y-auto overscroll-contain p-4 pb-6"
+          aria-live="polite"
+          onLoadCapture={() => {
+            if (followLatest.current) scrollToLatest()
+          }}
+          onScroll={(event) => {
+            const viewport = event.currentTarget
+            const nearBottom =
+              viewport.scrollHeight - viewport.clientHeight - viewport.scrollTop < 24
+            followLatest.current = nearBottom
+            setShowLatest(!nearBottom)
+          }}
+        >
+          {!messages.length && (
+            <p className="text-sm text-muted-foreground">
+              描述房间或家具布局，也可以附上户型图、PDF 或设计说明。
+            </p>
+          )}
+          {!!messages.filter((m) => m.origin === 'development-test').length && (
+            <div className="mb-3 rounded-lg border border-border p-3 text-xs text-muted-foreground">
+              <p>早期开发验收记录已折叠，包含测试中断和旧版报错，不属于你的操作。</p>
+              <button
+                type="button"
+                className="mt-2 underline"
+                aria-expanded={showTests}
+                onClick={() => setShowTests((v) => !v)}
+              >
+                {showTests ? '收起' : '查看'}开发验收记录（
+                {messages.filter((m) => m.origin === 'development-test').length}条）
+              </button>
             </div>
-          ))}
-        <div role="group" aria-label="生成的文件" className="my-2 flex flex-wrap gap-2">
-          {steps.flatMap((step) => {
-            if (step.state !== 'done' || !['export_json', 'export_glb'].includes(step.name || ''))
-              return []
-            const result = step.result as {
-              file?: { url: string; name: string }
-              url?: string
-              name?: string
-            }
-            const file =
-              result.file ||
-              (result.url ? { url: result.url, name: result.name || 'scene.glb' } : null)
-            return file
-              ? [
-                  <a key={file.url} href={file.url} download className={chip}>
-                    下载 {file.name}
-                  </a>,
-                ]
-              : []
-          })}
-        </div>
-        {!!steps.length && (
-          <details className="my-3 rounded-lg border border-border p-2 text-xs" open={busy}>
-            <summary>执行记录 · {steps.filter((s) => s.state === 'done').length} 步完成</summary>
-            {steps.map((s, i) => (
-              <details key={`${i}-${s.name}`} className="mt-2">
-                <summary>
-                  {s.state === 'done' ? '✓' : s.state === 'error' ? '×' : '…'} {s.name}
-                </summary>
-                <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-all text-[10px]">
-                  {JSON.stringify({ args: s.args, result: s.result }, null, 2)}
-                </pre>
-                {(() => {
-                  const r = s.result as
-                    | {
-                        images?: { id: string; name: string }[]
-                        file?: { url: string; name: string }
-                        url?: string
-                        name?: string
-                      }
-                    | undefined
-                  const file =
-                    r?.file ||
-                    (s.name === 'export_glb' && r?.url
-                      ? { url: r.url, name: r.name || 'scene.glb' }
-                      : null)
-                  return (
-                    <>
-                      {r?.images?.map((im) => (
-                        <a
-                          key={im.id}
-                          href={`${url}&action=asset&ref=${im.id}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
+          )}
+          {messages
+            .filter((m) => showTests || m.origin !== 'development-test')
+            .map((m, i) => (
+              <div
+                key={`${i}-${m.role}`}
+                className={`mb-3 whitespace-pre-wrap break-words rounded-xl p-3 text-sm leading-relaxed ${m.role === 'user' ? 'bg-accent' : m.error ? 'border border-red-500/40' : 'border border-border'}`}
+              >
+                <div className="mb-1 text-xs text-muted-foreground">
+                  {m.role === 'user'
+                    ? '你'
+                    : `${m.actor === 'system' ? '系统' : config?.models.find((x) => x.id === m.modelId)?.label || 'Qwen'}${m.effort ? ` · ${config?.efforts.find((x) => x.id === m.effort)?.name || m.effort}` : ''}`}
+                </div>
+                {m.at && (
+                  <div className="mb-2 text-[10px] text-muted-foreground">
+                    {new Date(m.at).toLocaleString('zh-CN')}
+                  </div>
+                )}
+                {m.notice && (
+                  <p className="mb-2 rounded bg-accent p-2 text-xs text-muted-foreground">
+                    {m.notice}
+                  </p>
+                )}
+                {m.content}
+                {m.details && (
+                  <details className="mt-2 text-xs text-muted-foreground">
+                    <summary>技术诊断</summary>
+                    <pre className="max-h-32 overflow-auto whitespace-pre-wrap break-all">
+                      {m.details}
+                    </pre>
+                  </details>
+                )}
+                {!!m.attachments?.length && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {m.attachments.map((a) => (
+                      <a
+                        key={a.id}
+                        href={`${url}&action=asset&ref=${a.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="rounded-md border border-border px-2 py-1 text-xs"
+                      >
+                        <Paperclip className="mr-1 inline size-3" />
+                        {a.name}
+                        {a.mime.startsWith('image/') && (
                           <img
-                            src={`${url}&action=asset&ref=${im.id}`}
-                            alt={im.name}
-                            className="my-2 max-h-48 rounded"
+                            src={`${url}&action=asset&ref=${a.id}`}
+                            alt={a.name}
+                            className="mt-1 max-h-24 max-w-full rounded"
                           />
-                        </a>
-                      ))}
-                      {file && (
-                        <a href={file.url} className="my-2 block underline">
-                          下载 {file.name}
-                        </a>
-                      )}
-                    </>
-                  )
-                })()}
-              </details>
+                        )}
+                        {a.note && <span className="block text-muted-foreground">{a.note}</span>}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
-          </details>
+          <div role="group" aria-label="生成的文件" className="my-2 flex flex-wrap gap-2">
+            {steps.flatMap((step) => {
+              if (step.state !== 'done' || !['export_json', 'export_glb'].includes(step.name || ''))
+                return []
+              const result = step.result as {
+                file?: { url: string; name: string }
+                url?: string
+                name?: string
+              }
+              const file =
+                result.file ||
+                (result.url ? { url: result.url, name: result.name || 'scene.glb' } : null)
+              return file
+                ? [
+                    <a key={file.url} href={file.url} download className={chip}>
+                      下载 {file.name}
+                    </a>,
+                  ]
+                : []
+            })}
+          </div>
+          {!!steps.length && (
+            <details className="my-3 rounded-lg border border-border p-2 text-xs" open={busy}>
+              <summary>执行记录 · {steps.filter((s) => s.state === 'done').length} 步完成</summary>
+              {steps.map((s, i) => (
+                <details key={`${i}-${s.name}`} className="mt-2">
+                  <summary>
+                    {s.state === 'done' ? '✓' : s.state === 'error' ? '×' : '…'} {s.name}
+                  </summary>
+                  <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-all text-[10px]">
+                    {JSON.stringify({ args: s.args, result: s.result }, null, 2)}
+                  </pre>
+                  {(() => {
+                    const r = s.result as
+                      | {
+                          images?: { id: string; name: string }[]
+                          file?: { url: string; name: string }
+                          url?: string
+                          name?: string
+                        }
+                      | undefined
+                    const file =
+                      r?.file ||
+                      (s.name === 'export_glb' && r?.url
+                        ? { url: r.url, name: r.name || 'scene.glb' }
+                        : null)
+                    return (
+                      <>
+                        {r?.images?.map((im) => (
+                          <a
+                            key={im.id}
+                            href={`${url}&action=asset&ref=${im.id}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <img
+                              src={`${url}&action=asset&ref=${im.id}`}
+                              alt={im.name}
+                              className="my-2 max-h-48 rounded"
+                            />
+                          </a>
+                        ))}
+                        {file && (
+                          <a href={file.url} className="my-2 block underline">
+                            下载 {file.name}
+                          </a>
+                        )}
+                      </>
+                    )
+                  })()}
+                </details>
+              ))}
+            </details>
+          )}
+        </div>
+        {showLatest && (
+          <button
+            type="button"
+            onClick={scrollToLatest}
+            className="absolute right-5 bottom-2 rounded-full border border-border bg-background px-3 py-1.5 text-xs shadow-md"
+            aria-label="滚动到最新消息"
+          >
+            ↓ 到最新
+          </button>
         )}
-        <div ref={bottom} />
       </div>
-      <div className="relative border-t border-border p-3 pb-12">
+      <div className="relative shrink-0 border-t border-border p-3 pb-12">
         {panel && (
           <div
             className="absolute bottom-full left-2 right-2 z-30 mb-2 max-h-[65vh] overflow-y-auto rounded-xl border border-border bg-background p-4 shadow-2xl"

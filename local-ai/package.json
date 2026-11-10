@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "@modelcontextprotocol/client": "2.4.0",
-    "@pascal-app/cli": "1.0.7"
+    "@pascal-app/cli": "1.0.7",
+    "undici": "7.30.1"
   },
   "devDependencies": {
     "playwright": "1.65.0"

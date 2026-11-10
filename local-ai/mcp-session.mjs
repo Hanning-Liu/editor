@@ -1,5 +1,6 @@
 import { Client } from "@modelcontextprotocol/client";
 import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
+import { modelFetch } from "./model-request.mjs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -33,7 +34,7 @@ export function createMcpSession(
 					),
 				})),
 			];
-			const response = await fetch(options.chosen.endpoint, {
+			const response = await modelFetch(options.chosen.endpoint, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({

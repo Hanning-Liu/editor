@@ -35,6 +35,16 @@ sudo systemctl status pascal-ai-gateway.service pascal-ai-tailnet.service
 
 两个tailnet均为用户态，不接管系统路由，避免与阿里云100.100管理地址冲突。不要改回内核TUN，不要启用exit-node或子网路由。若魔搭重启后AI离线，先检查其私网设备是否Running，再检查阿里云私网9080与Mac18091/18092。
 
+### Chat 在深入推理时出现 fetch failed
+
+2026-11-10 的一次加窗请求在模型第5次推理等待约301秒后失败；模型服务实际继续运行，约336秒后才返回工具调用。此前只有读取和截图，没有执行 `add_window`。原因是非流式模型请求触发了 Node HTTP 默认300秒响应头等待限制，早于应用层的600秒单次推理时限。
+
+`local-ai/model-request.mjs` 为模型请求单独配置传输，由调用方 AbortSignal 控制完整期限和用户取消；不改变云端回调的超时，不自动重放推理或场景编辑。主 Chat 与 MCP 图片分析采样均复用该模块。错误记录保留底层 cause/code，响应头及响应体超时按推理超时报告。同步 Mac 工作节点时，需要同时同步该模块和 package.json/package-lock.json，并安装锁定依赖。
+
+Chat 推理期间每15秒发送一个心跳块，防止非流式思考时云端转发的响应体读取长期空闲。心跳不加入保存的聊天或工具记录；浏览器断线时后台任务仍保留，恢复状态只读取同一任务，不自动重新提交编辑。
+
+回归检查：`node --test local-ai/cloud-tests/model-request.test.mjs local-ai/cloud-tests/connection.test.mjs`。如需实际跨越默认5分钟限制，使用 `PASCAL_TEST_SLOW_HEADERS=1 node --test --test-name-pattern='real five-minute' local-ai/cloud-tests/model-request.test.mjs`，耗时约310秒。真实加窗验收使用 `local-ai/cloud-tests/window-timeout.mjs`，它创建独立副本并保存提交凭据，避免在原场景重复加窗。
+
 ## 令牌与权限
 
 魔搭网页保留管理员登录。当前是单管理员工作空间，未实现多租户隔离和访客计费；不要公开管理员密码。

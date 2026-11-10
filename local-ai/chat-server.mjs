@@ -1,4 +1,5 @@
 import { guardWorkerRequest } from "./connection.mjs";
+import { modelFetch, isModelTimeout, errorDetails } from "./model-request.mjs";
 import {
 	configuration,
 	preferences,
@@ -94,6 +95,13 @@ async function run(id, text, res, controller, options) {
 		if (!res.destroyed && !res.writableEnded)
 			res.write(JSON.stringify(event) + "\n");
 	};
+	// Thinking produces no model response chunks; keep intermediate HTTP proxies
+	// active without adding synthetic entries to the saved conversation.
+	const heartbeat = setInterval(() => {
+		if (!res.destroyed && !res.writableEnded)
+			res.write(JSON.stringify({ type: "heartbeat" }) + "\n");
+	}, 15000);
+	heartbeat.unref();
 	let client, transport;
 	let final = "";
 	try {
@@ -264,7 +272,7 @@ async function run(id, text, res, controller, options) {
 			controller.signal.throwIfAborted();
 			emit({ type: "status", text: `Qwen 正在规划（${step + 1}/32）…` });
 			await persist(h);
-			const response = await fetch(options.chosen.endpoint, {
+			const response = await modelFetch(options.chosen.endpoint, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -714,7 +722,7 @@ async function run(id, text, res, controller, options) {
 			? controller.signal.reason?.kind === "user"
 				? "user_cancelled"
 				: "service_stopped"
-			: e.name === "TimeoutError"
+			: isModelTimeout(e)
 				? "model_timeout"
 				: "run_failed";
 		final = stopped
@@ -746,7 +754,7 @@ async function run(id, text, res, controller, options) {
 				: "failed",
 			at: new Date().toISOString(),
 			error: !stopped,
-			details: String(e.message || e),
+			details: errorDetails(e),
 		});
 		emit({
 			type: stopped ? "stopped" : "error",
@@ -758,6 +766,7 @@ async function run(id, text, res, controller, options) {
 			at: new Date().toISOString(),
 		});
 	} finally {
+		clearInterval(heartbeat);
 		await client.close().catch(() => {});
 		await persist(h);
 		active.delete(id);
