@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "originalSceneCount": 19,
+  "allGraphsExactlyUnchanged": true,
+  "results": [
+    {
+      "id": "627706cfbcfd",
+      "unchanged": true
+    },
+    {
+      "id": "47104b4663ac",
+      "unchanged": true
+    },
+    {
+      "id": "8cb1690c5cd7",
+      "unchanged": true
+    },
+    {
+      "id": "6e52a561f3fb",
+      "unchanged": true
+    },
+    {
+      "id": "c2940bd37c17",
+      "unchanged": true
+    },
+    {
+      "id": "82498753e1d3",
+      "unchanged": true
+    },
+    {
+      "id": "f96c6330229a",
+      "unchanged": true
+    },
+    {
+      "id": "49b67910c3da",
+      "unchanged": true
+    },
+    {
+      "id": "cc58e2011f54",
+      "unchanged": true
+    },
+    {
+      "id": "023eec0b599c",
+      "unchanged": true
+    },
+    {
+      "id": "95e2b0e31971",
+      "unchanged": true
+    },
+    {
+      "id": "d7a72e3f7364",
+      "unchanged": true
+    },
+    {
+      "id": "b7dfa298af14",
+      "unchanged": true
+    },
+    {
+      "id": "83abffa96a33",
+      "unchanged": true
+    },
+    {
+      "id": "3a01e264c30b",
+      "unchanged": true
+    },
+    {
+      "id": "f722998a7595",
+      "unchanged": true
+    },
+    {
+      "id": "613bfb3b5f9a",
+      "unchanged": true
+    },
+    {
+      "id": "ebbf4a7f8bc8",
+      "unchanged": true
+    },
+    {
+      "id": "7282523591b5",
+      "unchanged": true
+    }
+  ],
+  "health": {
+    "editor": 200,
+    "chat": 200,
+    "studio": 200,
+    "qwen": 200
+  }
+}

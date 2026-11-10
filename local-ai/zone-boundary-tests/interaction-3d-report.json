@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "treeHoverIn3D": true,
+  "projectedBoundaryMouseHover": true,
+  "projectedBoundaryClickCyclesOwner": true,
+  "graphExactlyUnchanged": true,
+  "errors": []
+}

@@ -1,13 +1,13 @@
 'use client'
-import { type AnyNodeId, sceneRegistry, useScene, type ZonePart, zoneParts } from '@pascal-app/core'
-import { useViewer } from '@pascal-app/viewer'
+import { type AnyNodeId, sceneRegistry, type ZonePart } from '@pascal-app/core'
+import { markPureRaycast } from '@pascal-app/viewer'
 import { useFrame } from '@react-three/fiber'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import {
   BufferGeometry,
   DoubleSide,
   type Group,
-  Line,
+  LineSegments,
   Path,
   Shape,
   ShapeGeometry,
@@ -15,35 +15,23 @@ import {
   Vector3,
 } from 'three'
 import { LineBasicNodeMaterial, MeshBasicNodeMaterial } from 'three/webgpu'
+import { useFunctionalZonePresentation } from '../../hooks/use-functional-zone-presentation'
 import { EDITOR_LAYER } from '../../lib/constants'
+import {
+  boundaryDashes,
+  boundaryOwner,
+  functionalZoneBoundaries,
+  type ZoneBoundary,
+} from '../../lib/functional-zone-boundaries'
+import { functionalZoneEvents } from '../../lib/functional-zone-selection'
 import { roomFloorElevation } from '../../lib/room-handle-drag'
 import { useFunctionalZoneDraft } from '../../store/use-functional-zone-draft'
 import { levelFrame } from './group-transform-shared'
 
 const noRaycast = () => null
 export function FunctionalZoneOverlay() {
-  const nodes = useScene((s) => s.nodes),
-    levelId = useViewer((s) => s.selection.levelId),
+  const { areas, boundaries, nodes, levelId, selected, hovered } = useFunctionalZonePresentation(),
     draft = useFunctionalZoneDraft((s) => s.draft)
-  const areas = useMemo(
-    () =>
-      Object.values(nodes).flatMap((n) =>
-        n.type === 'functional-zone' &&
-        n.parentId === levelId &&
-        n.visible !== false &&
-        n.id !== draft?.nodeId
-          ? [
-              {
-                id: n.id,
-                color: n.color,
-                parts: zoneParts(n),
-                elevation: roomFloorElevation(nodes, n.roomId),
-              },
-            ]
-          : [],
-      ),
-    [nodes, levelId, draft?.nodeId],
-  )
   const ref = useRef<Group>(null)
   useFrame(() => {
     const level = levelId ? sceneRegistry.nodes.get(levelId as AnyNodeId) : undefined
@@ -54,107 +42,162 @@ export function FunctionalZoneOverlay() {
     }
   })
   const matrix = useMemo(() => levelFrame(levelId).matrix, [levelId])
+  const draftBoundaries = useMemo(
+    () =>
+      draft
+        ? functionalZoneBoundaries([
+            {
+              id: 'functional-zone-draft',
+              parts: draft.geometry,
+              elevation: roomFloorElevation(nodes, draft.roomId),
+            },
+          ])
+        : [],
+    [draft, nodes],
+  )
+  const byId = new Map(areas.map((n) => [n.id as string, n]))
   return (
     <group ref={ref} matrix={matrix} matrixAutoUpdate={false} name="functional-zone-overlays">
       {areas.map((n) => (
-        <ZoneParts3D
+        <ZoneFill3D
           key={n.id}
-          parts={n.parts}
-          color={n.color}
+          parts={n.partsGeometry}
+          color={n.displayColor}
           name={n.id}
           elevation={n.elevation}
+          opacity={selected.includes(n.id) ? 0.25 : hovered === n.id ? 0.16 : 0.06}
         />
       ))}
+      {boundaries.map((edge) => {
+        const owner = boundaryOwner(edge.owners, selected, hovered)!,
+          active = selected.includes(owner as (typeof selected)[number]),
+          hot = edge.owners.includes(hovered ?? '')
+        const color =
+          active || hot || edge.owners.length === 1
+            ? (byId.get(owner)?.displayColor ?? '#94a3b8')
+            : '#94a3b8'
+        return <Boundary3D key={edge.key} edge={edge} color={color} active={active || hot} />
+      })}
       {draft && (
-        <ZoneParts3D
+        <ZoneFill3D
           parts={draft.geometry}
           color="#8b5cf6"
           name="functional-zone-draft"
           elevation={roomFloorElevation(nodes, draft.roomId)}
+          opacity={0.16}
         />
       )}
+      {draftBoundaries.map((edge) => (
+        <Boundary3D key={`draft-${edge.key}`} edge={edge} color="#8b5cf6" active />
+      ))}
     </group>
   )
 }
-function ZoneParts3D({
+function ZoneFill3D({
   parts,
   color,
   name,
   elevation,
+  opacity,
 }: {
   parts: ZonePart[]
   color: string
   name: string
   elevation: number
+  opacity: number
 }) {
-  const objects = useMemo(
+  const geometry = useMemo(
     () =>
       parts.map((part) => {
         const shape = new Shape(part.polygon.map(([x, z]) => new Vector2(x, z)))
         shape.holes = part.holes.map((r) => new Path(r.map(([x, z]) => new Vector2(x, z))))
-        const geometry = new ShapeGeometry(shape)
-        const lines = [part.polygon, ...part.holes].map(
-          (r) =>
-            new Line(
-              new BufferGeometry().setFromPoints(
-                [...r, r[0]!].map(([x, z]) => new Vector3(x, 0.045, z)),
-              ),
-              new LineBasicNodeMaterial({
-                color,
-                transparent: true,
-                opacity: 0.85,
-                depthTest: false,
-                depthWrite: false,
-              }),
-            ),
-        )
-        for (const line of lines) {
-          line.raycast = noRaycast
-          line.layers.set(EDITOR_LAYER)
-        }
-        const fill = new MeshBasicNodeMaterial({
-          color,
-          transparent: true,
-          opacity: 0.16,
-          side: DoubleSide,
-          depthWrite: false,
-          depthTest: false,
-        })
-        return { geometry, lines, fill }
+        return new ShapeGeometry(shape)
       }),
-    [parts, color],
+    [parts],
+  )
+  const material = useMemo(
+    () =>
+      new MeshBasicNodeMaterial({
+        color,
+        transparent: true,
+        opacity,
+        side: DoubleSide,
+        depthWrite: false,
+        depthTest: false,
+      }),
+    [color, opacity],
   )
   useEffect(
     () => () => {
-      for (const o of objects) {
-        o.geometry.dispose()
-        o.fill.dispose()
-        for (const l of o.lines) {
-          l.geometry.dispose()
-          l.material.dispose()
-        }
-      }
+      for (const g of geometry) g.dispose()
     },
-    [objects],
+    [geometry],
   )
+  useEffect(() => () => material.dispose(), [material])
   return (
     <group name={name} position-y={elevation}>
-      {objects.map((o, i) => (
-        <group key={i} name={name + '-part-' + i}>
-          <mesh
-            layers={EDITOR_LAYER}
-            rotation={[Math.PI / 2, 0, 0]}
-            position={[0, 0.035, 0]}
-            geometry={o.geometry}
-            raycast={noRaycast}
-            renderOrder={997}
-            material={o.fill}
-          />
-          {o.lines.map((l, j) => (
-            <primitive key={j} object={l} />
-          ))}
-        </group>
+      {geometry.map((g, i) => (
+        <mesh
+          key={i}
+          layers={EDITOR_LAYER}
+          rotation={[Math.PI / 2, 0, 0]}
+          position={[0, 0.035, 0]}
+          geometry={g}
+          material={material}
+          raycast={noRaycast}
+          renderOrder={997}
+        />
       ))}
     </group>
   )
+}
+function Boundary3D({
+  edge,
+  color,
+  active,
+}: {
+  edge: ZoneBoundary
+  color: string
+  active: boolean
+}) {
+  const line = useMemo(() => {
+    const geometry = new BufferGeometry().setFromPoints(
+      boundaryDashes(edge).flatMap((pair) =>
+        pair.map(([x, z]) => new Vector3(x, edge.elevation + 0.045, z)),
+      ),
+    )
+    const material = new LineBasicNodeMaterial({
+      color: '#94a3b8',
+      transparent: true,
+      opacity: 0.85,
+      depthTest: false,
+      depthWrite: false,
+    })
+    const line = new LineSegments(geometry, material)
+    line.name = `functional-zone-boundary:${edge.key}`
+    line.userData.functionalZoneOwners = edge.owners
+    line.layers.set(EDITOR_LAYER)
+    line.renderOrder = 998
+    const raycast = line.raycast
+    line.raycast = markPureRaycast((raycaster, hits) => {
+      const query = Object.create(raycaster) as typeof raycaster
+      query.params = { ...raycaster.params, Line: { threshold: 0.05 } }
+      raycast.call(line, query, hits)
+    })
+    return line
+  }, [edge])
+  // Keep the raycast target stable across hover/selection: replacing it between
+  // pointerup and click makes the native event manager report a missed click.
+  useLayoutEffect(() => {
+    line.material.color.set(color)
+    line.material.opacity = active ? 1 : 0.85
+  }, [line, color, active])
+  useEffect(
+    () => () => {
+      line.geometry.dispose()
+      line.material.dispose()
+    },
+    [line],
+  )
+  return <primitive object={line} {...functionalZoneEvents(edge.owners, '3d')} />
 }

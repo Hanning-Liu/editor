@@ -47,6 +47,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '../../../primitives/dropdown-menu'
+import { hoverFunctionalZone, leaveFunctionalZone } from '../../../../../lib/functional-zone-selection'
+import { useFunctionalZonePresentation } from '../../../../../hooks/use-functional-zone-presentation'
 import { InlineRenameField } from './inline-rename-input'
 import { TreeNode } from './tree-node'
 
@@ -149,6 +151,7 @@ export function RoomSpatialTree({
     nodes = useScene((s) => s.nodes),
     selectedIds = useViewer((s) => s.selection.selectedIds),
     readOnly = useScene((s) => s.readOnly)
+  const {areas} = useFunctionalZonePresentation()
   const [expanded, setExpanded] = useState(true),
     [error, setError] = useState('')
   const reading = useMemo(
@@ -272,6 +275,7 @@ export function RoomSpatialTree({
               <SemanticRow
                 key={area.id}
                 node={area}
+                displayColor={areas.find((n) => n.id === area.id)?.displayColor}
                 depth={3}
                 onDrop={(e) => drop(e, area.id)}
                 onSelect={() =>
@@ -335,6 +339,7 @@ export function RoomSpatialTree({
 }
 function SemanticRow({
   node,
+  displayColor,
   depth,
   count,
   children,
@@ -343,6 +348,7 @@ function SemanticRow({
   addLabel,
   onDrop,
 }: {
+  displayColor?: string
   node: FunctionalZoneNode | FurnitureGroupNode
   depth: number
   count?: number
@@ -389,6 +395,7 @@ function SemanticRow({
   ]
   if (onAdd && addLabel)
     actions.push({ label: addLabel, run: onAdd, disabled: readOnly })
+  const hovered = useViewer((s) => s.hoveredId), selected = useViewer((s) => s.selection.selectedIds)
   const isZone = node.type === 'functional-zone'
   return (
     <div
@@ -399,6 +406,10 @@ function SemanticRow({
       <RowMenu actions={actions}>
         <div
           data-spatial-row={node.id}
+          onPointerEnter={() => { if (isZone) hoverFunctionalZone([node.id]) }}
+          onPointerLeave={() => { if (isZone) leaveFunctionalZone([node.id]) }}
+          data-zone-hovered={isZone && hovered === node.id}
+          data-zone-selected={isZone && selected.includes(node.id)}
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.target !== e.currentTarget) return
@@ -432,7 +443,7 @@ function SemanticRow({
             'group/spatial flex h-8 cursor-pointer items-center gap-1 border-b border-border/50 pr-2 text-sm ' +
             (over
               ? 'bg-primary/15 ring-1 ring-primary'
-              : inspection?.choice.id === node.id
+              : inspection?.choice.id === node.id || selected.includes(node.id)
                 ? 'bg-accent/50'
                 : 'hover:bg-accent/30')
           }
@@ -465,7 +476,7 @@ function SemanticRow({
             <ChevronRight size={12} className={open ? 'rotate-90' : ''} />
           </button>
           {isZone ? (
-            <LayoutGrid size={14} style={{ color: node.color }} />
+            <LayoutGrid size={14} style={{ color: displayColor ?? node.color }} />
           ) : (
             <Boxes size={14} className="text-muted-foreground" />
           )}

@@ -1,0 +1,20 @@
+{
+  "base": "062488fbaa9cb41600f2d9b503f39dbda59ee7c6",
+  "focusedTests": {
+    "passed": 38,
+    "failed": 0,
+    "files": 4
+  },
+  "typecheck": "packages/editor passed",
+  "i18n": {
+    "catalogSyncPassed": true,
+    "wholeCheckPassed": false,
+    "unchangedBaselineLiteralGuardFiles": [
+      "apps/editor/components/editor-navbar.tsx",
+      "apps/editor/components/local-chat.tsx",
+      "apps/editor/components/local-studio.tsx",
+      "apps/editor/components/scene-loader.tsx"
+    ]
+  },
+  "screenshotsVisuallyReviewed": true
+}

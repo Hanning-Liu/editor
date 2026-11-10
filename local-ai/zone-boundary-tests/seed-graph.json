@@ -1,0 +1,655 @@
+{
+  "nodes": {
+    "site_5v68p2ogf8bc5ljl": {
+      "object": "node",
+      "id": "site_5v68p2ogf8bc5ljl",
+      "type": "site",
+      "parentId": null,
+      "visible": true,
+      "metadata": {},
+      "polygon": {
+        "type": "polygon",
+        "points": [
+          [
+            -15,
+            -15
+          ],
+          [
+            15,
+            -15
+          ],
+          [
+            15,
+            15
+          ],
+          [
+            -15,
+            15
+          ]
+        ]
+      },
+      "children": [
+        "building_fgq9ywiurdqb2zm4"
+      ]
+    },
+    "building_fgq9ywiurdqb2zm4": {
+      "object": "node",
+      "id": "building_fgq9ywiurdqb2zm4",
+      "type": "building",
+      "parentId": "site_5v68p2ogf8bc5ljl",
+      "visible": true,
+      "metadata": {},
+      "children": [
+        "level_73lrdku0bxk21swx"
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "level_73lrdku0bxk21swx": {
+      "object": "node",
+      "id": "level_73lrdku0bxk21swx",
+      "type": "level",
+      "parentId": "building_fgq9ywiurdqb2zm4",
+      "visible": true,
+      "metadata": {},
+      "children": [
+        "wall_49t2not7oayhgt4i",
+        "wall_kkwo28jwet65ez1l",
+        "wall_x1hkfyyufluloqal",
+        "wall_tpb1qi5jl6hvf8sl",
+        "zone_2w8gb8yrp5uld09p",
+        "ceiling_a20wzo0g3bcbttb3",
+        "slab_pfoymffvowy8b8sg",
+        "item_ay6r3shhpou42zib",
+        "item_wbx844lgmeqykgq5",
+        "functional-zone_4ttqmko278wcpoy0",
+        "functional-zone_ph8ga3s4yap2m01z"
+      ],
+      "level": 0,
+      "baseElevation": 0,
+      "height": 2.5
+    },
+    "wall_49t2not7oayhgt4i": {
+      "object": "node",
+      "id": "wall_49t2not7oayhgt4i",
+      "type": "wall",
+      "name": "Wall 1",
+      "parentId": "level_73lrdku0bxk21swx",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "height": 2.8,
+      "start": [
+        0,
+        0
+      ],
+      "end": [
+        8,
+        0
+      ],
+      "frontSide": "interior",
+      "backSide": "exterior"
+    },
+    "wall_kkwo28jwet65ez1l": {
+      "object": "node",
+      "id": "wall_kkwo28jwet65ez1l",
+      "type": "wall",
+      "name": "Wall 2",
+      "parentId": "level_73lrdku0bxk21swx",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "height": 2.8,
+      "start": [
+        8,
+        0
+      ],
+      "end": [
+        8,
+        6
+      ],
+      "frontSide": "interior",
+      "backSide": "exterior"
+    },
+    "wall_x1hkfyyufluloqal": {
+      "object": "node",
+      "id": "wall_x1hkfyyufluloqal",
+      "type": "wall",
+      "name": "Wall 3",
+      "parentId": "level_73lrdku0bxk21swx",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "height": 2.8,
+      "start": [
+        8,
+        6
+      ],
+      "end": [
+        0,
+        6
+      ],
+      "frontSide": "interior",
+      "backSide": "exterior"
+    },
+    "wall_tpb1qi5jl6hvf8sl": {
+      "object": "node",
+      "id": "wall_tpb1qi5jl6hvf8sl",
+      "type": "wall",
+      "name": "Wall 4",
+      "parentId": "level_73lrdku0bxk21swx",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "height": 2.8,
+      "start": [
+        0,
+        6
+      ],
+      "end": [
+        0,
+        0
+      ],
+      "frontSide": "interior",
+      "backSide": "exterior"
+    },
+    "zone_2w8gb8yrp5uld09p": {
+      "object": "node",
+      "id": "zone_2w8gb8yrp5uld09p",
+      "type": "zone",
+      "name": "层级验收客厅",
+      "parentId": "level_73lrdku0bxk21swx",
+      "visible": true,
+      "metadata": {},
+      "polygon": [
+        [
+          0,
+          0
+        ],
+        [
+          8,
+          0
+        ],
+        [
+          8,
+          6
+        ],
+        [
+          0,
+          6
+        ]
+      ],
+      "holes": [],
+      "autoFromWalls": true,
+      "boundaryWallIds": [
+        "wall_49t2not7oayhgt4i",
+        "wall_kkwo28jwet65ez1l",
+        "wall_tpb1qi5jl6hvf8sl",
+        "wall_x1hkfyyufluloqal"
+      ],
+      "boundarySeparatorIds": [],
+      "seed": [
+        4,
+        3
+      ],
+      "spaceRole": "room",
+      "roomNumber": "",
+      "enclosureStatus": "enclosed",
+      "floorFinish": "",
+      "wallFinish": "",
+      "ceilingFinish": "",
+      "ceilingHeight": 2.7,
+      "occupancy": "",
+      "clearDimensionPolicy": "none",
+      "color": "#a855f7"
+    },
+    "ceiling_a20wzo0g3bcbttb3": {
+      "object": "node",
+      "id": "ceiling_a20wzo0g3bcbttb3",
+      "type": "ceiling",
+      "name": "层级验收客厅 Ceiling",
+      "parentId": "level_73lrdku0bxk21swx",
+      "visible": true,
+      "metadata": {},
+      "children": [],
+      "polygon": [
+        [
+          0,
+          0
+        ],
+        [
+          8,
+          0
+        ],
+        [
+          8,
+          6
+        ],
+        [
+          0,
+          6
+        ]
+      ],
+      "holes": [],
+      "holeMetadata": [],
+      "boundary": "auto",
+      "zoneId": "zone_2w8gb8yrp5uld09p",
+      "autoFromWalls": true
+    },
+    "slab_pfoymffvowy8b8sg": {
+      "object": "node",
+      "id": "slab_pfoymffvowy8b8sg",
+      "type": "slab",
+      "name": "Floor plate",
+      "parentId": "level_73lrdku0bxk21swx",
+      "visible": true,
+      "metadata": {},
+      "polygon": [
+        [
+          -0.05,
+          -0.05
+        ],
+        [
+          8.05,
+          -0.05
+        ],
+        [
+          8.05,
+          6.05
+        ],
+        [
+          -0.05,
+          6.05
+        ]
+      ],
+      "holes": [],
+      "holeMetadata": [],
+      "elevation": 0.05,
+      "foundation": {
+        "type": "none"
+      },
+      "thickness": 0.05,
+      "recessed": false,
+      "boundary": "auto",
+      "plateRole": "base",
+      "zoneIds": [
+        "zone_2w8gb8yrp5uld09p"
+      ],
+      "autoFromWalls": true
+    },
+    "item_ay6r3shhpou42zib": {
+      "object": "node",
+      "id": "item_ay6r3shhpou42zib",
+      "type": "item",
+      "name": "Bedside Table",
+      "parentId": "level_73lrdku0bxk21swx",
+      "visible": true,
+      "metadata": {},
+      "position": [
+        1.5237855911254883,
+        0,
+        2.6014297008514404
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "children": [
+        "item_0c2j5yggkuxiizl4"
+      ],
+      "asset": {
+        "id": "bedside-table",
+        "category": "furniture",
+        "name": "Bedside Table",
+        "thumbnail": "/items/bedside-table/thumbnail.webp",
+        "source": "library",
+        "src": "/items/bedside-table/model.glb",
+        "dimensions": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "tags": [
+          "floor",
+          "bedroom"
+        ],
+        "functionTags": [
+          "coffee-tables"
+        ],
+        "offset": [
+          0,
+          0,
+          -0.01
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "surface": {
+          "height": 0.5
+        }
+      }
+    },
+    "item_wbx844lgmeqykgq5": {
+      "object": "node",
+      "id": "item_wbx844lgmeqykgq5",
+      "type": "item",
+      "name": "Livingroom Chair",
+      "parentId": "level_73lrdku0bxk21swx",
+      "visible": true,
+      "metadata": {},
+      "position": [
+        4.75,
+        0,
+        3.6014297008514404
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "children": [],
+      "asset": {
+        "id": "livingroom-chair",
+        "category": "furniture",
+        "name": "Livingroom Chair",
+        "thumbnail": "/items/livingroom-chair/thumbnail.webp",
+        "source": "library",
+        "src": "/items/livingroom-chair/model.glb",
+        "dimensions": [
+          1.5,
+          0.8,
+          1.5
+        ],
+        "tags": [
+          "floor",
+          "seating",
+          "living"
+        ],
+        "functionTags": [
+          "armchairs"
+        ],
+        "offset": [
+          0.01,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    "item_0c2j5yggkuxiizl4": {
+      "object": "node",
+      "id": "item_0c2j5yggkuxiizl4",
+      "type": "item",
+      "name": "验收Toy",
+      "parentId": "item_ay6r3shhpou42zib",
+      "visible": true,
+      "metadata": {},
+      "position": [
+        0.05,
+        0.5,
+        0.05
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "children": [],
+      "asset": {
+        "id": "toy",
+        "category": "furniture",
+        "name": "Toy",
+        "thumbnail": "https://byrpxoiotywskoojsrzd.supabase.co/storage/v1/object/public/items/system/toy/thumbnail.png",
+        "floorPlanUrl": "https://byrpxoiotywskoojsrzd.supabase.co/storage/v1/object/public/items/system/toy/floor-plan.png",
+        "source": "library",
+        "src": "https://byrpxoiotywskoojsrzd.supabase.co/storage/v1/object/public/items/system/toy/model.glb",
+        "dimensions": [
+          0.29,
+          0.49,
+          0.34
+        ],
+        "tags": [
+          "floor",
+          "kids",
+          "decor"
+        ],
+        "offset": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      }
+    },
+    "functional-zone_4ttqmko278wcpoy0": {
+      "object": "node",
+      "id": "functional-zone_4ttqmko278wcpoy0",
+      "type": "functional-zone",
+      "name": "交互多块区",
+      "parentId": "level_73lrdku0bxk21swx",
+      "visible": true,
+      "metadata": {},
+      "roomId": "zone_2w8gb8yrp5uld09p",
+      "functions": [
+        "会客",
+        "阅读"
+      ],
+      "polygon": [
+        [
+          0.5,
+          0.5
+        ],
+        [
+          4,
+          0.5
+        ],
+        [
+          3.5,
+          4
+        ],
+        [
+          0.5,
+          4
+        ]
+      ],
+      "holes": [
+        [
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            1,
+            2
+          ]
+        ]
+      ],
+      "parts": [
+        {
+          "polygon": [
+            [
+              5,
+              0.5
+            ],
+            [
+              7,
+              0.5
+            ],
+            [
+              7,
+              2.5
+            ],
+            [
+              5,
+              2.5
+            ]
+          ],
+          "holes": []
+        }
+      ],
+      "color": "#a78bfa"
+    },
+    "functional-zone_ph8ga3s4yap2m01z": {
+      "object": "node",
+      "id": "functional-zone_ph8ga3s4yap2m01z",
+      "type": "functional-zone",
+      "name": "补余区",
+      "parentId": "level_73lrdku0bxk21swx",
+      "visible": true,
+      "metadata": {},
+      "roomId": "zone_2w8gb8yrp5uld09p",
+      "functions": [],
+      "polygon": [
+        [
+          0,
+          0
+        ],
+        [
+          8,
+          0
+        ],
+        [
+          8,
+          6
+        ],
+        [
+          0,
+          6
+        ]
+      ],
+      "holes": [
+        [
+          [
+            0.5,
+            0.5
+          ],
+          [
+            0.5,
+            4
+          ],
+          [
+            3.5,
+            4
+          ],
+          [
+            4,
+            0.5
+          ]
+        ],
+        [
+          [
+            5,
+            0.5
+          ],
+          [
+            5,
+            2.5
+          ],
+          [
+            7,
+            2.5
+          ],
+          [
+            7,
+            0.5
+          ]
+        ]
+      ],
+      "parts": [
+        {
+          "polygon": [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              1,
+              2
+            ]
+          ],
+          "holes": []
+        }
+      ],
+      "color": "#a78bfa"
+    }
+  },
+  "rootNodeIds": [
+    "site_5v68p2ogf8bc5ljl"
+  ],
+  "collections": {},
+  "materials": {},
+  "installedPlugins": [
+    "pascal:trees",
+    "pascal:environment",
+    "webxr:core",
+    "pascal:pool",
+    "pascal:landscape",
+    "pascal:bath-space",
+    "pascal:streetscape"
+  ]
+}

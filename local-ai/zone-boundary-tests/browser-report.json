@@ -1,0 +1,210 @@
+{
+  "passed": true,
+  "projectId": "a28eecfabef9",
+  "uniqueBoundaries": 16,
+  "sharedBoundaries": 12,
+  "allSvgDashed": true,
+  "distinctColors": true,
+  "hover": true,
+  "sharedBoundaryCyclesOwners": true,
+  "treeAndLabelSelection": true,
+  "refreshSavedName": true,
+  "colorsStableAfterRefresh": true,
+  "toggle2D3D": true,
+  "webGpuGeometry": {
+    "lines": [
+      {
+        "name": "functional-zone-boundary:5000000:0,0:0,600000000",
+        "owners": [
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 76,
+        "length": 3.779999263584614,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:0,0:800000000,0",
+        "owners": [
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 100,
+        "length": 5.000000007450581,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:0,600000000:800000000,600000000",
+        "owners": [
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 100,
+        "length": 5.000000007450581,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:100000000,100000000:100000000,200000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 14,
+        "length": 0.6399999856948853,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:100000000,100000000:200000000,100000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 14,
+        "length": 0.6399999856948853,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:100000000,200000000:200000000,200000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 14,
+        "length": 0.6399999856948853,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:200000000,100000000:200000000,200000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 14,
+        "length": 0.6399999856948853,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:350000000,400000000:400000000,50000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 46,
+        "length": 2.2155338324302356,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:50000000,400000000:350000000,400000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 38,
+        "length": 1.8800000548362732,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:50000000,50000000:400000000,50000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 44,
+        "length": 2.1800000071525574,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:50000000,50000000:50000000,400000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 44,
+        "length": 2.1800000071525574,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:500000000,250000000:700000000,250000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 26,
+        "length": 1.2599997520446777,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:500000000,50000000:500000000,250000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 26,
+        "length": 1.2799999117851257,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:500000000,50000000:700000000,50000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 26,
+        "length": 1.2599997520446777,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:700000000,50000000:700000000,250000000",
+        "owners": [
+          "functional-zone_adn7wc7g6m6qnba4",
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 26,
+        "length": 1.2799999117851257,
+        "layer": 2
+      },
+      {
+        "name": "functional-zone-boundary:5000000:800000000,0:800000000,600000000",
+        "owners": [
+          "functional-zone_fkosbpv9xlizfqko"
+        ],
+        "vertices": 76,
+        "length": 3.779999263584614,
+        "layer": 2
+      }
+    ],
+    "fills": [
+      {
+        "area": 10.375,
+        "opacity": 0.06,
+        "color": "a78bfa",
+        "visible": true
+      },
+      {
+        "area": 4,
+        "opacity": 0.06,
+        "color": "a78bfa",
+        "visible": true
+      },
+      {
+        "area": 32.625,
+        "opacity": 0.25,
+        "color": "0ea5e9",
+        "visible": true
+      },
+      {
+        "area": 1,
+        "opacity": 0.25,
+        "color": "0ea5e9",
+        "visible": true
+      }
+    ]
+  },
+  "furnitureLayoutAndSupportUnchanged": true,
+  "allZoneGeometryUnchanged": true,
+  "saves": [
+    200
+  ],
+  "errors": [],
+  "baselineConsoleWarnings": [
+    "Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition.",
+    "Attempted to synchronously unmount a root while React was already rendering. React cannot finish unmounting the root until the current render has completed, which may lead to a race condition."
+  ]
+}

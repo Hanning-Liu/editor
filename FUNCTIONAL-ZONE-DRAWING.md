@@ -47,3 +47,5 @@ Qwen 与 MCP 使用相同接口：
 全量 `i18n:check` 的目录同步检查通过，但 literal guard 仍报基线中已有的四个本地接入页面：editor-navbar、local-chat、local-studio、scene-loader。本任务未修改这四个文件，未屏蔽或绕过检查。因此不宣称全量 CI 全绿。
 
 3D 画面复查已确认边界/孔洞可见。浏览器仍记录基线 React/drei 同步 unmount 控制台警告；本次主交互测试与边界测试的未处理 pageerror 均为零。
+
+公共边界已增加统一去重、虚线显示与归属高亮，见 [后续交互更新](FUNCTIONAL-ZONE-BOUNDARIES.md)。
