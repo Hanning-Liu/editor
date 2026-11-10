@@ -1,3 +1,4 @@
+import { editorFetch, publicUrl, guardWorkerRequest } from '../connection.mjs'
 import { createServer } from 'node:http'
 import { readFile, writeFile, copyFile, stat } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
@@ -172,8 +173,8 @@ async function apply(sceneId, b) {
       throw Error('项目版本已变化，请刷新目标列表后再应用')
     const r = j.result
     if (r.kind === 'image') {
-      const thumbnailUrl = 'http://127.0.0.1:3002' + fileUrl(j, 'result.png')
-      const res = await fetch('http://127.0.0.1:3002/api/scenes/' + sceneId, {
+      const thumbnailUrl = publicUrl(fileUrl(j, 'result.png'))
+      const res = await editorFetch('/api/scenes/' + sceneId, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -206,7 +207,7 @@ async function apply(sceneId, b) {
         const maps = Object.fromEntries(
             Object.entries(r.mapUrls).map(([k, v]) => [
               k,
-              v.startsWith('/') ? 'http://127.0.0.1:3002' + v : v,
+              v.startsWith('/') ? publicUrl(v) : v,
             ]),
           ),
           texture = {
@@ -359,6 +360,7 @@ const mime = (name) =>
             ? 'text/plain'
             : 'application/octet-stream'
 const server = createServer(async (req, res) => {
+  if (guardWorkerRequest(req, res)) return
   try {
     const u = new URL(req.url, 'http://127.0.0.1')
     if (u.pathname === '/health') {
@@ -504,7 +506,7 @@ const server = createServer(async (req, res) => {
   }
 })
 server.listen(Number(process.env.STUDIO_PORT || 18082), '127.0.0.1', () =>
-  console.log('Local Studio listening http://127.0.0.1:18082'),
+  console.log('Local Studio listening http://127.0.0.1:' + (process.env.STUDIO_PORT || 18082)),
 )
 for (const signal of ['SIGINT', 'SIGTERM'])
   process.on(signal, () => {

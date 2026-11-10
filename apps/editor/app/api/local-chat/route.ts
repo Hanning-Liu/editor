@@ -1,3 +1,5 @@
+import { aiUpstream, isAIRequestOriginAllowed } from '@/lib/ai-upstream'
+import { limitedBody } from '@/lib/limited-body'
 import { guardSceneApiRequest } from '@/lib/scene-api-security'
 import { getSceneOperations } from '@/lib/scene-store-server'
 
@@ -7,9 +9,7 @@ export const runtime = 'nodejs'
 async function proxy(request: Request) {
   const guard = guardSceneApiRequest(request)
   if (guard) return guard
-  const origin = request.headers.get('origin')
-  if (origin && new URL(origin).host !== request.headers.get('host'))
-    return new Response('Forbidden origin', { status: 403 })
+  if (!isAIRequestOriginAllowed(request)) return new Response('Forbidden origin', { status: 403 })
   const query = new URL(request.url).searchParams
   const id = query.get('sceneId')
   if (!id || !/^[a-zA-Z0-9_-]{1,64}$/.test(id))
@@ -23,16 +23,18 @@ async function proxy(request: Request) {
       return new Response('invalid action', { status: 400 })
     if (Number(request.headers.get('content-length') || 0) > 12 * 1024 * 1024)
       return new Response('附件请求过大', { status: 413 })
-    const response = await fetch(
-      `http://127.0.0.1:18081/?sceneId=${encodeURIComponent(id)}&action=${encodeURIComponent(action)}&ref=${encodeURIComponent(query.get('ref') || '')}`,
-      {
-        method: request.method,
-        headers: { 'Content-Type': 'application/json' },
-        ...(request.method === 'POST' ? { body: await request.text() } : {}),
-        signal: request.signal,
-        cache: 'no-store',
-      },
+    const upstream = aiUpstream(
+      'chat',
+      new URLSearchParams({ sceneId: id, action, ref: query.get('ref') || '' }),
     )
+    const response = await fetch(upstream.url, {
+      method: request.method,
+      headers: upstream.headers,
+      ...(request.method === 'POST' ? { body: await limitedBody(request, 12 * 1024 * 1024) } : {}),
+      redirect: 'error',
+      signal: request.signal,
+      cache: 'no-store',
+    })
     return new Response(response.body, {
       status: response.status,
       headers: {
@@ -46,6 +48,8 @@ async function proxy(request: Request) {
       },
     })
   } catch (error) {
+    if ((error as { status?: number }).status === 413)
+      return Response.json({ error: '附件请求过大' }, { status: 413 })
     return Response.json({ error: `本地 Chat 服务不可用：${String(error)}` }, { status: 502 })
   }
 }

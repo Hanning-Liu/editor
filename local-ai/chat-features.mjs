@@ -1,4 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { editorFetch } from "./connection.mjs";
 import { randomUUID } from "node:crypto";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -317,11 +318,8 @@ export function aggregateUsage(calls = []) {
 	return total;
 }
 export async function sceneContext(id) {
-	const state = JSON.parse(
-		await readFile(path.join(root, "pascal-home/run/editor.json"), "utf8"),
-	);
-	const res = await fetch(`${state.url}/api/scenes/${id}`, {
-		signal: AbortSignal.timeout(5000),
+	const res = await editorFetch(`/api/scenes/${id}`, {
+		signal: AbortSignal.timeout(15000),
 	});
 	if (!res.ok) throw Error("读取场景统计失败");
 	const s = await res.json();

@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { resolveAuthMode, sessionPrincipal } from '@/lib/self-host-auth'
 import { PASCAL_LOCALE_HEADER, resolveUiLocale } from '@/lib/ui-locale'
+import { hasWorkerToken } from '@/lib/worker-token'
 
 /**
  * Self-host gate. Pages redirect to `/login` (or `/setup` when nothing is
@@ -32,6 +33,9 @@ export function gateRequest(request: Request): NextResponse | null {
   if (OPEN_PATHS.has(pathname) || OPEN_PREFIXES.some((prefix) => pathname.startsWith(prefix)))
     return null
   if (SELF_GUARDED_API_PREFIXES.some((prefix) => pathname.startsWith(prefix))) return null
+  if (pathname === '/api/worker-store') return null
+  // The capture worker needs the real editor, including protected material and Studio files.
+  if (hasWorkerToken(request)) return null
 
   const mode = resolveAuthMode(request)
   if (mode === 'open') return null

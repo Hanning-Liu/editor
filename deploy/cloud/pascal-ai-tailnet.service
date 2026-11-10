@@ -1,0 +1,26 @@
+[Unit]
+Description=Pascal private AI tailnet (separate state and socket)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/pascal-ai-gateway/bin/tailscaled --state=/var/lib/pascal-ai-gateway/tailscale.state --socket=/run/pascal-ai-tailnet/tailscaled.sock --tun=userspace-networking --outbound-http-proxy-listen=127.0.0.1:1055 --port=41641
+RuntimeDirectory=pascal-ai-tailnet
+Restart=on-failure
+RestartSec=3
+MemoryMax=192M
+TasksMax=64
+NoNewPrivileges=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/var/lib/pascal-ai-gateway
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+PrivateTmp=yes
+PrivateDevices=yes
+CapabilityBoundingSet=
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

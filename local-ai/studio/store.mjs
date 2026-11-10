@@ -1,3 +1,4 @@
+import { publicUrl } from '../connection.mjs'
 import { mkdir, readFile, writeFile, rename, readdir } from 'node:fs/promises'
 import path from 'node:path'
 import { DATA } from './config.mjs'
@@ -46,11 +47,11 @@ export async function generatedAssets() {
       id: 'studio-' + j.id,
       category: 'furniture',
       name: j.name,
-      src: 'http://127.0.0.1:3002' + fileUrl(j, 'model.glb'),
-      thumbnail: 'http://127.0.0.1:3002' + fileUrl(j, 'preview.png'),
+      src: publicUrl(fileUrl(j, 'model.glb')),
+      thumbnail: publicUrl(fileUrl(j, 'preview.png')),
       dimensions: j.result.dimensions,
       ...(j.result.floorPlanUrl
-        ? { floorPlanUrl: 'http://127.0.0.1:3002' + j.result.floorPlanUrl }
+        ? { floorPlanUrl: publicUrl(j.result.floorPlanUrl) }
         : {}),
       scale: [1, 1, 1],
       rotation: [0, 0, 0],

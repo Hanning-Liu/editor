@@ -2,7 +2,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { existsSync, readdirSync } from 'node:fs'
 export const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
-export const DATA = path.join(ROOT, 'studio-data')
+export const DATA = process.env.STUDIO_DATA_DIR || path.join(ROOT, 'studio-data')
 export const MLX_PY =
   process.env.STUDIO_MLX_PYTHON ||
   '/Users/Bill_Admin/miniforge3/envs/MLX/bin/python'

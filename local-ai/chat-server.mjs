@@ -1,3 +1,4 @@
+import { guardWorkerRequest } from "./connection.mjs";
 import {
 	configuration,
 	preferences,
@@ -765,6 +766,7 @@ async function run(id, text, res, controller, options) {
 	}
 }
 const server = createServer(async (req, res) => {
+	if (guardWorkerRequest(req, res)) return;
 	try {
 		const u = new URL(req.url, "http://127.0.0.1");
 		if (u.pathname === "/health") {

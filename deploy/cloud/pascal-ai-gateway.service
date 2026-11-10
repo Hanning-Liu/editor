@@ -1,0 +1,30 @@
+[Unit]
+Description=Pascal AI gateway (independent of Pocket Rudiment)
+After=network-online.target pascal-ai-tailnet.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pascal-gateway
+Group=pascal-gateway
+WorkingDirectory=/opt/pascal-ai-gateway
+EnvironmentFile=/etc/pascal-ai-gateway/environment
+ExecStart=/usr/bin/python3 /opt/pascal-ai-gateway/gateway.py
+Restart=on-failure
+RestartSec=3
+MemoryMax=192M
+CPUQuota=40%
+TasksMax=32
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

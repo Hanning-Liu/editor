@@ -1,0 +1,10 @@
+# Dedicated site; choose a verified owned hostname before enabling.
+YOUR-GATEWAY-DOMAIN {
+    @ai path /chat /studio
+    handle @ai {
+        reverse_proxy 127.0.0.1:9080 {
+            flush_interval -1
+        }
+    }
+    respond 404
+}

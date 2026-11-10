@@ -14,6 +14,7 @@ import { dir, get, save, fileUrl } from './store.mjs'
 import { createMcpSession } from '../mcp-session.mjs'
 import { currentScene } from '../scene-journal.mjs'
 import { ensureFloorplan } from './floorplan.mjs'
+import { modelProcessEnv } from '../connection.mjs'
 const env = {
   ...process.env,
   HF_HUB_OFFLINE: '1',
@@ -35,7 +36,7 @@ export async function processRun(
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
       cwd: options.cwd || ROOT,
-      env: { ...env, ...options.env },
+      env: modelProcessEnv({ ...env, ...options.env }),
       stdio: ['ignore', 'pipe', 'pipe'],
       detached: true,
     })
@@ -170,7 +171,7 @@ async function makeCode(job, signal) {
         {
           role: 'system',
           content:
-            'You write small Blender bpy furniture modules. Return ONLY JSON {"code":"..."}. The module imports bpy and defines build(params), creating the requested mesh objects with materials. params has width (X), depth (Y), height (Z), in meters; bottom at Z=0. Do not define params yourself. Use short, simple code, max 100 lines. No files, no network, no subprocess, no scene resets, no rendering or exporting. No bpy.ops.wm calls. Use context-free mesh operators or bpy data API. Create real solid furniture parts; do not replace requested furniture by an unrelated primitive. Use Principled materials with named finish slots. The host will render and export.',
+            'You write small Blender bpy furniture modules. Return ONLY JSON {"code":"..."}. The module imports bpy and defines build(params), creating the requested mesh objects with materials. params has width (X), depth (Y), height (Z), in meters; bottom at Z=0. Do not define params yourself. Use short, simple code, max 100 lines. No files, no network, no subprocess, no scene resets, no rendering or exporting. No bpy.ops.wm calls. Use context-free mesh operators or bpy data API. Create real solid furniture parts; do not replace requested furniture by an unrelated primitive. Use Principled materials with named finish slots. Blender cube dimensions must be exact: primitive_cube_add(size=1) creates a 1-meter cube. Set obj.dimensions = (width, depth, height) for each box and then apply scale; never divide these dimensions by 2 for a size=1 cube. Place legs so their top faces touch the underside of the seat; rails must span between and touch their legs. Requested structural furniture must have connected supporting parts, not floating or exploded components. The host will render and export.',
         },
         {
           role: 'user',

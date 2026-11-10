@@ -1,3 +1,5 @@
+import { editorUrl, assetFetch } from "./connection.mjs";
+import { createRemoteSceneStore, remoteArtifacts } from "./remote-scene-store.mjs";
 import "./editor-src/packages/mcp/dist/bridge/node-shims.js";
 import { SceneBridge } from "./editor-src/packages/mcp/dist/bridge/scene-bridge.js";
 import { createPascalMcpServer } from "./editor-src/packages/mcp/dist/server.js";
@@ -25,9 +27,11 @@ const catalog = {
   async search(query) {return assetCatalogSource([...MCP_CATALOG_ITEMS,...await generatedAssets()]).search(query)},
   async byId(ids) {return assetCatalogSource([...MCP_CATALOG_ITEMS,...await generatedAssets()]).byId(ids)}
 };
-const store = await createSceneStore();
+const remoteStore = process.env.PASCAL_REMOTE_STORE === "1";
+const store = remoteStore ? createRemoteSceneStore() : await createSceneStore();
 const execution = new AsyncLocalStorage<AbortSignal>();
 const geometry = localGeometryScripts(resolveDefaultDatabasePath());
+if (remoteStore) Object.assign(geometry, remoteArtifacts());
 geometry.assertActive = async () => {
 	execution.getStore()?.throwIfAborted();
 };
@@ -76,8 +80,9 @@ connectStdio(() => {
 		geometryScripts: geometry,
 		assetViews: createAssetViewLoader(
 			createFetchAssetViewIO({
+				fetchImpl: assetFetch,
 				resolveUrl: async (url) =>
-					url.startsWith("/") ? "http://127.0.0.1:3002" + url : url,
+					url.startsWith("/") ? editorUrl(url) : url,
 			}),
 		),
 		executeTool: async (input) => {

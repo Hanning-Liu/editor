@@ -1,0 +1,30 @@
+[Unit]
+Description=Pascal dedicated HTTPS gateway
+After=network-online.target pascal-ai-gateway.service
+Wants=network-online.target
+
+[Service]
+User=pascal-tls
+Group=pascal-tls
+StateDirectory=pascal-ai-tls
+Environment=XDG_DATA_HOME=/var/lib/pascal-ai-tls
+Environment=XDG_CONFIG_HOME=/var/lib/pascal-ai-tls
+ExecStart=/opt/pascal-ai-gateway/bin/caddy run --config /etc/pascal-ai-gateway/Caddyfile --adapter caddyfile
+ExecReload=/opt/pascal-ai-gateway/bin/caddy reload --config /etc/pascal-ai-gateway/Caddyfile --adapter caddyfile
+Restart=on-failure
+RestartSec=3
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+MemoryMax=128M
+CPUQuota=40%
+TasksMax=64
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

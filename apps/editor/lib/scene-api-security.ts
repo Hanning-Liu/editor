@@ -74,8 +74,10 @@ function validateAuth(request: Request): NextResponse | null {
 
   const token = process.env.PASCAL_SCENE_API_TOKEN
   if (token) {
-    const supplied = bearerToken(request) ?? request.headers.get('x-pascal-scene-token')
-    if (supplied && safeEqual(supplied, token)) return null
+    // A hosting provider may consume or forward Authorization for its own API
+    // ingress. The application's explicit worker credential is independent.
+    const supplied = [bearerToken(request), request.headers.get('x-pascal-scene-token')]
+    if (supplied.some((value) => value && safeEqual(value, token))) return null
     return sceneApiJson(request, { error: 'unauthorized' }, { status: 401 })
   }
 

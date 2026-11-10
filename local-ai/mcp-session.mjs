@@ -72,7 +72,7 @@ export function createMcpSession(
 		cwd: root,
 		env: {
 			...process.env,
-			PASCAL_DATA_DIR: path.join(root, "pascal-home/data"),
+			PASCAL_DATA_DIR: process.env.PASCAL_DATA_DIR || path.join(root, "pascal-home/data"),
 			PASCAL_SERVER_SCRIPT_COMPILE: "1",
 			PASCAL_BLENDER: "/Applications/Blender.app/Contents/MacOS/Blender",
 		},

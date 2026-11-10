@@ -1,3 +1,4 @@
+import { editorFetch } from "./connection.mjs";
 import { readFile, writeFile, mkdir, rename } from "node:fs/promises";
 import { createHash } from "node:crypto";
 const root = new URL("./scene-journals/", import.meta.url);
@@ -16,7 +17,7 @@ const hash = (g) =>
 		.update(JSON.stringify(stable(g)))
 		.digest("hex");
 export async function currentScene(id) {
-	const r = await fetch("http://127.0.0.1:3002/api/scenes/" + id);
+	const r = await editorFetch("/api/scenes/" + id);
 	if (!r.ok) throw Error("场景读取失败：" + r.status);
 	return r.json();
 }

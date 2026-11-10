@@ -1,3 +1,4 @@
+import { publicUrl } from '../connection.mjs'
 import { z } from '../editor-src/node_modules/zod/index.js'
 import { randomUUID } from 'node:crypto'
 export function registerStudioTools(server: any, bridge: any) {
@@ -7,15 +8,15 @@ export function registerStudioTools(server: any, bridge: any) {
     return id
   }
   const request = async (action: string, args: any = {}, method = 'GET') => {
-    const u = new URL('http://127.0.0.1:18082/')
+    const u = new URL('http://127.0.0.1:' + (process.env.STUDIO_PORT || 18082) + '/')
     u.searchParams.set('sceneId', scene())
     u.searchParams.set('action', action)
     if (args.jobId) u.searchParams.set('jobId', args.jobId)
     const r = await fetch(u, {
       method,
+      headers: { 'Content-Type': 'application/json', ...(process.env.PASCAL_GATEWAY_TOKEN ? { 'x-pascal-gateway-token': process.env.PASCAL_GATEWAY_TOKEN } : {}) },
       ...(method === 'POST'
         ? {
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(args),
           }
         : {}),
@@ -100,7 +101,7 @@ export function registerStudioTools(server: any, bridge: any) {
         type: j.type,
         name: j.name,
         sceneId: j.sceneId,
-        studioUrl: 'http://127.0.0.1:3002/editor/' + j.sceneId + '?studio=1',
+        studioUrl: publicUrl('/editor/' + j.sceneId + '?studio=1'),
         message: '任务已提交，请在Studio查看进度；尚未自动应用到场景。',
       }
     },

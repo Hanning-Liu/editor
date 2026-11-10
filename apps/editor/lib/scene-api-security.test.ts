@@ -74,6 +74,20 @@ test('accepts bearer token auth when configured', () => {
   expect(guardSceneApiRequest(request)).toBeNull()
 })
 
+test('a platform bearer does not shadow the separate scene worker credential', () => {
+  process.env.PASCAL_SCENE_API_TOKEN = 'worker-secret'
+  const request = (sceneToken: string) =>
+    new Request('https://editor.example/api/scenes', {
+      headers: {
+        authorization: 'Bearer hosting-platform-token',
+        'x-pascal-scene-token': sceneToken,
+        host: 'editor.example',
+      },
+    })
+  expect(guardSceneApiRequest(request('worker-secret'))).toBeNull()
+  expect(guardSceneApiRequest(request('wrong'))?.status).toBe(401)
+})
+
 test('applies configured CORS origins for preflight', () => {
   process.env.PASCAL_SCENE_API_ORIGINS = 'https://app.example'
   const request = new Request('https://editor.example/api/scenes', {

@@ -1,0 +1,25 @@
+# Cloud Next server; secrets belong in ModelScope server-side variables.
+PASCAL_DATA_DIR=/mnt/workspace/pascal
+PASCAL_PUBLIC_URL=https://YOUR-PASCAL-SPACE.ms.show
+PASCAL_ADMIN_PASSWORD=REPLACE_WITH_PRIVATE_WORKSPACE_PASSWORD
+PASCAL_SCENE_API_TOKEN=REPLACE_WITH_RANDOM_32_BYTE_SECRET
+PASCAL_GATEWAY_TOKEN=REPLACE_WITH_DIFFERENT_RANDOM_32_BYTE_SECRET
+PASCAL_CHAT_URL=https://YOUR-GATEWAY-DOMAIN/chat
+PASCAL_STUDIO_URL=https://YOUR-GATEWAY-DOMAIN/studio
+
+# Independent Mac worker environment (not NEXT_PUBLIC_*).
+# PASCAL_EDITOR_URL=https://YOUR-PASCAL-SPACE.ms.show
+# PASCAL_PUBLIC_URL=https://YOUR-PASCAL-SPACE.ms.show
+# PASCAL_REMOTE_STORE=1
+# PASCAL_SCENE_API_TOKEN=<same scene token as cloud>
+# PASCAL_GATEWAY_TOKEN=<same gateway token as cloud>
+# PASCAL_DATA_DIR=<isolated local artifacts directory>
+# LOCAL_CHAT_PORT=18091
+# STUDIO_PORT=18092
+# STUDIO_DATA_DIR=<isolated Studio jobs directory>
+# LOCAL_QWEN_URL=http://127.0.0.1:18080/v1/chat/completions
+
+# Aliyun /etc/pascal-ai-gateway/environment, owner root, mode 600.
+# PASCAL_GATEWAY_TOKEN=<same gateway token>
+# PASCAL_CHAT_WORKER=http://100.x.y.z:18091
+# PASCAL_STUDIO_WORKER=http://100.x.y.z:18092

@@ -1,3 +1,5 @@
+import { aiUpstream } from '@/lib/ai-upstream'
+import { limitedBody } from '@/lib/limited-body'
 import { guardSceneApiRequest } from '@/lib/scene-api-security'
 import { getSceneOperations } from '@/lib/scene-store-server'
 export const dynamic = 'force-dynamic'
@@ -17,12 +19,15 @@ async function proxy(request: Request) {
   if (action !== 'file' && !(await (await getSceneOperations()).loadStoredScene(sceneId)))
     return Response.json({ error: '项目不存在' }, { status: 404 })
   try {
-    const body = request.method === 'POST' ? await request.text() : undefined
+    const body =
+      request.method === 'POST' ? await limitedBody(request, 30 * 1024 * 1024) : undefined
     if (body && body.length > 30 * 1024 * 1024)
       return Response.json({ error: '请求过大' }, { status: 413 })
-    const response = await fetch('http://127.0.0.1:18082/?' + query.toString(), {
+    const upstream = aiUpstream('studio', query)
+    const response = await fetch(upstream.url, {
       method: request.method,
-      headers: { 'Content-Type': 'application/json' },
+      headers: upstream.headers,
+      redirect: 'error',
       ...(body ? { body } : {}),
       cache: 'no-store',
       signal: request.signal,
@@ -40,7 +45,9 @@ async function proxy(request: Request) {
           : {}),
       },
     })
-  } catch {
+  } catch (error) {
+    if ((error as { status?: number }).status === 413)
+      return Response.json({ error: '请求过大' }, { status: 413 })
     return Response.json({ error: '本地 Studio 服务未启动或连接中断' }, { status: 502 })
   }
 }
