@@ -20,7 +20,12 @@ export function relativeRequestPolicy(text,nodes) {
   const exact=items.filter(n=>text.includes(n.id) || (n.name && n.name.length>1 && text.toLowerCase().includes(n.name.toLowerCase())))
   const candidates=exact.length ? exact : items.filter(n=>aliases.some(a=>a.words.some(w=>text.toLowerCase().includes(w)) && a.match.test([n.name,n.asset.name,n.asset.id,...n.asset.tags||[],...n.asset.functionTags||[]].join(' '))))
   if (!candidates.length && !/家具|沙发|椅|桌|床|它的|它右|它左|它前|它后/.test(text)) return null
-  const referenceFrame=/屏幕|画面|镜头|相机|camera|screen/i.test(text) ? 'camera_unavailable'
+  // Canonical frame identifiers express the requested convention. Asking to
+  // report a world-space vector must not override an explicit use_direction.
+  const explicitFrames=[...new Set([...text.matchAll(/\breferenceFrame["']?\s*(?:[:=：]|为|是|采用|\bis\b)\s*["']?(use_direction|facing_front|world)\b/gi)].map(m=>m[1].toLowerCase()))]
+  const referenceFrame=explicitFrames.length>1 ? 'ambiguous_reference_frame'
+    : explicitFrames.length===1 ? explicitFrames[0]
+    : /屏幕|画面|镜头|相机|camera|screen/i.test(text) ? 'camera_unavailable'
     : /世界|全局|world/i.test(text) ? 'world'
     : /面对(?:这|该|这张|这个)?(?:沙发|家具|椅|桌)|站在.*正面|面向.*正面|从.*正面看|facing.front/i.test(text) ? 'facing_front' : 'use_direction'
   const namedRooms=Object.values(nodes).filter(n=>n.type==='zone' && (!n.spaceRole || n.spaceRole==='room') && (text.includes(n.id) || (n.name && n.name.length>1 && text.toLowerCase().includes(n.name.toLowerCase()))))
@@ -29,7 +34,7 @@ export function relativeRequestPolicy(text,nodes) {
   return {roomId:namedRooms.length===1?namedRooms[0].id:null,subjectId:candidates.length===1?candidates[0].id:null,candidates:candidates.map(n=>({id:n.id,name:n.name||n.asset.name})),
     relations,referenceFrame,expectedTools,
     readOnly:/^\s*(只读|仅查看|仅检查|请只读|请仅|read.only)/i.test(text)||/(?:不要|不得|不)(?:修改|编辑)(?:任何)?(?:场景|项目|模型)/.test(text),
-    referenceDescription:referenceFrame==='use_direction'?'默认采用沿家具使用方向（座椅坐姿），不是站在家具正面看':referenceFrame==='facing_front'?'采用站在家具正面、面向家具的观察者方向':referenceFrame==='world'?'采用明确的世界轴：右+X、前-Z':'当前没有相机证据，不能猜测屏幕相对方向',
+    referenceDescription:referenceFrame==='use_direction'?'默认采用沿家具使用方向（座椅坐姿），不是站在家具正面看':referenceFrame==='facing_front'?'采用站在家具正面、面向家具的观察者方向':referenceFrame==='world'?'采用明确的世界轴：右+X、前-Z':referenceFrame==='ambiguous_reference_frame'?'请求包含多个参照系标识，请明确本次采用哪一个':'当前没有相机证据，不能猜测屏幕相对方向',
   }
 }
 

@@ -15,6 +15,9 @@ test('consensus accepts a front, while low evidence and disagreement require rev
  assert.equal(assess({...symmetric,hasBackrest:true},{...symmetric,hasBackrest:true},views).status,'needs_review')
  assert.equal(assess(symmetric,{...symmetric,category:'chair'},views).status,'needs_review')
  assert.equal(assess(symmetric,{...symmetric,confidence:.2},views).status,'needs_review')
+ const table={...symmetric,category:'table',hasBackrest:null,symmetry:'radial'}
+ assert.equal(assess(table,table,views).status,'symmetric')
+ assert.equal(assess({...table,hasBackrest:undefined},table,views).status,'needs_review')
  assert.equal(assess({...symmetric,symmetry:'unknown'},symmetric,views).status,'needs_review')
 })
 test('records bind the exact model and reject tampered/non-horizontal directions',()=>{

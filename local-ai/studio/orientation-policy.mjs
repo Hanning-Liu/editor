@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 export const ORIENTATION_VERSION = 1
-export const ORIENTATION_POLICY = 'multiview-consensus-v2'
+export const ORIENTATION_POLICY = 'multiview-consensus-v3'
 export const canonical = v => Array.isArray(v) ? v.map(canonical) : v && typeof v === 'object' ? Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])) : v
 export const digest = v => createHash('sha256').update(JSON.stringify(canonical(v))).digest('hex')
 export const fileDigest = bytes => createHash('sha256').update(bytes).digest('hex')
@@ -22,9 +22,10 @@ export function assess(first,second,views) {
   const allowed=['chair','sofa','bed','cabinet','desk','table','stool','bench']
   const roles={chair:'seated_forward',sofa:'seated_forward',bed:'foot_side',cabinet:'operating_face',desk:'operating_face',table:'operating_face',stool:'seated_forward',bench:'seated_forward'}
   const evidence = p => Array.isArray(p?.observations)&&p.observations.filter(o=>Number.isInteger(o.viewId)&&views.some(v=>v.id===o.viewId)&&typeof o.feature==='string'&&o.feature.length>=4).length>=2
-  // A backed bench has a seated direction even though its category can also
-  // contain backless, multi-sided benches. Never infer symmetry from its name.
-  if (first?.hasUniqueFront===false && second?.hasUniqueFront===false && first.hasBackrest===false && second.hasBackrest===false && first.category===second.category && ['table','stool','bench'].includes(base.category) && first.frontRole==='none' && second.frontRole==='none' && Number(first.confidence)>=.85 && Number(second.confidence)>=.85 && ['radial','multi_side'].includes(first.symmetry) && first.symmetry===second.symmetry && evidence(first)&&evidence(second))
+  // Backrest is not applicable (null) to tables. For seating it must be
+  // explicitly absent; a backed bench has a seated direction like a chair.
+  const backless = p => p?.hasBackrest===false || (p?.category==='table'&&p.hasBackrest===null)
+  if (first?.hasUniqueFront===false && second?.hasUniqueFront===false && backless(first) && backless(second) && first.category===second.category && ['table','stool','bench'].includes(base.category) && first.frontRole==='none' && second.frontRole==='none' && Number(first.confidence)>=.85 && Number(second.confidence)>=.85 && ['radial','multi_side'].includes(first.symmetry) && first.symmetry===second.symmetry && evidence(first)&&evidence(second))
     return {...base,status:'symmetric',frontRole:'none',reason:reason||'多视图显示物体没有唯一的语义正面。'}
   const view=views.find(v=>v.id===first?.frontViewId)
   if (first?.hasUniqueFront===true && second?.hasUniqueFront===true && view && first.frontViewId===second.frontViewId && first.category===second.category && first.frontRole===second.frontRole && allowed.includes(base.category) && first.frontRole===roles[base.category] && Number(first.confidence)>=.85 && Number(second.confidence)>=.85 && evidence(first)&&evidence(second))

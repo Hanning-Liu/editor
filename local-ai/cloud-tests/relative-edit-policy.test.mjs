@@ -75,6 +75,15 @@ test('common front/back wall phrasings also require the frame guard',()=>{
  for(const text of ['给沙发前墙开窗','给沙发对着的墙开窗']) assert.deepEqual(relativeRequestPolicy(text,nodes).relations,['front'])
 })
 
+test('explicit frame assignments survive requests to report world-space output',()=>{
+ const nodes=fixture()
+ for(const text of ['只读：沙发右侧墙，referenceFrame 为 use_direction，报告世界前向。','sofa right wall, referenceFrame="use_direction", report the world forward vector.'])
+  assert.equal(relativeRequestPolicy(text,nodes).referenceFrame,'use_direction')
+ assert.equal(relativeRequestPolicy('沙发右侧墙，referenceFrame=facing_front，报告世界向量',nodes).referenceFrame,'facing_front')
+ assert.equal(relativeRequestPolicy('沙发右侧墙，referenceFrame=world',nodes).referenceFrame,'world')
+ assert.equal(relativeRequestPolicy('沙发右侧墙，referenceFrame=world，referenceFrame=use_direction',nodes).referenceFrame,'ambiguous_reference_frame')
+})
+
 test('an agent-supplied roomId cannot silently disambiguate overlapping rooms',()=>{
  const nodes=fixture();nodes.zone_other={...structuredClone(nodes.zone_r),id:'zone_other',name:'Other'}
  const decision=relativeWallDecision(nodes,{subjectId:'item_sofa',referenceFrame:'use_direction',relation:'right',roomId:'zone_r'})
