@@ -622,7 +622,7 @@ async function run(id, text, res, controller, options) {
 						...output(safeResult),
 						...(observationImages.length ? { images: observationImages } : {}),
 					};
-                    if (value.kind === 'relative_wall_decision' && value.status === 'resolved') {
+                    if (value.kind === 'relative_wall_decision' && value.status === 'resolved' && (!spatialPolicy || spatialPolicy.relations.includes(value.relation))) {
                         acceptSpatialResolution(spatialPolicy, value);
                         spatialResolutions.push(value);
                     }

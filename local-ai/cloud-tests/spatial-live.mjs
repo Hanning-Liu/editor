@@ -20,7 +20,7 @@ try{project=JSON.parse(await readFile(file))}catch(e){if(e.code!=='ENOENT')throw
  await store.save({id:project.id,name:project.name,graph,expectedVersion:0})
  project={...project,sofaId:sofa.id,toyId:toy.id};await writeFile(file,JSON.stringify(project,null,2),{flag:'wx'})
 }
-const {client,transport}=createMcpSession();const call=async(name,args={})=>{const r=await client.callTool({name,arguments:args});assert.ok(!r.isError,JSON.stringify(r));return r.structuredContent||JSON.parse(r.content.find(c=>c.type==='text').text)}
+const {client,transport}=createMcpSession();const call=async(name,args={})=>{const r=await client.callTool({name,arguments:args});if(cloud)await new Promise(resolve=>setTimeout(resolve,750));assert.ok(!r.isError,JSON.stringify({tool:name,args,result:r}));return r.structuredContent||JSON.parse(r.content.find(c=>c.type==='text').text)}
 try{await client.connect(transport);await call('load_scene',{id:project.id});const before=await store.load(project.id);await writeFile(out+'/before-native.json',JSON.stringify(before,null,2));const reports=[]
  const walls=Object.values(before.graph.nodes).filter(n=>n.type==='wall');const named=Object.fromEntries(walls.map(w=>[w.name,w.id]));
  for(const [yaw,expected]of [[0,[3,1,4,2]],[90,[2,4,3,1]],[180,[1,3,2,4]],[270,[4,2,1,3]]]){

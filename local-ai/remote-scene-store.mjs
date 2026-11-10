@@ -4,12 +4,24 @@ import { setTimeout as wait } from 'node:timers/promises'
 export function createRemoteSceneStore() {
   if (!process.env.PASCAL_SCENE_API_TOKEN) throw Error('Remote scene store requires PASCAL_SCENE_API_TOKEN')
   const call = async (method, args) => {
-    const response = await editorFetch('/api/worker-store', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ method, args }), signal: AbortSignal.timeout(60000),
-    })
-    const result = await response.json()
-    if (!response.ok) throw Object.assign(Error(result.message || result.error || 'Cloud scene store unavailable'), { code: result.error, status: response.status })
+    let response, result
+    for (let attempt = 0; attempt < 6; attempt++) {
+      response = await editorFetch('/api/worker-store', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ method, args }), signal: AbortSignal.timeout(60000),
+      })
+      result = await response.json()
+      // 429 explicitly rejected the request before execution. Do not retry
+      // ambiguous transport errors/5xx writes: they may already have committed.
+      if (response.status !== 429 || attempt === 5) break
+      const seconds = Number(response.headers.get('Retry-After') ?? NaN)
+      await wait(Math.min(30000, Math.max(500, Number.isFinite(seconds) ? seconds * 1000 : 1000 * 2 ** attempt)))
+    }
+    if (!response.ok) {
+      const detail = result.message || result.error || result.ErrorMessage || 'Cloud scene store unavailable'
+      const message = typeof detail === 'string' ? detail : JSON.stringify(detail)
+      throw Object.assign(Error(`Scene store ${method} HTTP ${response.status}: ${message}`), { code: result.error, status: response.status })
+    }
     const value = result.value
     if (value?.id && typeof value.editorUrl === 'string') {
       const url = publicUrl('/project/' + encodeURIComponent(value.id))

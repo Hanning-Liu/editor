@@ -27,7 +27,7 @@ export function relativeRequestPolicy(text,nodes) {
   if (/门.*窗|窗.*门|door.*window|window.*door/i.test(text)) expectedTools.push(...['add_door','add_window'].filter(n=>!expectedTools.includes(n)))
   return {subjectId:candidates.length===1?candidates[0].id:null,candidates:candidates.map(n=>({id:n.id,name:n.name||n.asset.name})),
     relations,referenceFrame,expectedTools,
-    readOnly:/^\s*(只读|仅查看|仅检查|请只读|请仅|read.only)/i.test(text)||/不要(?:修改|编辑|创建)|不(?:修改|编辑)场景/.test(text),
+    readOnly:/^\s*(只读|仅查看|仅检查|请只读|请仅|read.only)/i.test(text)||/(?:不要|不得|不)(?:修改|编辑)(?:任何)?(?:场景|项目|模型)/.test(text),
     referenceDescription:referenceFrame==='use_direction'?'默认采用沿家具使用方向（座椅坐姿），不是站在家具正面看':referenceFrame==='facing_front'?'采用站在家具正面、面向家具的观察者方向':referenceFrame==='world'?'采用明确的世界轴：右+X、前-Z':'当前没有相机证据，不能猜测屏幕相对方向',
   }
 }
@@ -39,7 +39,9 @@ function reject(code,message,decision) {
 export function checkCalibrationRequest(text,args) {
   const quote=args.evidenceQuote||''
   const normalized=quote.replace(/＋/g,'+').replace(/−|－/g,'-').toUpperCase()
-  if (!quote || !text.includes(quote) || !/正面|前向|朝向|FRONT/.test(normalized) ||
+  const axes=[...new Set(normalized.match(/[+-][XZ]/g)||[])]
+  if (/^\s*(只读|仅查看|仅检查|请只读|请仅)/.test(text) || /(?:不要|不得|别)(?:再)?(?:修改|标定|设置|保存)/.test(text) ||
+      axes.length!==1 || axes[0]!==args.frontAxis || !quote || !text.includes(quote) || !/正面|前向|朝向|FRONT/.test(normalized) ||
       !/本地|模型|LOCAL|MODEL/.test(normalized) || !normalized.includes(args.frontAxis))
     reject('front_confirmation_required','正面标定必须引用本条用户消息中明确的模型本地轴；不能把模型猜测或历史助手说法当成用户确认。')
 }

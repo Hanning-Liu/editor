@@ -56,3 +56,15 @@ test('multiple relations, position aliases, default widths and rebuild aliases r
  assert.throws(()=>assertRelativeWallEdit('add_window',{wallId:'wall_4',position:.99},{...policy,expectedTools:['add_window']},[decision],nodes),{code:'outside_room_wall_span'})
  assert.throws(()=>assertRelativeWallEdit('add_door',{...args,width:'900 mm'},policy,[decision],nodes),{code:'relative_numeric_dimensions'})
 })
+
+test('calibration cannot turn read-only text or multiple axes into confirmation',()=>{
+ const args={frontAxis:'+Z',evidenceQuote:'模型本地正面 +Z'}
+ assert.throws(()=>checkCalibrationRequest('只读检查，模型本地正面 +Z，不要标定',args),{code:'front_confirmation_required'})
+ assert.throws(()=>checkCalibrationRequest('模型本地正面 +Z 或 -Z',{...args,evidenceQuote:'模型本地正面 +Z 或 -Z'}),{code:'front_confirmation_required'})
+})
+
+test('preserving furniture is not a global read-only instruction',()=>{
+ const nodes=fixture(),p=relativeRequestPolicy('在沙发右侧墙加门，不要修改既有家具、材质和布局。',nodes)
+ assert.equal(p.readOnly,false)
+ assert.equal(relativeRequestPolicy('沙发右侧是哪堵墙？不要修改场景。',nodes).readOnly,true)
+})

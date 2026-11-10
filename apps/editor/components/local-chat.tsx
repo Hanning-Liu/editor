@@ -528,9 +528,18 @@ export function LocalChat({ sceneId }: { sceneId: string }) {
                     parameters={s.args}
                     rejected
                   />
-                  <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-all text-[10px]">
-                    {JSON.stringify({ args: s.args, result: s.result }, null, 2)}
-                  </pre>
+                  <details
+                    open={
+                      !s.name?.startsWith('spatial_') &&
+                      !s.spatialDecisions?.length &&
+                      !(s.result as { spatialDecision?: unknown } | undefined)?.spatialDecision
+                    }
+                  >
+                    <summary className="text-muted-foreground">原始工具记录</summary>
+                    <pre className="max-h-44 overflow-auto whitespace-pre-wrap break-all text-[10px]">
+                      {JSON.stringify({ args: s.args, result: s.result }, null, 2)}
+                    </pre>
+                  </details>
                   {(() => {
                     const r = s.result as
                       | {
